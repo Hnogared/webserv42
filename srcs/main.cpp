@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 21:49:03 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/07 13:28:15 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/07 14:36:54 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,13 +18,14 @@ int	main(int argc, char **argv)
 {
 	if (argc > 2)
 	{
-		Harl::complain(Harl::ERROR, "Usage: ./webserv [configuration_file]");
+		Harl::complain(Harl::ERROR,
+			"Usage: ./webserv [OPT<configuration_file>]");
 		return (1);
 	}
 
 	try
 	{
-		Server	server(8080);
+		webserv::Server	server(8080);
 
 		std::cout << "Listening on port " << server.getPort() << "..."
 			<< std::endl;

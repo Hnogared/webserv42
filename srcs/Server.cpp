@@ -6,11 +6,14 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 12:36:55 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/07 13:26:52 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/07 15:19:00 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
+
+namespace	webserv
+{
 
 /* Private class constants initialization */
 const std::string	Server::CLASS_NAME = "Server";
@@ -21,30 +24,53 @@ const std::string	Server::CLASS_NAME = "Server";
 /* Default constructor */
 Server::Server(int port, int backlog) : _port(port), _backlog(backlog)
 {
+	{
+		std::ifstream	lock_file(LOCK_FILE);
+
+		if (lock_file.is_open())
+		{
+			lock_file.close();
+			throw std::runtime_error(CLASS_NAME
+				+ ": Another instance is already running");
+		}
+	}
+
+	{
+		std::ofstream	lock_file_out(LOCK_FILE);
+		
+		if (!lock_file_out.is_open())
+		{
+			throw std::runtime_error(CLASS_NAME
+				+ ": Failed to create lock file");
+		}
+		lock_file_out.close();
+	}
+
 	int	optval = 1;
 
-	_sock_fd = socket(AF_INET, SOCK_STREAM, 0);
-	if (_sock_fd < 0 || setsockopt(
-		_sock_fd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) < 0)
+	this->_sock_fd = socket(AF_INET, SOCK_STREAM, 0);
+	if (this->_sock_fd < 0 || setsockopt(
+		this->_sock_fd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) < 0)
 	{
-		throw SocketCreationError(CLASS_NAME
-			+ ": Failed to create socket: " + std::string(strerror(errno)));
+		throw SocketCreationError(CLASS_NAME + ": Failed to create socket: "
+			+ std::string(strerror(errno)));
 	}
 
-	_server_address.sin_family = AF_INET;
-	_server_address.sin_addr.s_addr = htonl(INADDR_ANY); // All interfaces
-	_server_address.sin_port = htons(port);
-	if (bind(_sock_fd, (struct sockaddr *)&_server_address,
-		sizeof(_server_address)) == -1)
+	this->_server_address.sin_family = AF_INET;
+	this->_server_address.sin_addr.s_addr = htonl(INADDR_ANY); // All interfaces
+	this->_server_address.sin_port = htons(port);
+
+	if (bind(this->_sock_fd, (struct sockaddr *)&_server_address,
+		sizeof(this->_server_address)) == -1)
 	{
-		throw SocketBindError(CLASS_NAME
-			+ ": Failed to bind socket: " + std::string(strerror(errno)));
+		throw SocketError(CLASS_NAME + ": Failed to bind socket: "
+			+ std::string(strerror(errno)));
 	}
 
-	if (listen(_sock_fd, backlog) == -1)
+	if (listen(this->_sock_fd, backlog) == -1)
 	{
-		throw SocketListenError(CLASS_NAME
-			+ ": Failed to listen on socket: " + std::string(strerror(errno)));
+		throw SocketError(CLASS_NAME + ": Failed to listen on socket: "
+			+ std::string(strerror(errno)));
 	}
 }
 
@@ -52,13 +78,14 @@ Server::Server(int port, int backlog) : _port(port), _backlog(backlog)
 Server::Server(const Server &original)
 {
 	*this = original;
+	remove(LOCK_FILE);
 }
 
 
 /* Destructor */
 Server::~Server(void)
 {
-	close(_sock_fd);
+	close(this->_sock_fd);
 }
 
 
@@ -105,20 +132,21 @@ struct sockaddr_in	Server::getServerAddress(void) const
 /* ************************************************************************** */
 /* Public methods */
 
-int	Server::acceptConnection(void)
+void	Server::acceptConnection(void)
 {
 	int					client_fd;
 	struct sockaddr_in	client_address;
 	socklen_t			client_address_len = sizeof(client_address);
 
-	client_fd = accept(_sock_fd, (struct sockaddr *)&client_address,
+	client_fd = accept(this->_sock_fd, (struct sockaddr *)&client_address,
 			&client_address_len);
 	if (client_fd == -1)
 	{
-		throw SocketError(CLASS_NAME
+		throw SocketConnectionError(CLASS_NAME
 			+ ": Failed to accept connection: " + std::string(strerror(errno)));
 	}
-	return (client_fd);
+	
+	_clients.push_back(Client(client_fd));
 }
 
 
@@ -207,19 +235,19 @@ Server::SocketCreationError	&Server::SocketCreationError::operator=(const
 
 
 /* ***************************************** */
-/* Socket bind error                         */
+/* Socket connection error                   */
 /* ***************************************** */
 
 /* Default constructor */
-Server::SocketBindError::SocketBindError(void)
+Server::SocketConnectionError::SocketConnectionError(void)
 	: SocketError("Error binding socket") {}
 
 /* Message constructor */
-Server::SocketBindError::SocketBindError(const std::string &message)
+Server::SocketConnectionError::SocketConnectionError(const std::string &message)
 	: SocketError(message) {}
 
 /* Copy constructor */
-Server::SocketBindError::SocketBindError(const SocketBindError
+Server::SocketConnectionError::SocketConnectionError(const SocketConnectionError
 		&original) : SocketError(original)
 {
 	*this = original;
@@ -227,15 +255,15 @@ Server::SocketBindError::SocketBindError(const SocketBindError
 
 
 /* Destructor */
-Server::SocketBindError::~SocketBindError(void) throw() {}
+Server::SocketConnectionError::~SocketConnectionError(void) throw() {}
 
 
 /* ***************************************** */
 /* Operator overloads */
 
 /* Copy assignment operator */
-Server::SocketBindError	&Server::SocketBindError::operator=(const
-		SocketBindError &original)
+Server::SocketConnectionError	&Server::SocketConnectionError::operator=(
+		const SocketConnectionError &original)
 {
 	if (this == &original)
 		return (*this);
@@ -243,39 +271,4 @@ Server::SocketBindError	&Server::SocketBindError::operator=(const
 	return (*this);
 }
 
-
-/* ***************************************** */
-/* Socket listen error                       */
-/* ***************************************** */
-
-/* Default constructor */
-Server::SocketListenError::SocketListenError(void)
-	: SocketError("Error listening on socket") {}
-
-/* Message constructor */
-Server::SocketListenError::SocketListenError(const std::string &message)
-	: SocketError(message) {}
-
-/* Copy constructor */
-Server::SocketListenError::SocketListenError(const SocketListenError
-		&original) : SocketError(original)
-{
-	*this = original;
-}
-
-
-/* Destructor */
-Server::SocketListenError::~SocketListenError(void) throw() {}
-
-/* ***************************************** */
-/* Operator overloads */
-
-/* Copy assignment operator */
-Server::SocketListenError	&Server::SocketListenError::operator=(const
-		SocketListenError &original)
-{
-	if (this == &original)
-		return (*this);
-	SocketError::operator=(original);
-	return (*this);
-}
+} // namespace webserv

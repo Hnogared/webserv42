@@ -9,7 +9,8 @@ VPATH	:=	srcs
 SRCS	:=	main.cpp	\
 			colors.cpp	\
 			Harl.cpp	\
-			Server.cpp
+			Server.cpp	\
+			Client.cpp
 
 OBJS_DIR:=	objs
 OBJS	:=	$(addprefix $(OBJS_DIR)/, $(SRCS:.cpp=.o))

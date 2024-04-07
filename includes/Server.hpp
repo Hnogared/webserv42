@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 12:33:54 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/07 13:25:23 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/07 15:13:01 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 # define SERVER_HPP
 
 # include <string>
+# include <vector>
+# include <fstream>
 
 # include <sys/socket.h>
 # include <arpa/inet.h>
@@ -21,6 +23,13 @@
 # include <string.h>
 # include <exception>
 # include <unistd.h>
+
+# include "Client.hpp"
+
+# define LOCK_FILE	"/tmp/webserv42.lock"
+
+namespace	webserv
+{
 
 class	Server
 {
@@ -30,7 +39,7 @@ class	Server
 		Server(const Server &original);
 
 		/* Destructor */
-		~Server();
+		~Server(void);
 
 		/* Operator overloads */
 		Server	&operator=(const Server &original);
@@ -42,7 +51,7 @@ class	Server
 		struct sockaddr_in	getServerAddress(void) const;
 
 		/* Public methods */
-		int acceptConnection();
+		void	acceptConnection(void);
 
 
 	private:
@@ -51,6 +60,7 @@ class	Server
 		int					_port;
 		int					_backlog;
 		struct sockaddr_in	_server_address;
+		std::vector<Client>	_clients;
 
 		/* Private class constants */
 		static const std::string	CLASS_NAME;
@@ -96,35 +106,23 @@ class	Server
 						&original);
 		};
 
-		class	SocketBindError : public SocketError
+		class	SocketConnectionError : public SocketError
 		{
 			public:
 				/* Constructors */
-				explicit SocketBindError(void);
-				explicit SocketBindError(const std::string &message);
-				SocketBindError(const SocketBindError &original);
+				explicit SocketConnectionError(void);
+				explicit SocketConnectionError(const std::string &message);
+				SocketConnectionError(const SocketConnectionError &original);
 
 				/* Destructor */
-				~SocketBindError(void) throw();
+				~SocketConnectionError(void) throw();
 
 				/* Operator overloads */
-				SocketBindError	&operator=(const SocketBindError &original);
-		};
-
-		class	SocketListenError : public SocketError
-		{
-			public:
-				/* Constructors */
-				explicit SocketListenError(void);
-				explicit SocketListenError(const std::string &message);
-				SocketListenError(const SocketListenError &original);
-
-				/* Destructor */
-				~SocketListenError(void) throw();
-
-				/* Operator overloads */
-				SocketListenError	&operator=(const SocketListenError &original);
+				SocketConnectionError	&operator=(const SocketConnectionError
+						&original);
 		};
 };
+
+} // namespace webserv
 
 #endif // SERVER_HPP
