@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 14:42:17 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/07 19:32:20 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/07 22:02:35 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 # include <sys/socket.h>
 
 # include "Socket.hpp"
+# include "Exceptions.hpp"
 
 namespace	webserv
 {

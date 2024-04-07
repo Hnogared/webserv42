@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 12:33:54 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/07 19:18:48 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/07 21:11:32 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@
 # include <signal.h>
 
 # include "Harl.hpp"
+# include "Exceptions.hpp"
 # include "Socket.hpp"
 # include "Client.hpp"
 
@@ -63,7 +64,7 @@ class	Server
 		static bool					running;
 
 		/* Private attributes */
-		webserv::Socket		_socket;
+		Socket				_socket;
 		int					_port;
 		int					_backlog;
 		struct sockaddr_in	_server_address;
@@ -77,63 +78,6 @@ class	Server
 
 		/* [delete] Copy assignment operator */
 		Server	&operator=(const Server &original);
-
-
-	/* Exceptions */
-	public:
-		class	SocketError : public std::exception
-		{
-			public:
-				/* Constructors */
-				explicit SocketError(void);
-				explicit SocketError(const std::string &message);
-				SocketError(const SocketError &original);
-
-				/* Destructor */
-				~SocketError(void) throw();
-
-				/* Operator overloads */
-				SocketError	&operator=(const SocketError &original);
-
-				/* std::exception method overrides */
-				virtual const char *what(void) const throw();
-
-
-				private:
-					std::string	_msg;
-		};
-
-		class	SocketCreationError : public SocketError
-		{
-			public:
-				/* Constructors */
-				explicit SocketCreationError(void);
-				explicit SocketCreationError(const std::string &message);
-				SocketCreationError(const SocketCreationError &original);
-
-				/* Destructor */
-				~SocketCreationError(void) throw();
-
-				/* Operator overloads */
-				SocketCreationError	&operator=(const SocketCreationError
-						&original);
-		};
-
-		class	SocketConnectionError : public SocketError
-		{
-			public:
-				/* Constructors */
-				explicit SocketConnectionError(void);
-				explicit SocketConnectionError(const std::string &message);
-				SocketConnectionError(const SocketConnectionError &original);
-
-				/* Destructor */
-				~SocketConnectionError(void) throw();
-
-				/* Operator overloads */
-				SocketConnectionError	&operator=(const SocketConnectionError
-						&original);
-		};
 };
 
 } // namespace webserv

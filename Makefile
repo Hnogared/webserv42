@@ -6,11 +6,12 @@ NAME	:=	webserv
 
 VPATH	:=	srcs
 
-SRCS	:=	main.cpp	\
-			colors.cpp	\
-			Harl.cpp	\
-			Socket.cpp	\
-			Server.cpp	\
+SRCS	:=	main.cpp		\
+			colors.cpp		\
+			Harl.cpp		\
+			Exceptions.cpp	\
+			Socket.cpp		\
+			Server.cpp		\
 			Client.cpp
 
 OBJS_DIR:=	objs

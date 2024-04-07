@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 12:36:55 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/07 19:30:57 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/07 21:13:02 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,12 +51,12 @@ Server::Server(int port, int backlog) : _port(port), _backlog(backlog)
 
 	int	optval = 1;
 
-	this->_socket = webserv::Socket(socket(AF_INET, SOCK_STREAM, 0));
+	this->_socket = Socket(socket(AF_INET, SOCK_STREAM, 0));
 	if (this->_socket.getFd() < 0 || setsockopt(this->_socket.getFd(),
 		SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) < 0)
 	{
-		throw SocketCreationError(CLASS_NAME + ": Failed to create socket: "
-			+ std::string(strerror(errno)));
+		throw SocketCreationError(CLASS_NAME
+			+ ": Failed to create socket: " + std::string(strerror(errno)));
 	}
 
 	this->_server_address.sin_family = AF_INET;
@@ -175,10 +175,10 @@ void	Server::acceptConnection(void)
 	}
 
 	this->_clients.push_back(Client(client_fd));
-	this->_clients.back().receiveData();
 
 	Harl::complain(Harl::INFO, CLASS_NAME + ": Accepted connection");
 }
+
 
 /* ************************************************************************** */
 /* Private static methods */
@@ -194,128 +194,6 @@ void	Server::sigHandler(int signal)
 		Harl::complain(Harl::INFO, CLASS_NAME
 			+ ": Received SIGINT, stopping...");
 	}
-}
-
-
-/* ************************************************************************** */
-/* Exceptions */
-
-/* ***************************************** */
-/* Socket error                              */
-/* ***************************************** */
-
-/* Default constructor */
-Server::SocketError::SocketError(void) : _msg("Socket error") {}
-
-/* Message constructor */
-Server::SocketError::SocketError(const std::string &message) : _msg(message) {}
-
-/* Copy constructor */
-Server::SocketError::SocketError(const SocketError &original) : std::exception()
-{
-	*this = original;
-}
-
-
-/* Destructor */
-Server::SocketError::~SocketError(void) throw() {}
-
-
-/* ***************************************** */
-/* Operator overloads */
-
-/* Copy assignment operator */
-Server::SocketError	&Server::SocketError::operator=(const SocketError &original)
-{
-	if (this == &original)
-		return (*this);
-	this->_msg = std::string(original.what());
-	return (*this);
-}
-
-/* ***************************************** */
-/* std::exception method overrides */
-
-/* Method to return the exception message */
-const char	*Server::SocketError::what(void) const throw()
-{
-	return (_msg.c_str());
-}
-
-
-/* ***************************************** */
-/* Socket creation error                     */
-/* ***************************************** */
-
-/* Default constructor */
-Server::SocketCreationError::SocketCreationError(void)
-	: SocketError("Error creating socket") {}
-
-/* Message constructor */
-Server::SocketCreationError::SocketCreationError(const std::string &message)
-	: SocketError(message) {}
-
-/* Copy constructor */
-Server::SocketCreationError::SocketCreationError(const SocketCreationError
-		&original) : SocketError(original)
-{
-	*this = original;
-}
-
-
-/* Destructor */
-Server::SocketCreationError::~SocketCreationError(void) throw() {}
-
-
-/* ***************************************** */
-/* Operator overloads */
-
-/* Copy assignment operator */
-Server::SocketCreationError	&Server::SocketCreationError::operator=(const
-		SocketCreationError &original)
-{
-	if (this == &original)
-		return (*this);
-	SocketError::operator=(original);
-	return (*this);
-}
-
-
-/* ***************************************** */
-/* Socket connection error                   */
-/* ***************************************** */
-
-/* Default constructor */
-Server::SocketConnectionError::SocketConnectionError(void)
-	: SocketError("Error binding socket") {}
-
-/* Message constructor */
-Server::SocketConnectionError::SocketConnectionError(const std::string &message)
-	: SocketError(message) {}
-
-/* Copy constructor */
-Server::SocketConnectionError::SocketConnectionError(const SocketConnectionError
-		&original) : SocketError(original)
-{
-	*this = original;
-}
-
-
-/* Destructor */
-Server::SocketConnectionError::~SocketConnectionError(void) throw() {}
-
-
-/* ***************************************** */
-/* Operator overloads */
-
-/* Copy assignment operator */
-Server::SocketConnectionError	&Server::SocketConnectionError::operator=(
-		const SocketConnectionError &original)
-{
-	if (this == &original)
-		return (*this);
-	SocketError::operator=(original);
-	return (*this);
 }
 
 } // namespace webserv

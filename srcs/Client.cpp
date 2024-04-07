@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 14:43:33 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/07 19:36:06 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/07 22:02:09 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,6 @@ void	Client::receiveData(void)
 {
 	char	buffer[1024];
 	ssize_t	bytes_read;
-
 
 	std::cout << "Receiving data from client..." << std::endl;
 	bytes_read = recv(this->_socket.getFd(), buffer, sizeof(buffer), 0);

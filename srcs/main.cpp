@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 21:49:03 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/07 17:41:41 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/07 21:40:53 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,16 +36,26 @@ int	main(int argc, char **argv)
 		{
 			server->run();
 		}
+		catch(const webserv::RuntimeError &e)
+		{
+			Harl::complain(Harl::ERROR, e.what());
+			return (e.code());
+		}
 		catch(const std::exception &e)
 		{
 			Harl::complain(Harl::ERROR, e.what());
-			return (3);
+			return (2);
 		}
+	}
+	catch(const webserv::RuntimeError &e)
+	{
+		Harl::complain(Harl::ERROR, e.what());
+		return (e.code());
 	}
 	catch(const std::exception &e)
 	{
 		Harl::complain(Harl::ERROR, e.what());
-		return (2);
+		return (3);
 	}
 
 	(void)argv;
