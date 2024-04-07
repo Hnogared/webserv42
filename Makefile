@@ -8,7 +8,8 @@ VPATH	:=	srcs
 
 SRCS	:=	main.cpp	\
 			colors.cpp	\
-			Harl.cpp
+			Harl.cpp	\
+			Server.cpp
 
 OBJS_DIR:=	objs
 OBJS	:=	$(addprefix $(OBJS_DIR)/, $(SRCS:.cpp=.o))
