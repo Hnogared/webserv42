@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 12:33:54 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/07 15:13:01 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/07 19:18:48 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,14 +16,19 @@
 # include <string>
 # include <vector>
 # include <fstream>
+# include <utility>
+# include <cerrno>
 
 # include <sys/socket.h>
 # include <arpa/inet.h>
-# include <errno.h>
 # include <string.h>
 # include <exception>
 # include <unistd.h>
+# include <poll.h>
+# include <signal.h>
 
+# include "Harl.hpp"
+# include "Socket.hpp"
 # include "Client.hpp"
 
 # define LOCK_FILE	"/tmp/webserv42.lock"
@@ -36,34 +41,42 @@ class	Server
 	public:
 		/* Constructors */
 		explicit Server(int port, int backlog = 10);
-		Server(const Server &original);
 
 		/* Destructor */
 		~Server(void);
 
-		/* Operator overloads */
-		Server	&operator=(const Server &original);
-
 		/* Getters */
-		int					getSockFd(void) const;
+		bool				isRunning(void) const;
+		webserv::Socket		getSocket(void) const;
 		int					getPort(void) const;
 		int					getBacklog(void) const;
 		struct sockaddr_in	getServerAddress(void) const;
 
 		/* Public methods */
+		void	run(void);
 		void	acceptConnection(void);
 
 
 	private:
+		/* Private static attributes */
+		static const std::string	CLASS_NAME;
+		static bool					running;
+
 		/* Private attributes */
-		int					_sock_fd;
+		webserv::Socket		_socket;
 		int					_port;
 		int					_backlog;
 		struct sockaddr_in	_server_address;
 		std::vector<Client>	_clients;
 
-		/* Private class constants */
-		static const std::string	CLASS_NAME;
+		/* Private static methods */
+		static void	sigHandler(int signal);
+
+		/* [delete] Copy constructor */
+		Server(const Server &original);
+
+		/* [delete] Copy assignment operator */
+		Server	&operator=(const Server &original);
 
 
 	/* Exceptions */
