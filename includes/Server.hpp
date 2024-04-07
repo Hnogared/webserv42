@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 12:33:54 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/07 21:11:32 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/07 23:42:48 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ class	Server
 
 		/* Getters */
 		bool				isRunning(void) const;
-		webserv::Socket		getSocket(void) const;
+		Socket				getSocket(void) const;
 		int					getPort(void) const;
 		int					getBacklog(void) const;
 		struct sockaddr_in	getServerAddress(void) const;

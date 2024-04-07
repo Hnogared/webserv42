@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 12:36:55 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/07 21:13:02 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/07 22:34:18 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,7 +154,7 @@ void	Server::run(void)
 			for (size_t i = 1; i < clients_count + 1; i++)
 			{
 				if (poll_fds[i].revents & POLLIN)
-					this->_clients[i - 1].receiveData();
+					this->_clients[i - 1].getRequest();
 			}
 		}
 	}

@@ -6,13 +6,15 @@ NAME	:=	webserv
 
 VPATH	:=	srcs
 
-SRCS	:=	main.cpp		\
-			colors.cpp		\
-			Harl.cpp		\
-			Exceptions.cpp	\
-			Socket.cpp		\
-			Server.cpp		\
-			Client.cpp
+SRCS	:=	main.cpp			\
+			Server.cpp			\
+			Client.cpp			\
+			colors.cpp			\
+			Harl.cpp			\
+			Exceptions.cpp		\
+			HttpRequest.cpp		\
+			HttpResponse.cpp	\
+			Socket.cpp
 
 OBJS_DIR:=	objs
 OBJS	:=	$(addprefix $(OBJS_DIR)/, $(SRCS:.cpp=.o))
