@@ -6,11 +6,14 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 12:36:55 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/07 13:23:11 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/07 13:26:52 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
+
+/* Private class constants initialization */
+const std::string	Server::CLASS_NAME = "Server";
 
 /* ************************************************************************** */
 /* Constructors */
@@ -24,8 +27,8 @@ Server::Server(int port, int backlog) : _port(port), _backlog(backlog)
 	if (_sock_fd < 0 || setsockopt(
 		_sock_fd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) < 0)
 	{
-		throw SocketCreationError(
-			"Failed to create socket: " + std::string(strerror(errno)));
+		throw SocketCreationError(CLASS_NAME
+			+ ": Failed to create socket: " + std::string(strerror(errno)));
 	}
 
 	_server_address.sin_family = AF_INET;
@@ -34,14 +37,14 @@ Server::Server(int port, int backlog) : _port(port), _backlog(backlog)
 	if (bind(_sock_fd, (struct sockaddr *)&_server_address,
 		sizeof(_server_address)) == -1)
 	{
-		throw SocketBindError(
-			"Failed to bind socket: " + std::string(strerror(errno)));
+		throw SocketBindError(CLASS_NAME
+			+ ": Failed to bind socket: " + std::string(strerror(errno)));
 	}
 
 	if (listen(_sock_fd, backlog) == -1)
 	{
-		throw SocketListenError(
-			"Failed to listen on socket: " + std::string(strerror(errno)));
+		throw SocketListenError(CLASS_NAME
+			+ ": Failed to listen on socket: " + std::string(strerror(errno)));
 	}
 }
 
@@ -112,8 +115,8 @@ int	Server::acceptConnection(void)
 			&client_address_len);
 	if (client_fd == -1)
 	{
-		throw SocketError(
-			"Failed to accept connection: " + std::string(strerror(errno)));
+		throw SocketError(CLASS_NAME
+			+ ": Failed to accept connection: " + std::string(strerror(errno)));
 	}
 	return (client_fd);
 }

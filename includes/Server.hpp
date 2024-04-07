@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 12:33:54 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/07 13:15:27 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/07 13:25:23 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,9 @@ class	Server
 		int					_port;
 		int					_backlog;
 		struct sockaddr_in	_server_address;
+
+		/* Private class constants */
+		static const std::string	CLASS_NAME;
 
 
 	/* Exceptions */
