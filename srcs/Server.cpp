@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 12:36:55 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/08 19:50:54 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/08 19:56:29 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -189,7 +189,18 @@ void	Server::acceptConnection(void)
 
 void	Server::handleRequest(const Client &client)
 {
-	http::HttpRequest request = client.fetchRequest();
+	http::HttpRequest request;
+
+	try
+	{
+		request = client.fetchRequest();
+	}
+	catch(const std::exception& e)
+	{
+		Harl::complain(Harl::ERROR, client.getAddrStr(Client::PEER)
+			+ " Failed to fetch request: " + e.what());
+		return ;
+	}
 
 	Harl::complain(Harl::INFO, client.getAddrStr(Client::PEER) + " REQ '"
 		+ request.getStatusLine() + "'");

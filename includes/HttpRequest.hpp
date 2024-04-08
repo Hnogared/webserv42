@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 22:57:07 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/08 19:20:13 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/08 19:54:24 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,8 @@ class	HttpRequest : public HttpMessage
 {
 	public:
 		/* Constructors */
-		HttpRequest(const std::string &request);
+		explicit HttpRequest(void);
+		explicit HttpRequest(const std::string &request);
 		HttpRequest(const HttpRequest &original);
 
 		/* Destructor */

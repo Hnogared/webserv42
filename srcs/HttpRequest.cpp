@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 23:01:55 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/08 19:36:46 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/08 19:56:12 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,10 @@ namespace	http
 
 /* ************************************************************************** */
 /* Constructors */
+
+/* Default constructor */
+HttpRequest::HttpRequest(void)
+	: HttpMessage(), _is_valid(false), _method(), _target() {}
 
 /* Request constructor */
 HttpRequest::HttpRequest(const std::string &request)
