@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 12:36:55 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/08 16:47:38 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/08 19:50:54 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,11 +146,12 @@ void	Server::run(void)
 			for (size_t i = 1; i < clients_count + 1; i++)
 			{
 				if (poll_fds[i].revents & POLLIN)
-					this->_clients[i - 1].fetchRequest();
+					this->handleRequest(this->_clients[i - 1]);
 			}
 		}
 	}
 }
+
 
 void	Server::acceptConnection(void)
 {
@@ -183,6 +184,23 @@ void	Server::acceptConnection(void)
 
 	Harl::complain(Harl::INFO, "Accepted client connection: "
 		+ this->_clients.back().getAddrStr(Client::PEER));
+}
+
+
+void	Server::handleRequest(const Client &client)
+{
+	http::HttpRequest request = client.fetchRequest();
+
+	Harl::complain(Harl::INFO, client.getAddrStr(Client::PEER) + " REQ '"
+		+ request.getStatusLine() + "'");
+
+	if (!request.isValid())
+	{
+		client.sendResponse(http::HttpResponse(400, "Bad Request", "HTTP/1.1"));
+		return ;
+	}
+
+	client.sendResponse(http::HttpResponse(200, "OK", "HTTP/1.1"));
 }
 
 

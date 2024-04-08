@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 14:42:17 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/08 19:15:41 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/08 19:48:19 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,9 +53,9 @@ class	Client
 		std::string	getAddrStr(e_addr_choice choice) const;
 
 		/* Public methods */
-		void	sendResponse(const http::HttpResponse &response);
-		void	fetchRequest(void);
-		void	parseRequest(const std::string &request);
+		void				sendResponse(const http::HttpResponse
+			&response) const;
+		http::HttpRequest	fetchRequest(void) const;
 
 
 	private:

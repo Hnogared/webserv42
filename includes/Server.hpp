@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 12:33:54 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/08 19:16:14 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/08 19:44:44 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@
 # include "Harl.hpp"
 # include "Socket.hpp"
 # include "Client.hpp"
+# include "HttpRequest.hpp"
 
 # define LOCK_FILE	"/tmp/webserv42.lock"
 
@@ -56,6 +57,7 @@ class	Server
 		/* Public methods */
 		void	run(void);
 		void	acceptConnection(void);
+		void	handleRequest(const Client &client);
 
 
 	private:

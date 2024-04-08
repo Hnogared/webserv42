@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 14:43:33 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/08 19:36:07 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/08 19:48:52 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ std::string	Client::getAddrStr(e_addr_choice choice) const
 /* ************************************************************************** */
 /* Public methods */
 
-void	Client::sendResponse(const http::HttpResponse &response)
+void	Client::sendResponse(const http::HttpResponse &response) const
 {
 	ssize_t		bytes_sent;
 	std::string	response_str(response.toString());
@@ -79,7 +79,7 @@ void	Client::sendResponse(const http::HttpResponse &response)
 	}
 }
 
-void	Client::fetchRequest(void)
+http::HttpRequest	Client::fetchRequest(void) const
 {
 	char	buffer[1024];
 	ssize_t	bytes_read;
@@ -95,23 +95,7 @@ void	Client::fetchRequest(void)
 		throw std::runtime_error("Connection closed by client");
 
 	buffer[bytes_read] = '\0';
-	this->parseRequest(std::string(buffer));
-}
-
-void	Client::parseRequest(const std::string &request)
-{
-	http::HttpRequest	req(request);
-
-	Harl::complain(Harl::INFO, this->getAddrStr(Client::PEER)
-		+ " REQ '" + req.getStatusLine() + "'");
-
-	if (!req.isValid())
-	{
-		this->sendResponse(http::HttpResponse(400, "Bad Request", "HTTP/1.1"));
-		return ;
-	}
-
-	this->sendResponse(http::HttpResponse(200, "OK", "HTTP/1.1"));
+	return (http::HttpRequest(buffer));
 }
 
 } // namespace webserv
