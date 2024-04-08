@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 22:57:07 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/07 23:15:23 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/08 19:20:13 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,14 @@
 # include <string>
 # include <stdexcept>
 # include <sstream>
+# include <algorithm>
 
-namespace	webserv
+# include "HttpMessage.hpp"
+
+namespace	http
 {
 
-class	HttpRequest
+class	HttpRequest : public HttpMessage
 {
 	public:
 		/* Constructors */
@@ -34,35 +37,21 @@ class	HttpRequest
 		HttpRequest	&operator=(const HttpRequest &original);
 
 		/* Getters */
+		bool		isValid(void) const;
 		std::string	getMethod(void) const;
 		std::string	getTarget(void) const;
-		std::string	getVersion(void) const;
 
 
 	private:
 		/* Private attributes */
-		std::string	_method;
-		std::string	_target;
-		std::string	_version;
+		bool			_is_valid;
+		std::string		_method;
+		std::string		_target;
 
-
-	/* Exceptions */
-	public:
-		class	BadRequest : public std::runtime_error
-		{
-			public:
-				/* Constructors */
-				explicit BadRequest(const std::string &msg);
-				BadRequest(const BadRequest &original);
-
-				/* Destructor */
-				virtual ~BadRequest(void) throw();
-
-				/* Operator overloads */
-				BadRequest	&operator=(const BadRequest &original);
-		};
+		/* Private methods */
+		void	_parseRequestLine(const std::string &request);
 };
 
-} // namespace webserv
+} // namespace http
 
 #endif // HTTPREQUEST_HPP

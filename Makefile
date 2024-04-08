@@ -11,10 +11,12 @@ SRCS	:=	main.cpp			\
 			Client.cpp			\
 			colors.cpp			\
 			Harl.cpp			\
-			Exceptions.cpp		\
+			exceptions.cpp		\
+			HttpMessage.cpp		\
 			HttpRequest.cpp		\
 			HttpResponse.cpp	\
-			Socket.cpp
+			Socket.cpp			\
+			net.cpp
 
 OBJS_DIR:=	objs
 OBJS	:=	$(addprefix $(OBJS_DIR)/, $(SRCS:.cpp=.o))
@@ -123,7 +125,7 @@ ifneq ($(SERIOUS), TRUE)
  define custom_command
 	$(eval command = $(1))
 	$(eval custom_command_name = $(2))
-	@echo "$(MAKEFILE_NAME): $(THEME_COLOR)$(custom_command_name)$(NC)";\
+	@echo "\e[K$(MAKEFILE_NAME): $(THEME_COLOR)$(custom_command_name)$(NC)";\
 	$(command)
  endef
 
@@ -133,7 +135,7 @@ ifneq ($(SERIOUS), TRUE)
 	$(eval start_status := $(subst _, ,\
 		$(word $(shell shuf -i 2-$(words $(STATUS_MSGS)) -n 1), $(STATUS_MSGS))))
 	$(eval end_status := $(subst _, , $(word 1, $(STATUS_MSGS))))
-	@echo "$(MAKEFILE_NAME): [$(start_status)] $(custom_command_name)";		\
+	@echo "\e[K$(MAKEFILE_NAME): [$(start_status)] $(custom_command_name)";	\
 	$(command); 															\
 	tmp=$$?;																\
 	if [ $$tmp -eq 0 ]; then												\

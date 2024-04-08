@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 12:33:54 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/07 23:42:48 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/08 19:16:14 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,8 @@
 # include <poll.h>
 # include <signal.h>
 
+# include "exceptions.hpp"
 # include "Harl.hpp"
-# include "Exceptions.hpp"
 # include "Socket.hpp"
 # include "Client.hpp"
 
@@ -60,7 +60,6 @@ class	Server
 
 	private:
 		/* Private static attributes */
-		static const std::string	CLASS_NAME;
 		static bool					running;
 
 		/* Private attributes */

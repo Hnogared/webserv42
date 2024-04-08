@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 23:20:31 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/07 23:48:38 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/08 18:34:36 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,15 +17,17 @@
 # include <sstream>
 # include <map>
 
-namespace	webserv
+# include "HttpMessage.hpp"
+
+namespace	http
 {
 
-class	HttpResponse
+class	HttpResponse : public HttpMessage
 {
 	public:
 		/* Constructors */
-		HttpResponse(const std::string &version, int status_code,
-			const std::string &reason);
+		HttpResponse(int status_code, const std::string &status_line,
+			const std::string &version);
 		HttpResponse(const HttpResponse &original);
 
 		/* Destructor */
@@ -35,28 +37,17 @@ class	HttpResponse
 		HttpResponse	&operator=(const HttpResponse &original);
 
 		/* Getters */
-		std::string	getVersion(void) const;
-		int			getStatusCode(void) const;
-		std::string	getReason(void) const;
-		std::string	getHeader(const std::string &key) const;
-		std::map<std::string, std::string>	getHeaders(void) const;
-		std::string	getBody(void) const;
+		int	getStatusCode(void) const;
 
 		/* Public methods */
-		void		addHeader(const std::string &key, const std::string &val);
-		void		setBody(const std::string &body);
 		std::string	toString(void) const;
 
 
 	private:
 		/* Private attributes */
-		std::string							_version;
-		int									_status_code;
-		std::string							_reason;
-		std::map<std::string, std::string>	_headers;
-		std::string							_body;
+		int	_status_code;
 };
 
-} // namespace webserv
+} // namespace http
 
 #endif // HTTPRESPONSE_HPP

@@ -6,14 +6,24 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 19:02:56 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/07 19:24:57 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/08 19:15:57 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef SOCKET_HPP
 # define SOCKET_HPP
 
+# include <string>
+# include <sstream>
+# include <cerrno>
+
 # include <unistd.h>
+# include <netinet/in.h>
+# include <string.h>
+
+# include "exceptions.hpp"
+# include "net.hpp"
+# include "Harl.hpp"
 
 namespace webserv
 {
@@ -23,6 +33,7 @@ class Socket
 	public:
 		/* Constructors */
 		explicit Socket(int fd = -1);
+		Socket(int fd, const struct sockaddr_in &peer_addr);
 		Socket(const Socket &original);
 
 		/* Destructor */
@@ -32,8 +43,17 @@ class Socket
 		Socket	&operator=(const Socket &original);
 
 		/* Getters */
-		int	getFd(void) const;
-		int	*getRefCountPtr(void) const;
+		int					getFd(void) const;
+		int					*getRefCountPtr(void) const;
+		struct sockaddr_in	getLocalAddr(void) const;
+		struct sockaddr_in	getPeerAddr(void) const;
+		bool				isPeerAddrSet(void) const;
+		std::string			getInfosStr(void) const;
+
+		/* Setters */
+		void	setFd(int fd);
+		void	setLocalAddr(struct sockaddr_in local_addr);
+		void	setPeerAddr(struct sockaddr_in peer_addr);
 
 		/* Public methods */
 		void	close(void);
@@ -41,8 +61,11 @@ class Socket
 
 	private:
 		/* Private attributes */
-		int	_fd;
-		int	*_ref_count;
+		int					_fd;
+		int					*_ref_count;
+		struct sockaddr_in	_local_addr;
+		struct sockaddr_in	_peer_addr;
+		bool				_peer_addr_set;
 };
 
 } // namespace webserv

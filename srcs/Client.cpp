@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 14:43:33 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/07 23:56:31 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/08 19:36:07 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,10 @@
 namespace	webserv
 {
 
-/* Static atrtibutes initialization */
-const std::string	Client::CLASS_NAME = "Client";
-
 /* ************************************************************************** */
 
 /* Socket fd constructor */
-Client::Client(int sock_fd) : _socket(sock_fd) {}
+Client::Client(const Socket &socket) : _socket(socket) {}
 
 /* Copy constructor */
 Client::Client(const Client &original)
@@ -48,10 +45,27 @@ webserv::Socket	Client::getSocket(void) const
 	return (this->_socket);
 }
 
+std::string	Client::getAddrStr(e_addr_choice choice) const
+{
+	std::ostringstream	oss;
+	struct sockaddr_in	addr;
+
+	if (choice == LOCAL)
+		addr = this->_socket.getLocalAddr();
+	else if (this->_socket.isPeerAddrSet())
+		addr = this->_socket.getPeerAddr();
+	else
+		return ("Unknown");
+
+	oss << net::my_inet_ntoa(addr.sin_addr) << ":" << ntohs(addr.sin_port);
+	return (oss.str());
+}
+
+
 /* ************************************************************************** */
 /* Public methods */
 
-void	Client::sendResponse(const HttpResponse &response)
+void	Client::sendResponse(const http::HttpResponse &response)
 {
 	ssize_t		bytes_sent;
 	std::string	response_str(response.toString());
@@ -60,12 +74,12 @@ void	Client::sendResponse(const HttpResponse &response)
 			response_str.size(), 0);
 	if (bytes_sent < 0)
 	{
-		throw std::runtime_error(CLASS_NAME + ": Failed to send data: "
+		throw std::runtime_error("Failed to send data to client: "
 			+ std::string(strerror(errno)));
 	}
 }
 
-void	Client::getRequest(void)
+void	Client::fetchRequest(void)
 {
 	char	buffer[1024];
 	ssize_t	bytes_read;
@@ -73,12 +87,12 @@ void	Client::getRequest(void)
 	bytes_read = recv(this->_socket.getFd(), buffer, sizeof(buffer), 0);
 	if (bytes_read < 0)
 	{
-		throw std::runtime_error(CLASS_NAME + ": Failed to receive data: "
+		throw std::runtime_error("Failed to receive client data: "
 			+ std::string(strerror(errno)));
 	}
 
 	if (bytes_read == 0)
-		throw std::runtime_error(CLASS_NAME + ": Connection closed by client");
+		throw std::runtime_error("Connection closed by client");
 
 	buffer[bytes_read] = '\0';
 	this->parseRequest(std::string(buffer));
@@ -86,28 +100,18 @@ void	Client::getRequest(void)
 
 void	Client::parseRequest(const std::string &request)
 {
-	Harl::complain(Harl::INFO, request);
+	http::HttpRequest	req(request);
 
-	try
-	{
-		HttpRequest	req(request);
-	}
-	catch (const HttpRequest::BadRequest &e)
-	{
-		HttpResponse	response("HTTP/1.1", 400, "Bad Request");
+	Harl::complain(Harl::INFO, this->getAddrStr(Client::PEER)
+		+ " REQ '" + req.getStatusLine() + "'");
 
-		response.setBody(e.what());
-		this->sendResponse(response);
-		return ;
-	}
-	catch (const std::exception &e)
+	if (!req.isValid())
 	{
-		Harl::complain(Harl::ERROR, e.what());
-		this->sendResponse(HttpResponse("HTTP/1.1", 505, "Server Error"));
+		this->sendResponse(http::HttpResponse(400, "Bad Request", "HTTP/1.1"));
 		return ;
 	}
 
-	this->sendResponse(HttpResponse("HTTP/1.1", 200, "OK"));
+	this->sendResponse(http::HttpResponse(200, "OK", "HTTP/1.1"));
 }
 
 } // namespace webserv

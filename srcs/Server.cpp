@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 12:36:55 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/07 22:34:18 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/08 16:47:38 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,8 @@
 namespace	webserv
 {
 
-/* Static class attrbiutes initialization */
-const std::string	Server::CLASS_NAME = "Server";
-bool				Server::running = false;
+/* Static class attributes initialization */
+bool	Server::running = false;
 
 /* ************************************************************************** */
 /* Constructors */
@@ -33,8 +32,7 @@ Server::Server(int port, int backlog) : _port(port), _backlog(backlog)
 		if (lock_file.is_open())
 		{
 			lock_file.close();
-			throw std::runtime_error(CLASS_NAME
-				+ ": Another instance is already running");
+			throw std::runtime_error("Another instance is already running");
 		}
 	}
 
@@ -42,10 +40,7 @@ Server::Server(int port, int backlog) : _port(port), _backlog(backlog)
 		std::ofstream	lock_file_out(LOCK_FILE);
 
 		if (!lock_file_out.is_open())
-		{
-			throw std::runtime_error(CLASS_NAME
-				+ ": Failed to create lock file");
-		}
+			throw std::runtime_error("Failed to create lock file");
 		lock_file_out.close();
 	}
 
@@ -55,8 +50,8 @@ Server::Server(int port, int backlog) : _port(port), _backlog(backlog)
 	if (this->_socket.getFd() < 0 || setsockopt(this->_socket.getFd(),
 		SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) < 0)
 	{
-		throw SocketCreationError(CLASS_NAME
-			+ ": Failed to create socket: " + std::string(strerror(errno)));
+		throw SocketCreationError("Failed to create socket: "
+			+ std::string(strerror(errno)));
 	}
 
 	this->_server_address.sin_family = AF_INET;
@@ -66,13 +61,13 @@ Server::Server(int port, int backlog) : _port(port), _backlog(backlog)
 	if (bind(this->_socket.getFd(), (struct sockaddr *)&_server_address,
 		sizeof(this->_server_address)) == -1)
 	{
-		throw SocketError(CLASS_NAME + ": Failed to bind socket: "
+		throw SocketError("Failed to bind socket: "
 			+ std::string(strerror(errno)));
 	}
 
 	if (listen(this->_socket.getFd(), backlog) == -1)
 	{
-		throw SocketError(CLASS_NAME + ": Failed to listen on socket: "
+		throw SocketError("Failed to listen on socket: "
 			+ std::string(strerror(errno)));
 	}
 }
@@ -142,10 +137,7 @@ void	Server::run(void)
 			break;
 		
 		if (res == -1)
-		{
-			throw SocketError(CLASS_NAME + ": Failed to poll: "
-				+ std::string(strerror(errno)));
-		}
+			throw SocketError("Failed poll: " + std::string(strerror(errno)));
 
 		if (res)
 		{
@@ -154,7 +146,7 @@ void	Server::run(void)
 			for (size_t i = 1; i < clients_count + 1; i++)
 			{
 				if (poll_fds[i].revents & POLLIN)
-					this->_clients[i - 1].getRequest();
+					this->_clients[i - 1].fetchRequest();
 			}
 		}
 	}
@@ -170,13 +162,27 @@ void	Server::acceptConnection(void)
 			(struct sockaddr *)&client_address, &client_address_len);
 	if (client_fd == -1)
 	{
-		throw SocketConnectionError(CLASS_NAME
-			+ ": Failed to accept connection: " + std::string(strerror(errno)));
+		Harl::complain(Harl::ERROR, "Failed client connection: "
+			+ std::string(strerror(errno)));
+		return ;
 	}
 
-	this->_clients.push_back(Client(client_fd));
+	try
+	{
+		this->_clients.push_back(Client(Socket(client_fd, client_address)));
+	}
+	catch (const std::exception &e)
+	{
+		std::stringstream error_message;
 
-	Harl::complain(Harl::INFO, CLASS_NAME + ": Accepted connection");
+		close(client_fd);
+		error_message << "Failed client connection: " << e.what();
+		Harl::complain(Harl::ERROR, error_message.str());
+		return ;
+	}
+
+	Harl::complain(Harl::INFO, "Accepted client connection: "
+		+ this->_clients.back().getAddrStr(Client::PEER));
 }
 
 
@@ -191,8 +197,7 @@ void	Server::sigHandler(int signal)
 		remove(LOCK_FILE);
 		Server::running = false;
 
-		Harl::complain(Harl::INFO, CLASS_NAME
-			+ ": Received SIGINT, stopping...");
+		Harl::complain(Harl::INFO, "Received SIGINT, stopping...");
 	}
 }
 

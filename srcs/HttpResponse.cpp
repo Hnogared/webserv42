@@ -6,24 +6,24 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 23:28:04 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/07 23:50:57 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/08 19:15:20 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "HttpResponse.hpp"
 
-namespace	webserv
+namespace	http
 {
 
 /* Constructors */
 
 /* Version + status code + reason constructor */
-HttpResponse::HttpResponse(const std::string &version, int status_code,
-		const std::string &reason)
-	: _version(version), _status_code(status_code), _reason(reason) {}
+HttpResponse::HttpResponse(int status_code, const std::string &status_line,
+		const std::string &version)
+	: HttpMessage(status_line, version), _status_code(status_code) {}
 
 /* Copy constructor */
-HttpResponse::HttpResponse(const HttpResponse &original)
+HttpResponse::HttpResponse(const HttpResponse &original) : HttpMessage()
 {
 	*this = original;
 }
@@ -41,11 +41,8 @@ HttpResponse	&HttpResponse::operator=(const HttpResponse &original)
 {
 	if (this == &original)
 		return (*this);
-	this->_version = original.getVersion();
+	this->HttpMessage::operator=(original);
 	this->_status_code = original.getStatusCode();
-	this->_reason = original.getReason();
-	this->_headers = original.getHeaders();
-	this->_body = original.getBody();
 	return (*this);
 }
 
@@ -53,70 +50,31 @@ HttpResponse	&HttpResponse::operator=(const HttpResponse &original)
 /* ************************************************************************** */
 /* Getters */
 
-std::string	HttpResponse::getVersion(void) const
-{
-	return (this->_version);
-}
-
-int			HttpResponse::getStatusCode(void) const
+int	HttpResponse::getStatusCode(void) const
 {
 	return (this->_status_code);
-}
-
-std::string	HttpResponse::getReason(void) const
-{
-	return (this->_reason);
-}
-
-std::string	HttpResponse::getHeader(const std::string &key) const
-{
-	std::map<std::string, std::string>::const_iterator	it;
-
-	it = this->_headers.find(key);
-	if (it == this->_headers.end())
-		return ("");
-	return (it->second);
-}
-
-std::map<std::string, std::string>	HttpResponse::getHeaders(void) const
-{
-	return (this->_headers);
-}
-
-std::string	HttpResponse::getBody(void) const
-{
-	return (this->_body);
 }
 
 
 /* ************************************************************************** */
 /* Public methods */
 
-void	HttpResponse::addHeader(const std::string &key, const std::string &val)
-{
-	this->_headers[key] = val;
-}
-
-void	HttpResponse::setBody(const std::string &body)
-{
-	this->_body = body;
-}
-
 std::string	HttpResponse::toString(void) const
 {
-	std::ostringstream									result;
+	std::ostringstream							result;
+	const std::map<std::string, std::string>	&headers = this->getHeaders();
 	std::map<std::string, std::string>::const_iterator	it;
 
-	result << this->_version << " "
+	result << this->getVersion() << " "
 		<< this->_status_code << " "
-		<< this->_reason << "\r\n";
+		<< this->getStatusLine() << "\r\n";
 
-	for (it = this->_headers.begin(); it != this->_headers.end(); it++)
+	for (it = headers.begin(); it != headers.end(); it++)
 		result << it->first << ": " << it->second << "\r\n";
 	
 	result << "\r\n"
-		<< this->_body;
+		<< this->getBody();
 	return (result.str());
 }
 
-} // namespace webserv
+} // namespace http
