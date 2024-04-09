@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 23:01:55 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/08 19:56:12 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/09 19:35:05 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,11 @@ HttpRequest::HttpRequest(void)
 HttpRequest::HttpRequest(const std::string &request)
 	: HttpMessage(), _is_valid(true), _method(), _target()
 {
-	this->_parseRequestLine(request);
+	std::istringstream	iss_request(request);
+
+	this->_parseRequestLine(iss_request);
+	this->_parseHeaders(iss_request);
+	this->setBody(iss_request.str());
 }
 
 /* Copy constructor */
@@ -79,15 +83,14 @@ std::string	HttpRequest::getTarget(void) const
 /* Private methods */
 
 /* Method to parse amd store the request line */
-void	HttpRequest::_parseRequestLine(const std::string &request)
+void	HttpRequest::_parseRequestLine(std::istringstream &iss_request)
 {
-	std::istringstream	iss_request(request);
-	std::string			line;
+	std::string	line;
 
 	std::getline(iss_request, line);
 
-	if (line.size() < 3 || std::count(line.begin(), line.end(), ' ') != 2
-			|| line[line.size() - 1] != '\r')
+	if (line.size() < 3 || line[line.size() - 1] != '\r'
+			|| std::count(line.begin(), line.end(), ' ') != 2)
 		this->_is_valid = false;
 
 	if (line[line.size() - 1] == '\r')
@@ -103,6 +106,43 @@ void	HttpRequest::_parseRequestLine(const std::string &request)
 
 	if (this->_method.empty() || this->_target.empty())
 		this->_is_valid = false;
+}
+
+/* Method to parse and store the headers */
+void	HttpRequest::_parseHeaders(std::istringstream &iss_request)
+{
+	std::string	line;
+
+	while (std::getline(iss_request, line))
+	{
+		if (line.size() == 1 && line[0] == '\r')
+			break;
+
+		if (line.size() < 2 || line[line.size() - 1] != '\r')
+			this->_is_valid = false;
+
+		if (line[line.size() - 1] == '\r')
+			line = line.substr(0, line.size() - 1);
+
+		{
+			std::string::size_type	colon_pos = line.find(':');
+			std::string				header_name;
+			std::string				header_value;
+
+			if (colon_pos == std::string::npos)
+			{
+				this->_is_valid = false;
+				header_name = line;
+				header_value = "";
+			}
+			else
+			{
+				header_name = line.substr(0, colon_pos);
+				header_value = utils::trim(line.substr(colon_pos + 1));
+			}
+			this->addHeader(header_name, header_value);
+		}
+	}
 }
 
 } // namespace http

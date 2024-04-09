@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 21:06:56 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/08 19:14:05 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/09 19:45:23 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,6 +166,44 @@ SocketConnectionError::~SocketConnectionError(void) throw() {}
 /* Copy assignment operator */
 SocketConnectionError	&SocketConnectionError::operator=(
 		const SocketConnectionError &original)
+{
+	if (this == &original)
+		return (*this);
+	SocketError::operator=(original);
+	return (*this);
+}
+
+
+/* ************************************************************************** */
+/* Socket connection closed                                                   */
+/* ************************************************************************** */
+
+/* Default constructor */
+SocketConnectionClosed::SocketConnectionClosed(int code)
+	: SocketError("Connection closed", code) {}
+
+/* Message constructor */
+SocketConnectionClosed::SocketConnectionClosed(const std::string &message,
+	int code) : SocketError(message, code) {}
+
+/* Copy constructor */
+SocketConnectionClosed::SocketConnectionClosed(const SocketConnectionClosed
+		&original) : SocketError(original)
+{
+	*this = original;
+}
+
+
+/* Destructor */
+SocketConnectionClosed::~SocketConnectionClosed(void) throw() {}
+
+
+/* ************************************************************************** */
+/* Operator overloads */
+
+/* Copy assignment operator */
+SocketConnectionClosed	&SocketConnectionClosed::operator=(
+		const SocketConnectionClosed &original)
 {
 	if (this == &original)
 		return (*this);

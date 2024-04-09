@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 19:07:28 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/08 17:01:51 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/09 19:56:14 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,6 +99,12 @@ Socket	&Socket::operator=(const Socket &original)
 	this->_ref_count = original.getRefCountPtr();
 	(*(this->_ref_count))++;
 	return (*this);
+}
+
+/* Equality comparison operator */
+bool	Socket::operator==(const Socket &rhs) const
+{
+	return (this->_fd == rhs.getFd());
 }
 
 

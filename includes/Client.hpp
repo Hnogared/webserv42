@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 14:42:17 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/08 19:48:19 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/09 19:56:58 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,10 @@ class	Client
 		/* Destructor */
 		~Client(void);
 
+		/* Operator overloads */
+		Client	&operator=(const Client &original);
+		bool	operator==(const Client &other) const;
+
 		/* Getters */
 		int			getSocketFd(void) const;
 		Socket		getSocket(void) const;
@@ -61,9 +65,6 @@ class	Client
 	private:
 		/* Private attributes */
 		Socket	_socket;
-
-		/* [delete] Copy assignment operator overload */
-		Client	&operator=(const Client &original);
 };
 
 } // namespace webserv

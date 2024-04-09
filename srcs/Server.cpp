@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 12:36:55 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/08 19:56:29 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/09 19:59:29 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -182,8 +182,8 @@ void	Server::acceptConnection(void)
 		return ;
 	}
 
-	Harl::complain(Harl::INFO, "Accepted client connection: "
-		+ this->_clients.back().getAddrStr(Client::PEER));
+	Harl::complain(Harl::INFO, this->_clients.back().getAddrStr(Client::PEER)
+		+ " CONN ACCEPTED");
 }
 
 
@@ -194,6 +194,14 @@ void	Server::handleRequest(const Client &client)
 	try
 	{
 		request = client.fetchRequest();
+	}
+	catch (const SocketConnectionClosed &e)
+	{
+		Harl::complain(Harl::INFO, client.getAddrStr(Client::PEER)
+			+ " CONN CLOSED");
+		this->_clients.erase(std::remove(this->_clients.begin(),
+			this->_clients.end(), client), this->_clients.end());
+		return ;
 	}
 	catch(const std::exception& e)
 	{

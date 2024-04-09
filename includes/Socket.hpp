@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 19:02:56 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/08 19:15:57 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/09 19:55:49 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ class Socket
 
 		/* Operator overloads */
 		Socket	&operator=(const Socket &original);
+		bool	operator==(const Socket &other) const;
 
 		/* Getters */
 		int					getFd(void) const;

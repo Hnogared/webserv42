@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 21:03:07 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/08 19:14:19 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/09 19:45:42 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,24 @@ class	SocketConnectionError : public SocketError
 
 		/* Operator overloads */
 		SocketConnectionError	&operator=(const SocketConnectionError
+				&original);
+};
+
+
+class	SocketConnectionClosed : public SocketError
+{
+	public:
+		/* Constructors */
+		explicit SocketConnectionClosed(int code = 9);
+		explicit SocketConnectionClosed(const std::string &message,
+			int code = 9);
+		SocketConnectionClosed(const SocketConnectionClosed &original);
+
+		/* Destructor */
+		~SocketConnectionClosed(void) throw();
+
+		/* Operator overloads */
+		SocketConnectionClosed	&operator=(const SocketConnectionClosed
 				&original);
 };
 

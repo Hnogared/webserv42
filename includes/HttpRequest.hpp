@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 22:57:07 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/08 19:54:24 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/09 19:22:14 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include <algorithm>
 
 # include "HttpMessage.hpp"
+# include "utils.hpp"
 
 namespace	http
 {
@@ -50,7 +51,8 @@ class	HttpRequest : public HttpMessage
 		std::string		_target;
 
 		/* Private methods */
-		void	_parseRequestLine(const std::string &request);
+		void	_parseRequestLine(std::istringstream &iss_request);
+		void	_parseHeaders(std::istringstream &iss_request);
 };
 
 } // namespace http

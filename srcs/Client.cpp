@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 14:43:33 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/08 19:48:52 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/09 19:57:18 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,25 @@ Client::Client(const Client &original)
 
 /* Destructor */
 Client::~Client(void) {}
+
+
+/* ************************************************************************** */
+/* Operator overloads */
+
+/* Copy assignment operator */
+Client	&Client::operator=(const Client &original)
+{
+	if (this == &original)
+		return (*this);
+	this->_socket = original.getSocket();
+	return (*this);
+}
+
+/* Equality comparison operator */
+bool	Client::operator==(const Client &other) const
+{
+	return (this->_socket == other.getSocket());
+}
 
 
 /* ************************************************************************** */
@@ -87,12 +106,12 @@ http::HttpRequest	Client::fetchRequest(void) const
 	bytes_read = recv(this->_socket.getFd(), buffer, sizeof(buffer), 0);
 	if (bytes_read < 0)
 	{
-		throw std::runtime_error("Failed to receive client data: "
+		throw SocketError("Failed to receive client data: "
 			+ std::string(strerror(errno)));
 	}
 
 	if (bytes_read == 0)
-		throw std::runtime_error("Connection closed by client");
+		throw SocketConnectionClosed(std::string(strerror(errno)));
 
 	buffer[bytes_read] = '\0';
 	return (http::HttpRequest(buffer));
