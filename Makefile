@@ -4,7 +4,10 @@
 
 NAME	:=	webserv
 
-VPATH	:=	srcs
+VPATH	:=	srcs:			\
+			srcs/http:		\
+			srcs/webserv:	\
+			srcs/tools
 
 SRCS	:=	main.cpp			\
 			Server.cpp			\
@@ -22,12 +25,13 @@ SRCS	:=	main.cpp			\
 OBJS_DIR:=	objs
 OBJS	:=	$(addprefix $(OBJS_DIR)/, $(SRCS:.cpp=.o))
 
-
-INCL_DIR:=	./includes
+INCL_DIRS	:=	./includes/http		\
+				./includes/webserv	\
+				./includes/tools
 
 CC		:=	c++
 CFLAGS	:=	-Wall -Wextra -Werror
-IFLAGS	:=	-I $(INCL_DIR)
+IFLAGS	:=	$(addprefix -I, $(INCL_DIRS))
 
 ifdef STD
 CFLAGS	+=	-std=$(STD)
@@ -57,7 +61,7 @@ LOAD		:=	0
 
 ifndef CALL_MAKE
 COMPIL_LOAD := $(shell $(MAKE) $(MAKECMDGOALS) -n SERIOUS=TRUE CALL_MAKE=0\
-	| grep '^gcc' | wc -l)
+	| grep '^$(CC)' | wc -l)
 endif
 
 # Track the progress of a make task #
@@ -108,7 +112,7 @@ re:	fclean all
 get_obj_load:
 ifndef CALL_MAKE
 	$(eval LOAD := $(shell $(MAKE) $(MAKECMDGOALS) -n SERIOUS=TRUE CALL_MAKE=0\
-		| grep '^$(CC)' | grep -v '$(NAME)' | wc -l))
+		| grep '^$(CC)' | grep -v ' $(NAME) ' | wc -l))
 	$(eval PROGRESS := 0)
 endif
 
