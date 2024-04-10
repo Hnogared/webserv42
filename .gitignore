@@ -1,4 +1,4 @@
 objs/
-webserv
+/webserv
 .vscode
 .*.swp
