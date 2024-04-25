@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 10:19:18 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/25 11:58:00 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/25 12:32:41 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,10 @@ class	ConfigurationParser
 	public:
 		typedef enum	e_contextType
 		{
-			UNKNOWN,
+			GLOBAL,
 			HTTP,
-			SERVER
+			SERVER,
+			LOCATION
 		}	t_contextType;
 
 		typedef enum	e_tokenType
@@ -59,15 +60,14 @@ class	ConfigurationParser
 
 
 	private:
-		/* Static private attributes */
-		static const std::map<std::string, t_contextType>	_contexts;
-
 		/* Private methods */
 		static std::queue<t_token>	_tokenizeFile(std::ifstream &file,
 			std::queue<t_token> &tokens);
-		static void					_tokenizeLine(const std::string &line,
+		static void	_tokenizeLine(const std::string &line,
 			std::queue<t_token> &tokens);
-		static void					_parseTokens(std::queue<t_token> &tokens,
+		static void	_parseTokens(std::queue<t_token> &tokens,
+			std::vector<Configuration> &configurations);
+		static void	_parseServerConfig(std::queue<t_token> &tokens,
 			std::vector<Configuration> &configurations);
 
 

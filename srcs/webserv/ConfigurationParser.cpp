@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 10:21:20 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/25 12:03:03 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/25 12:33:48 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,16 +14,6 @@
 
 namespace	webserv
 {
-
-/* ************************************************************************** */
-/* Static const attributes initialization */
-
-// const std::map<std::string, ConfigurationParser::t_contextType>
-// 	ConfigurationParser::_contexts = {
-// 		{"http", ConfigurationParser::HTTP},
-// 		{"server", ConfigurationParser::SERVER}
-// 	};
-
 
 /* ************************************************************************** */
 /* Static methods */
@@ -118,7 +108,7 @@ void	ConfigurationParser::_parseTokens(std::queue<t_token> &tokens,
 	std::vector<Configuration> &configurations)
 {
 	t_token			token;
-	t_contextType	context = UNKNOWN;
+	t_contextType	context = GLOBAL;
 
 	while (tokens.size())
 	{
@@ -129,7 +119,7 @@ void	ConfigurationParser::_parseTokens(std::queue<t_token> &tokens,
 		{
 			if (token.content == "http")
 			{
-				if (context != UNKNOWN)
+				if (context != GLOBAL)
 					throw InvalidConfigFile("Unexpected token `http`");
 				context = HTTP;
 			}
@@ -138,15 +128,44 @@ void	ConfigurationParser::_parseTokens(std::queue<t_token> &tokens,
 				if (context != HTTP)
 					throw InvalidConfigFile("Unexpected token `server`");
 				context = SERVER;
-				configurations.push_back(Configuration());
+				ConfigurationParser::_parseServerConfig(tokens, configurations);
+			}
+			else if (token.content == "location")
+			{
+				if (context != SERVER)
+					throw InvalidConfigFile("Unexpected token `location`");
+				context = LOCATION;
 			}
 			else
 				throw InvalidConfigFile("Unexpected token `" + token.content + "`");
+		}
+		else if (token.type == CLOSE_BRACE)
+		{
+			switch (context)
+			{
+				case HTTP:
+					context = GLOBAL;
+					break;
+				case SERVER:
+					context = HTTP;
+					break;
+				case LOCATION:
+					context = SERVER;
+					break;
+				default:
+					throw InvalidConfigFile("Unexpected token `}`");
 			}
 		}
 		else
 			throw InvalidConfigFile("Unexpected token `" + token.content + "`");
 	}
+}
+
+void	ConfigurationParser::_parseServerConfig(std::queue<t_token> &tokens,
+	std::vector<Configuration> &configurations)
+{
+	(void)tokens;
+	(void)configurations;
 }
 
 
