@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 23:01:55 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/09 19:35:05 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/19 17:32:10 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,14 +20,15 @@ namespace	http
 
 /* Default constructor */
 HttpRequest::HttpRequest(void)
-	: HttpMessage(), _is_valid(false), _method(), _target() {}
+	: HttpMessage(), _method(), _target() {}
 
 /* Request constructor */
 HttpRequest::HttpRequest(const std::string &request)
-	: HttpMessage(), _is_valid(true), _method(), _target()
+	: HttpMessage(), _method(), _target()
 {
 	std::istringstream	iss_request(request);
 
+	this->setValidity(true);
 	this->_parseRequestLine(iss_request);
 	this->_parseHeaders(iss_request);
 	this->setBody(iss_request.str());
@@ -54,7 +55,6 @@ HttpRequest	&HttpRequest::operator=(const HttpRequest &original)
 		return (*this);
 
 	this->HttpMessage::operator=(original);
-	this->_is_valid = original.isValid();
 	this->_method = original.getMethod();
 	this->_target = original.getTarget();
 	return (*this);
@@ -62,11 +62,6 @@ HttpRequest	&HttpRequest::operator=(const HttpRequest &original)
 
 /* ************************************************************************** */
 /* Getters */
-
-bool	HttpRequest::isValid(void) const
-{
-	return (this->_is_valid);
-}
 
 std::string	HttpRequest::getMethod(void) const
 {
@@ -91,7 +86,7 @@ void	HttpRequest::_parseRequestLine(std::istringstream &iss_request)
 
 	if (line.size() < 3 || line[line.size() - 1] != '\r'
 			|| std::count(line.begin(), line.end(), ' ') != 2)
-		this->_is_valid = false;
+		this->setValidity(false);
 
 	if (line[line.size() - 1] == '\r')
 		line = line.substr(0, line.size() - 1);
@@ -105,7 +100,7 @@ void	HttpRequest::_parseRequestLine(std::istringstream &iss_request)
 	this->setVersion(version);
 
 	if (this->_method.empty() || this->_target.empty())
-		this->_is_valid = false;
+		this->setValidity(false);
 }
 
 /* Method to parse and store the headers */
@@ -119,7 +114,7 @@ void	HttpRequest::_parseHeaders(std::istringstream &iss_request)
 			break;
 
 		if (line.size() < 2 || line[line.size() - 1] != '\r')
-			this->_is_valid = false;
+			this->setValidity(false);
 
 		if (line[line.size() - 1] == '\r')
 			line = line.substr(0, line.size() - 1);
@@ -131,14 +126,14 @@ void	HttpRequest::_parseHeaders(std::istringstream &iss_request)
 
 			if (colon_pos == std::string::npos)
 			{
-				this->_is_valid = false;
+				this->setValidity(false);
 				header_name = line;
 				header_value = "";
 			}
 			else
 			{
 				header_name = line.substr(0, colon_pos);
-				header_value = utils::trim(line.substr(colon_pos + 1));
+				header_value = http::trimLWS(line.substr(colon_pos + 1));
 			}
 			this->addHeader(header_name, header_value);
 		}

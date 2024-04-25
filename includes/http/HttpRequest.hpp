@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 22:57:07 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/09 19:22:14 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/19 17:25:48 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,9 @@
 # include <sstream>
 # include <algorithm>
 
+# include "Harl.hpp"
 # include "HttpMessage.hpp"
-# include "utils.hpp"
+# include "httpTools.hpp"
 
 namespace	http
 {
@@ -39,7 +40,6 @@ class	HttpRequest : public HttpMessage
 		HttpRequest	&operator=(const HttpRequest &original);
 
 		/* Getters */
-		bool		isValid(void) const;
 		std::string	getMethod(void) const;
 		std::string	getTarget(void) const;
 

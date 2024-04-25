@@ -1,21 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.cpp                                          :+:      :+:    :+:   */
+/*   httpTools.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/09 19:19:34 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/09 19:35:26 by hnogared         ###   ########.fr       */
+/*   Created: 2024/04/18 16:42:19 by hnogared          #+#    #+#             */
+/*   Updated: 2024/04/18 16:45:50 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "utils.hpp"
+#include "httpTools.hpp"
 
-namespace	utils
+namespace	http
 {
 
-std::string	trim(const std::string &str, const std::string &set)
+std::string	trimLWS(const std::string &str, const std::string &set)
 {
 	std::string::size_type	start = str.find_first_not_of(set);
 	std::string::size_type	end = str.find_last_not_of(set);
@@ -25,4 +25,4 @@ std::string	trim(const std::string &str, const std::string &set)
 	return (str.substr(start, end - start + 1));
 }
 
-} // namespace utils
+} // namespace http

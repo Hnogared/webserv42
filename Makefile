@@ -9,18 +9,20 @@ VPATH	:=	srcs:			\
 			srcs/webserv:	\
 			srcs/tools
 
-SRCS	:=	main.cpp			\
-			Server.cpp			\
-			Client.cpp			\
-			colors.cpp			\
-			Harl.cpp			\
-			exceptions.cpp		\
-			HttpMessage.cpp		\
-			HttpRequest.cpp		\
-			HttpResponse.cpp	\
-			Socket.cpp			\
-			net.cpp				\
-			utils.cpp
+SRCS	:=	main.cpp				\
+			VirtualServer.cpp		\
+			Configuration.cpp		\
+			ConfigurationParser.cpp	\
+			Client.cpp				\
+			colors.cpp				\
+			Harl.cpp				\
+			exceptions.cpp			\
+			HttpMessage.cpp			\
+			HttpRequest.cpp			\
+			HttpResponse.cpp		\
+			Socket.cpp				\
+			net.cpp					\
+			httpTools.cpp
 
 OBJS_DIR:=	objs
 OBJS	:=	$(addprefix $(OBJS_DIR)/, $(SRCS:.cpp=.o))

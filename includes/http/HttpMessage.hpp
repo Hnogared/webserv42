@@ -6,13 +6,14 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/08 18:20:17 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/08 18:35:48 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/19 17:25:29 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef HTTPMESSAGE_HPP
 # define HTTPMESSAGE_HPP
 
+# include <iostream>
 # include <string>
 # include <map>
 
@@ -41,12 +42,14 @@ class	HttpMessage
 		std::string	getHeader(const std::string &key) const;
 		std::map<std::string, std::string>	getHeaders(void) const;
 		std::string	getBody(void) const;
+		bool		isValid(void) const;
 
 		/* Setters */
 		void	setVersion(const std::string &version);
 		void	setStatusLine(const std::string &status_line);
 		void	addHeader(const std::string &key, const std::string &val);
 		void	setBody(const std::string &body);
+		void	setValidity(bool is_valid);
 
 
 	private:
@@ -55,7 +58,10 @@ class	HttpMessage
 		std::string							_status_line;
 		std::map<std::string, std::string>	_headers;
 		std::string							_body;
+		bool								_is_valid;
 };
+
+std::ostream	&operator<<(std::ostream &out, const HttpMessage &http_msg);
 
 } // namespace http
 

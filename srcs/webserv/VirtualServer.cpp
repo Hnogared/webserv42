@@ -1,28 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Server.cpp                                         :+:      :+:    :+:   */
+/*   VirtualServer.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 12:36:55 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/09 19:59:29 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/19 17:32:57 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Server.hpp"
+#include "VirtualServer.hpp"
 
 namespace	webserv
 {
 
 /* Static class attributes initialization */
-bool	Server::running = false;
+bool	VirtualServer::running = false;
 
 /* ************************************************************************** */
 /* Constructors */
 
 /* Default constructor */
-Server::Server(int port, int backlog) : _port(port), _backlog(backlog)
+VirtualServer::VirtualServer(int port, int backlog) : _port(port), _backlog(backlog)
 {
 	signal(SIGINT, sigHandler);
 
@@ -74,7 +74,7 @@ Server::Server(int port, int backlog) : _port(port), _backlog(backlog)
 
 
 /* Destructor */
-Server::~Server(void)
+VirtualServer::~VirtualServer(void)
 {
 	remove(LOCK_FILE);
 }
@@ -83,27 +83,27 @@ Server::~Server(void)
 /* ************************************************************************** */
 /* Getters */
 
-bool	Server::isRunning(void) const
+bool	VirtualServer::isRunning(void) const
 {
-	return (Server::running);
+	return (VirtualServer::running);
 }
 
-webserv::Socket	Server::getSocket(void) const
+webserv::Socket	VirtualServer::getSocket(void) const
 {
 	return (this->_socket);
 }
 
-int	Server::getPort(void) const
+int	VirtualServer::getPort(void) const
 {
 	return (this->_port);
 }
 
-int	Server::getBacklog(void) const
+int	VirtualServer::getBacklog(void) const
 {
 	return (this->_backlog);
 }
 
-struct sockaddr_in	Server::getServerAddress(void) const
+struct sockaddr_in	VirtualServer::getVirtualServerAddress(void) const
 {
 	return (this->_server_address);
 }
@@ -112,11 +112,11 @@ struct sockaddr_in	Server::getServerAddress(void) const
 /* ************************************************************************** */
 /* Public methods */
 
-void	Server::run(void)
+void	VirtualServer::run(void)
 {
-	Server::running = true;
+	VirtualServer::running = true;
 
-	while (Server::running)
+	while (VirtualServer::running)
 	{
 		int				res;
 		size_t			clients_count = this->_clients.size();
@@ -131,9 +131,9 @@ void	Server::run(void)
 			poll_fds[i].events = POLLIN;
 		}
 
-		res = poll(poll_fds, clients_count + 1, -1); // Wait infitely
+		res = poll(poll_fds, clients_count + 1, -1); // Wait indefinitely
 		
-		if (!Server::running)
+		if (!VirtualServer::running)
 			break;
 		
 		if (res == -1)
@@ -153,7 +153,7 @@ void	Server::run(void)
 }
 
 
-void	Server::acceptConnection(void)
+void	VirtualServer::acceptConnection(void)
 {
 	int					client_fd;
 	struct sockaddr_in	client_address;
@@ -187,7 +187,7 @@ void	Server::acceptConnection(void)
 }
 
 
-void	Server::handleRequest(const Client &client)
+void	VirtualServer::handleRequest(const Client &client)
 {
 	http::HttpRequest request;
 
@@ -227,12 +227,12 @@ void	Server::handleRequest(const Client &client)
 /* Private static methods */
 
  /* Method to execute when receiving signals */
-void	Server::sigHandler(int signal)
+void	VirtualServer::sigHandler(int signal)
 {
 	if (signal == SIGINT)
 	{
 		remove(LOCK_FILE);
-		Server::running = false;
+		VirtualServer::running = false;
 
 		Harl::complain(Harl::INFO, "Received SIGINT, stopping...");
 	}

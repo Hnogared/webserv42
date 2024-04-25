@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/08 18:25:00 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/08 18:36:35 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/19 17:25:34 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ HttpMessage	&HttpMessage::operator=(const HttpMessage &original)
 	this->_status_line = original.getStatusLine();
 	this->_headers = original.getHeaders();
 	this->_body = original.getBody();
+	this->_is_valid = original.isValid();
 	return (*this);
 }
 
@@ -87,6 +88,11 @@ std::string	HttpMessage::getBody(void) const
 	return (this->_body);
 }
 
+bool	HttpMessage::isValid(void) const
+{
+	return (this->_is_valid);
+}
+
 
 /* ************************************************************************** */
 /* Setters */
@@ -103,12 +109,38 @@ void	HttpMessage::setStatusLine(const std::string &status_line)
 
 void	HttpMessage::addHeader(const std::string &key, const std::string &val)
 {
-	this->_headers[key] = val;
+	if (this->_headers.find(key) != this->_headers.end())
+		this->_headers[key] += "," + val;
+	else
+		this->_headers[key] = val;
 }
 
 void	HttpMessage::setBody(const std::string &body)
 {
 	this->_body = body;
+}
+
+void	HttpMessage::setValidity(bool is_valid)
+{
+	this->_is_valid = is_valid;
+}
+
+
+/* ************************************************************************** */
+/* External operator overloads                                                */
+/* ************************************************************************** */
+
+std::ostream	&operator<<(std::ostream &os, const HttpMessage &http_msg)
+{
+	std::map<std::string, std::string>	headers = http_msg.getHeaders();
+	std::map<std::string, std::string>::const_iterator	it;
+
+	os << http_msg.getStatusLine() << std::endl;
+	for (it = headers.begin(); it != headers.end(); ++it)
+		os << it->first << ": " << it->second << std::endl;
+	os << std::endl;
+	os << http_msg.getBody();
+	return (os);
 }
 
 } // namespace http

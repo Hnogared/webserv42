@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Server.hpp                                         :+:      :+:    :+:   */
+/*   VirtualVirtualServer.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 12:33:54 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/08 19:44:44 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/24 10:47:09 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef SERVER_HPP
-# define SERVER_HPP
+#ifndef VIRTUALSERVER_HPP
+# define VIRTUALSERVER_HPP
 
 # include <string>
 # include <vector>
@@ -38,21 +38,21 @@
 namespace	webserv
 {
 
-class	Server
+class	VirtualServer
 {
 	public:
 		/* Constructors */
-		explicit Server(int port, int backlog = 10);
+		explicit VirtualServer(int port, int backlog = 10);
 
 		/* Destructor */
-		~Server(void);
+		~VirtualServer(void);
 
 		/* Getters */
 		bool				isRunning(void) const;
 		Socket				getSocket(void) const;
 		int					getPort(void) const;
 		int					getBacklog(void) const;
-		struct sockaddr_in	getServerAddress(void) const;
+		struct sockaddr_in	getVirtualServerAddress(void) const;
 
 		/* Public methods */
 		void	run(void);
@@ -75,12 +75,12 @@ class	Server
 		static void	sigHandler(int signal);
 
 		/* [delete] Copy constructor */
-		Server(const Server &original);
+		VirtualServer(const VirtualServer &original);
 
 		/* [delete] Copy assignment operator */
-		Server	&operator=(const Server &original);
+		VirtualServer	&operator=(const VirtualServer &original);
 };
 
 } // namespace webserv
 
-#endif // SERVER_HPP
+#endif // VIRTUALSERVER_HPP
