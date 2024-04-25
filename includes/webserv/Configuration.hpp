@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 09:34:06 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/24 10:37:55 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/25 14:28:43 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ class	Configuration
 {
 	public:
 		/* Constructors */
+		explicit Configuration(void);
 		explicit Configuration(const std::string &path);
 		Configuration(const Configuration &original);
 

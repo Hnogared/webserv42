@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 09:35:37 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/24 10:50:43 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/25 14:29:14 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,9 @@ namespace	webserv
 {
 
 /* ************************************************************************** */
+
+/* Default constructor */
+Configuration::Configuration(void) {}
 
 /* Path constructor */
 Configuration::Configuration(const std::string &path)

@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 10:21:20 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/25 12:33:48 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/25 14:30:24 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,8 +164,28 @@ void	ConfigurationParser::_parseTokens(std::queue<t_token> &tokens,
 void	ConfigurationParser::_parseServerConfig(std::queue<t_token> &tokens,
 	std::vector<Configuration> &configurations)
 {
-	(void)tokens;
-	(void)configurations;
+	t_token			token;
+	t_contextType	context = SERVER;
+	Configuration	config;
+
+	token = tokens.front();
+	tokens.pop();
+
+	if (token.type != OPEN_BRACE)
+	{
+		throw InvalidConfigFile("Unexpected token `" + token.content + "`. "
+			"Expected `{`");
+	}
+
+	while (true)
+	{
+		token = tokens.front();
+		tokens.pop();
+		if (context == SERVER && token.type == CLOSE_BRACE)
+			break ;
+	}
+
+	configurations.push_back(config);
 }
 
 
