@@ -14,6 +14,7 @@ SRCS	:=	main.cpp				\
 			Configuration.cpp		\
 			ConfigurationParser.cpp	\
 			Client.cpp				\
+			strings.cpp				\
 			colors.cpp				\
 			Harl.cpp				\
 			exceptions.cpp			\

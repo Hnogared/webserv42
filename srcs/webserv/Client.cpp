@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 14:43:33 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/09 19:57:18 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/26 12:42:35 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ std::string	Client::getAddrStr(e_addr_choice choice) const
 	else
 		return ("Unknown");
 
-	oss << net::my_inet_ntoa(addr.sin_addr) << ":" << ntohs(addr.sin_port);
+	oss << tool::net::inet_ntoa(addr.sin_addr) << ":" << ntohs(addr.sin_port);
 	return (oss.str());
 }
 

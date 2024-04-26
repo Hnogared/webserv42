@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 19:07:28 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/09 19:56:14 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/26 12:44:20 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,13 +144,13 @@ std::string	Socket::getInfosStr(void) const
 		return ("Socket closed");
 
 	oss_msg << "Local addr: "
-		<< net::my_inet_ntoa(this->_local_addr.sin_addr)
+		<< tool::net::inet_ntoa(this->_local_addr.sin_addr)
 		<< ":" << ntohs(this->_local_addr.sin_port);
 
 	if (this->_peer_addr_set)
 	{
 		oss_msg << " | Peer addr: "
-			<< net::my_inet_ntoa(this->_peer_addr.sin_addr)
+			<< tool::net::inet_ntoa(this->_peer_addr.sin_addr)
 			<< ":" << ntohs(this->_peer_addr.sin_port);
 	}
 	else

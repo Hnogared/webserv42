@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 21:03:07 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/09 19:45:42 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/26 12:53:37 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,8 +63,8 @@ class	SocketCreationError : public SocketError
 {
 	public:
 		/* Constructors */
-		explicit SocketCreationError(int code = 7);
-		explicit SocketCreationError(const std::string &message, int code = 7);
+		explicit SocketCreationError();
+		explicit SocketCreationError(const std::string &message);
 		SocketCreationError(const SocketCreationError &original);
 
 		/* Destructor */
@@ -79,9 +79,8 @@ class	SocketConnectionError : public SocketError
 {
 	public:
 		/* Constructors */
-		explicit SocketConnectionError(int code = 8);
-		explicit SocketConnectionError(const std::string &message,
-			int code = 8);
+		explicit SocketConnectionError();
+		explicit SocketConnectionError(const std::string &message);
 		SocketConnectionError(const SocketConnectionError &original);
 
 		/* Destructor */
@@ -97,9 +96,8 @@ class	SocketConnectionClosed : public SocketError
 {
 	public:
 		/* Constructors */
-		explicit SocketConnectionClosed(int code = 9);
-		explicit SocketConnectionClosed(const std::string &message,
-			int code = 9);
+		explicit SocketConnectionClosed();
+		explicit SocketConnectionClosed(const std::string &message);
 		SocketConnectionClosed(const SocketConnectionClosed &original);
 
 		/* Destructor */

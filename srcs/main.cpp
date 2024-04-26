@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 21:49:03 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/24 14:18:02 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/26 12:29:49 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 
 int	main(int argc, char **argv)
 {
-	webserv::ConfigurationParser::parse("my_config.config");
+	webserv::ConfigurationParser::parse("small_config.config");
 	return (0);
 	if (argc > 2)
 	{

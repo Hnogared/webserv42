@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 10:19:18 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/25 12:32:41 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/26 13:43:27 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,11 +21,12 @@
 # include <map>
 # include <queue>
 # include <fstream>
+# include <iostream>
 
+# include "strings.hpp"
 # include "exceptions.hpp"
 # include "Configuration.hpp"
 
-# include <iostream>
 
 namespace	webserv
 {
@@ -51,6 +52,7 @@ class	ConfigurationParser
 
 		typedef struct	s_token
 		{
+			int			lineNbr;
 			t_tokenType	type;
 			std::string	content;
 		}	t_token;
@@ -64,17 +66,21 @@ class	ConfigurationParser
 		static std::queue<t_token>	_tokenizeFile(std::ifstream &file,
 			std::queue<t_token> &tokens);
 		static void	_tokenizeLine(const std::string &line,
-			std::queue<t_token> &tokens);
+			std::queue<t_token> &tokens, int lineNbr);
 		static void	_parseTokens(std::queue<t_token> &tokens,
+			std::vector<Configuration> &configurations);
+		static void	_parseHttpConfig(std::queue<t_token> &tokens,
 			std::vector<Configuration> &configurations);
 		static void	_parseServerConfig(std::queue<t_token> &tokens,
 			std::vector<Configuration> &configurations);
+		static void	_parseListen(std::queue<t_token> &tokens,
+			Configuration &config);
 
 
 		/* [delete] */
-		ConfigurationParser(void);
+		ConfigurationParser();
 		ConfigurationParser(const ConfigurationParser &original);
-		~ConfigurationParser(void);
+		~ConfigurationParser();
 		ConfigurationParser	&operator=(const ConfigurationParser &original);
 
 
@@ -84,9 +90,8 @@ class	ConfigurationParser
 		{
 			public:
 				/* Constructors */
-				explicit InvalidConfigFile(int code = 7);
-				explicit InvalidConfigFile(const std::string &message,
-					int code = 7);
+				explicit InvalidConfigFile();
+				explicit InvalidConfigFile(const std::string &message);
 				InvalidConfigFile(const InvalidConfigFile &original);
 	
 				/* Destructor */
@@ -96,6 +101,23 @@ class	ConfigurationParser
 				InvalidConfigFile	&operator=(
 					const InvalidConfigFile &original);
 		}; // class InvalidConfigFile
+	
+		class	UnexpectedToken : public RuntimeError
+		{
+			public:
+				/* Constructors */
+				explicit UnexpectedToken();
+				explicit UnexpectedToken(const std::string &message);
+				UnexpectedToken(const t_token &token);
+				UnexpectedToken(const t_token &token, const std::string &exp);
+				UnexpectedToken(const UnexpectedToken &original);
+	
+				/* Destructor */
+				~UnexpectedToken(void) throw();
+	
+				/* Operator overloads */
+				UnexpectedToken	&operator=(const UnexpectedToken &original);
+		}; // class UnexpectedToken
 }; // class ConfigurationParser
 
 } // namespace webserv

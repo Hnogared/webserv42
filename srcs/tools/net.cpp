@@ -6,16 +6,19 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/08 12:47:27 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/08 12:58:44 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/26 12:44:39 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "net.hpp"
 
+namespace	tool
+{
+
 namespace	net
 {
 
-std::string	my_inet_ntoa(struct in_addr addr)
+std::string	inet_ntoa(struct in_addr addr)
 {
 	std::ostringstream	oss_ip;
 	uint32_t			s_addr = ntohl(addr.s_addr);
@@ -28,4 +31,24 @@ std::string	my_inet_ntoa(struct in_addr addr)
 	return (oss_ip.str());
 }
 
+int	inet_aton(const std::string &address, struct in_addr &addr)
+{
+	int					i = 0;
+	uint32_t			s_addr = 0;
+	std::string			segment;
+	std::istringstream	iss(address);
+
+	while (std::getline(iss, segment, '.'))
+	{
+		if (i > 3)
+			return (0);
+		s_addr = (s_addr << 8) | tool::strings::stoi(segment);
+		i++;
+	}
+	addr.s_addr = htonl(s_addr);
+	return (1);
+}
+
 } // namespace net
+
+} // namespace tool

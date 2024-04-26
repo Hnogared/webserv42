@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 21:06:56 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/09 19:45:23 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/26 12:54:37 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,8 +67,7 @@ int	RuntimeError::code(void) const
 /* ************************************************************************** */
 
 /* Default constructor */
-SocketError::SocketError(int code)
-	: RuntimeError("Socket error", code) {}
+SocketError::SocketError(int code) : RuntimeError("Socket error", code) {}
 
 /* Message constructor */
 SocketError::SocketError(const std::string &message, int code)
@@ -103,12 +102,12 @@ SocketError	&SocketError::operator=(const SocketError &original)
 /* ************************************************************************** */
 
 /* Default constructor */
-SocketCreationError::SocketCreationError(int code)
-	: SocketError("Error creating socket", code) {}
+SocketCreationError::SocketCreationError()
+	: SocketError("Error creating socket", 7) {}
 
 /* Message constructor */
-SocketCreationError::SocketCreationError(const std::string &message, int code)
-	: SocketError(message, code) {}
+SocketCreationError::SocketCreationError(const std::string &message)
+	: SocketError(message, 7) {}
 
 /* Copy constructor */
 SocketCreationError::SocketCreationError(const SocketCreationError
@@ -141,12 +140,12 @@ SocketCreationError	&SocketCreationError::operator=(const
 /* ************************************************************************** */
 
 /* Default constructor */
-SocketConnectionError::SocketConnectionError(int code)
-	: SocketError("Error binding socket", code) {}
+SocketConnectionError::SocketConnectionError()
+	: SocketError("Error binding socket", 8) {}
 
 /* Message constructor */
-SocketConnectionError::SocketConnectionError(const std::string &message,
-	int code) : SocketError(message, code) {}
+SocketConnectionError::SocketConnectionError(const std::string &message)
+	: SocketError(message, 8) {}
 
 /* Copy constructor */
 SocketConnectionError::SocketConnectionError(const SocketConnectionError
@@ -179,12 +178,12 @@ SocketConnectionError	&SocketConnectionError::operator=(
 /* ************************************************************************** */
 
 /* Default constructor */
-SocketConnectionClosed::SocketConnectionClosed(int code)
-	: SocketError("Connection closed", code) {}
+SocketConnectionClosed::SocketConnectionClosed()
+	: SocketError("Connection closed", 9) {}
 
 /* Message constructor */
-SocketConnectionClosed::SocketConnectionClosed(const std::string &message,
-	int code) : SocketError(message, code) {}
+SocketConnectionClosed::SocketConnectionClosed(const std::string &message)
+	: SocketError(message, 9) {}
 
 /* Copy constructor */
 SocketConnectionClosed::SocketConnectionClosed(const SocketConnectionClosed

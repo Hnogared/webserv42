@@ -1,34 +1,36 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   net.hpp                                            :+:      :+:    :+:   */
+/*   strings.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/08 12:44:46 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/26 12:44:54 by hnogared         ###   ########.fr       */
+/*   Created: 2024/04/26 12:31:31 by hnogared          #+#    #+#             */
+/*   Updated: 2024/04/26 13:04:11 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef NET_HPP
-# define NET_HPP
+#ifndef STRINGS_HPP
+# define STRINGS_HPP
 
+# include <string>
 # include <sstream>
-# include <netinet/in.h>
-
-# include "strings.hpp"
 
 namespace	tool
 {
 
-namespace	net
+namespace	strings
 {
 
-std::string	inet_ntoa(struct in_addr addr);
-int			inet_aton(const std::string &address, struct in_addr &addr);
+int			stoi(const std::string &str);
 
-} // namespace net
+template <typename T>
+std::string	toStr(T elem);
+
+} // namespace strings
 
 } // namespace tool
 
-#endif // NET_HPP
+#include "strings.tpp"
+
+#endif // STRINGS_HPP

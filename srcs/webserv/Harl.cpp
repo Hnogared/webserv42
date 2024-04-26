@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 03:05:45 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/06 23:14:30 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/26 12:43:51 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,20 +39,20 @@ void	Harl::debug(const std::string &msg)
 /* Method to display an info level message */
 void	Harl::info(const std::string &msg)
 {
-	std::cout << ansi::FG_BLUE << "[INFO]" << ansi::RESET << " "
+	std::cout << tool::ansi::FG_BLUE << "[INFO]" << tool::ansi::RESET << " "
 		<< msg << '\n';
 }
 
 /* Method to display a warning level message */
 void	Harl::warning(const std::string &msg)
 {
-	std::cout << ansi::FG_YELLOW << "[WARNING]" << ansi::RESET << " "
-		<< msg << '\n';
+	std::cout << tool::ansi::FG_YELLOW << "[WARNING]" << tool::ansi::RESET
+		<< " " << msg << '\n';
 }
 
 /* Method to display an error level message */
 void	Harl::error(const std::string &msg)
 {
-	std::cout << ansi::FG_RED << "[ERROR]" << ansi::RESET << " "
+	std::cout << tool::ansi::FG_RED << "[ERROR]" << tool::ansi::RESET << " "
 		<< msg << '\n';
 }

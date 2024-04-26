@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 09:34:06 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/25 14:28:43 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/26 12:28:03 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,11 @@
 # define CONFIGURATION_HPP
 
 # include <string>
+# include <vector>
+# include <iostream>
+# include <netinet/in.h>
+
+# include "net.hpp"
 
 namespace	webserv
 {
@@ -33,20 +38,27 @@ class	Configuration
 		Configuration &operator=(const Configuration &original);
 
 		/* Getters */
-		int			getPort(void) const;
-		std::string	getServerName(void) const;
+		sockaddr_in					getAddress(void) const;
+		std::string					getAddressString(void) const;
+		int							getPort(void) const;
+		std::vector<std::string>	getServerNames(void) const;
 
 		/* Setters */
-		void		setPort(int port);
-		void		setServerName(const std::string &serverName);
+		int		setAddress(const std::string &address);
+		void	setAddress(const sockaddr_in &address);
+		void	setPort(int port);
+		void	addServerName(const std::string &serverName);
 
 
 	private:
 		/* Private attributes */
-		int			_port;
-		std::string	_serverName;
+		sockaddr_in					_address;
+		int							_port;
+		std::vector<std::string>	_serverNames;
 		
 };
+
+std::ostream	&operator<<(std::ostream &os, const Configuration &config);
 
 } // namespace webserv
 

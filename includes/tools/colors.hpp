@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 22:28:27 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/06 23:09:51 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/26 12:37:50 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,9 @@
 
 #include <iostream>
 #include <stdexcept>
+
+namespace	tool
+{
 
 namespace	ansi
 {
@@ -65,5 +68,7 @@ std::ostream &operator<<(std::ostream &os, e_ansi_colorFG color);
 std::ostream &operator<<(std::ostream &os, e_ansi_colorBG color);
 
 } // namespace ansi
+
+} // namespace tool
 
 #endif // COLORS_HPP
