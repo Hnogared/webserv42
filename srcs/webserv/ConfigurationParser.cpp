@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 10:21:20 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/26 14:09:38 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/26 14:14:05 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,8 @@ std::queue<ConfigurationParser::t_token>	ConfigurationParser::_tokenizeFile(
 
 	while (std::getline(file, line))
 	{
+		lineNbr++;
+
 		line = line.substr(0, line.find('#'));
 
 		pos = line.find_first_not_of(" \t\v\f\r");
@@ -78,7 +80,7 @@ std::queue<ConfigurationParser::t_token>	ConfigurationParser::_tokenizeFile(
 		if (line.empty())
 			continue;
 
-		ConfigurationParser::_tokenizeLine(line, tokens, lineNbr++);
+		ConfigurationParser::_tokenizeLine(line, tokens, lineNbr);
 	}
 	return (tokens);
 }
@@ -127,9 +129,6 @@ void	ConfigurationParser::_parseTokens(std::queue<t_token> &tokens,
 		token = tokens.front();
 		tokens.pop();
 
-		if (token.type == CLOSE_BRACE)
-			break ;
-
 		if (token.type == STRING)
 		{
 			if (token.content == "http")
@@ -146,9 +145,6 @@ void	ConfigurationParser::_parseTokens(std::queue<t_token> &tokens,
 
 		throw UnexpectedToken(token);
 	}
-
-	if (token.type != CLOSE_BRACE)
-		throw UnexpectedToken(token, "}");
 }
 
 void	ConfigurationParser::_parseHttpConfig(std::queue<t_token> &tokens,
