@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 10:21:20 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/26 14:14:05 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/26 14:31:17 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -195,11 +195,22 @@ void	ConfigurationParser::_parseServerConfig(std::queue<t_token> &tokens,
 		if (token.type == CLOSE_BRACE && context == SERVER)
 			break ;
 		
-		if (token.type == STRING && token.content == "listen")
-			ConfigurationParser::_parseListen(tokens, config);
+		if (token.type == STRING)
+		{
+			if (token.content == "listen")
+				ConfigurationParser::_parseListen(tokens, config);
+			else if (token.content == "server_name")
+				ConfigurationParser::_parseNames(tokens, config);
+			else
+				throw UnexpectedToken(token);
+			continue ;
+		}
+
+		throw UnexpectedToken(token);
 	}
 
 	configurations.push_back(config);
+	std::cout << config << std::endl;
 }
 
 void	ConfigurationParser::_parseListen(std::queue<t_token> &tokens,
@@ -222,14 +233,17 @@ void	ConfigurationParser::_parseListen(std::queue<t_token> &tokens,
 		if (token.content.find('.') == std::string::npos)
 			config.setPort(tool::strings::stoi(token.content));
 		else if (!config.setAddress(token.content))
-			throw InvalidConfigFile(token.lineNbr + ": Invalid address: `"
-				+ token.content + "`");
+			throw InvalidConfigFile(tool::strings::toStr(token.lineNbr)
+				+ ": Invalid address: `" + token.content + "`");
 	}
 	else
 	{
 		address = token.content.substr(0, pos);
 		port = token.content.substr(pos + 1);
 		config.setPort(tool::strings::stoi(port));
+		if (!config.setAddress(address))
+			throw InvalidConfigFile(tool::strings::toStr(token.lineNbr)
+				+ ": Invalid address: `" + address + "`");
 	}
 
 	token = tokens.front();
@@ -237,6 +251,27 @@ void	ConfigurationParser::_parseListen(std::queue<t_token> &tokens,
 
 	if (token.type != SEMICOLON)
 		throw UnexpectedToken(token, ";");
+}
+
+void	ConfigurationParser::_parseNames(std::queue<t_token> &tokens,
+	Configuration &config)
+{
+	t_token		token;
+
+	if (tokens.front().type != STRING)
+		throw UnexpectedToken(token, "string");
+
+	while (tokens.front().type == STRING)
+	{
+		token = tokens.front();
+		tokens.pop();
+		config.addServerName(token.content);
+	}
+
+	if (tokens.front().type != SEMICOLON)
+		throw UnexpectedToken(token, ";");
+	
+	tokens.pop();
 }
 
 /* ************************************************************************** */

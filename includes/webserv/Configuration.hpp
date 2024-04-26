@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 09:34:06 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/26 12:28:03 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/26 14:36:40 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,10 +38,10 @@ class	Configuration
 		Configuration &operator=(const Configuration &original);
 
 		/* Getters */
-		sockaddr_in					getAddress(void) const;
-		std::string					getAddressString(void) const;
-		int							getPort(void) const;
-		std::vector<std::string>	getServerNames(void) const;
+		sockaddr_in						getAddress(void) const;
+		std::string						getAddressString(void) const;
+		int								getPort(void) const;
+		const std::vector<std::string>	&getServerNames(void) const;
 
 		/* Setters */
 		int		setAddress(const std::string &address);

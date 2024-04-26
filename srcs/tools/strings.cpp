@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 12:31:15 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/26 13:01:06 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/26 14:38:58 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,12 +27,19 @@ int	stoi(const std::string &str)
 	return (nbr * (!iss.fail()));
 }
 
-std::string	itos(int num)
+std::string	join(const std::vector<std::string> &strings,
+	const std::string &sep)
 {
-	std::ostringstream oss;
+	size_t		i = 0;
+	std::string	joined;
 
-	oss << num;
-	return (oss.str());
+	if (strings.empty())
+		return (joined);
+
+	while (i < strings.size() - 1)
+		joined += strings[i++] + sep;
+	joined += strings[i];
+	return (joined);
 }
 
 } // namespace strings

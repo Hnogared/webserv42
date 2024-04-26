@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 12:31:31 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/26 13:04:11 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/26 14:37:10 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include <string>
 # include <sstream>
+# include <vector>
 
 namespace	tool
 {
@@ -23,6 +24,8 @@ namespace	strings
 {
 
 int			stoi(const std::string &str);
+std::string	join(const std::vector<std::string> &strings,
+	const std::string &sep);
 
 template <typename T>
 std::string	toStr(T elem);

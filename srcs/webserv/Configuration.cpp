@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 09:35:37 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/26 12:42:59 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/26 14:36:47 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ int	Configuration::getPort(void) const
 	return (ntohs(this->_address.sin_port));
 }
 
-std::vector<std::string>	Configuration::getServerNames(void) const
+const std::vector<std::string>	&Configuration::getServerNames(void) const
 {
 	return (this->_serverNames);
 }
@@ -110,7 +110,8 @@ void	Configuration::addServerName(const std::string &serverName)
 std::ostream	&operator<<(std::ostream &os, const Configuration &config)
 {
 	os << "Addr: " << config.getAddressString()
-		<< "\nPort: " << config.getPort() << std::endl;
+		<< "\nPort: " << config.getPort()
+		<< "\nNames: " << tool::strings::join(config.getServerNames(), ", ");
 	return (os);
 }
 

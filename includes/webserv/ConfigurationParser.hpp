@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 10:19:18 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/26 13:43:27 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/26 14:30:30 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,13 +67,17 @@ class	ConfigurationParser
 			std::queue<t_token> &tokens);
 		static void	_tokenizeLine(const std::string &line,
 			std::queue<t_token> &tokens, int lineNbr);
+		
 		static void	_parseTokens(std::queue<t_token> &tokens,
 			std::vector<Configuration> &configurations);
 		static void	_parseHttpConfig(std::queue<t_token> &tokens,
 			std::vector<Configuration> &configurations);
+
 		static void	_parseServerConfig(std::queue<t_token> &tokens,
 			std::vector<Configuration> &configurations);
 		static void	_parseListen(std::queue<t_token> &tokens,
+			Configuration &config);
+		static void	_parseNames(std::queue<t_token> &tokens,
 			Configuration &config);
 
 
