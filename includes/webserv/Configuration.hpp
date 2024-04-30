@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 09:34:06 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/26 14:36:40 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/30 14:28:00 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,6 @@ class	Configuration
 	private:
 		/* Private attributes */
 		sockaddr_in					_address;
-		int							_port;
 		std::vector<std::string>	_serverNames;
 		
 };

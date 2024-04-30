@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 10:19:18 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/26 14:30:30 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/30 16:20:12 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,6 +122,23 @@ class	ConfigurationParser
 				/* Operator overloads */
 				UnexpectedToken	&operator=(const UnexpectedToken &original);
 		}; // class UnexpectedToken
+
+		class	MissingToken : public RuntimeError
+		{
+			public:
+				/* Constructors */
+				explicit MissingToken();
+				explicit MissingToken(const std::string &type);
+				MissingToken(const t_token &token);
+				MissingToken(const t_token &token, const std::string &exp);
+				MissingToken(const MissingToken &original);
+	
+				/* Destructor */
+				~MissingToken(void) throw();
+	
+				/* Operator overloads */
+				MissingToken	&operator=(const MissingToken &original);
+		}; // class MissingToken
 }; // class ConfigurationParser
 
 } // namespace webserv

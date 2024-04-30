@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 09:35:37 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/26 14:36:47 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/30 14:28:51 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,8 @@ Configuration	&Configuration::operator=(const Configuration &original)
 {
 	if (this == &original)
 		return (*this);
+	this->_address = original.getAddress();
+	this->_serverNames = original.getServerNames();
 	return (*this);
 }
 

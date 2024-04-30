@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 21:49:03 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/26 12:29:49 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/26 14:54:09 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,19 @@
 #include "VirtualServer.hpp"
 #include "ConfigurationParser.hpp"
 
+int	main()
+{
+	std::vector<webserv::Configuration>	configs;
+
+	configs = webserv::ConfigurationParser::parse("small_config.conf");
+	for (size_t i = 0; i < configs.size(); i++)
+		std::cout << configs[i] << std::endl;
+	return (0);
+}
+
+/*
 int	main(int argc, char **argv)
 {
-	webserv::ConfigurationParser::parse("small_config.config");
-	return (0);
 	if (argc > 2)
 	{
 		Harl::complain(Harl::ERROR,
@@ -64,3 +73,4 @@ int	main(int argc, char **argv)
 	(void)argv;
 	return (0);
 }
+*/

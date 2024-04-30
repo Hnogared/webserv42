@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 10:21:20 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/26 14:31:17 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/04/30 16:34:22 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,10 +24,10 @@ std::vector<Configuration> ConfigurationParser::parse(const std::string &path)
 	std::vector<Configuration>	configurations;
 	std::queue<t_token>			tokens;
 
-	if (path.size() < 8 || path.substr(path.size() - 7) != ".config")
+	if (path.size() < 8 || path.substr(path.size() - 5) != ".conf")
 	{
 		throw InvalidConfigFile(path + ": Invalid file extension. "
-			"Expected `.config`");
+			"Expected `.conf`");
 	}
 
 	file.open(path.c_str());
@@ -37,20 +37,24 @@ std::vector<Configuration> ConfigurationParser::parse(const std::string &path)
 			+ strerror(errno));
 	}
 
-	ConfigurationParser::_tokenizeFile(file, tokens);
-	file.close();
+	try
+	{
+		ConfigurationParser::_tokenizeFile(file, tokens);
+		file.close();
+	}
+	catch(const RuntimeError& e)
+	{
+		file.close();
+		throw RuntimeError(path + ": " + e.what(), e.code());
+	}
 
 	try
 	{
 		ConfigurationParser::_parseTokens(tokens, configurations);
 	}
-	catch (const InvalidConfigFile &e)
+	catch (const RuntimeError &e)
 	{
-		throw InvalidConfigFile(path + ":" + e.what());
-	}
-	catch (const UnexpectedToken &e)
-	{
-		throw UnexpectedToken(path + ":" + e.what());
+		throw RuntimeError(path + ": " + e.what(), e.code());
 	}
 
 	return (configurations);
@@ -109,6 +113,14 @@ void	ConfigurationParser::_tokenizeLine(const std::string &line,
 			case ';':
 				tokens.push((t_token){lineNbr, SEMICOLON, ";"});
 				++pos;
+				break;
+			case '"': case '\'':
+				end = line.find(line[pos], pos + 1);
+				if (end == std::string::npos)
+					throw MissingToken(tool::strings::toStr(line[pos]));
+				tokens.push((t_token){lineNbr, STRING,
+					line.substr(pos + 1, end - pos - 1)});
+				pos = end + 1;
 				break;
 			default:
 				end = line.find_first_of(" \t\v\f\r{};", pos);
@@ -178,7 +190,7 @@ void	ConfigurationParser::_parseHttpConfig(std::queue<t_token> &tokens,
 	}
 
 	if (token.type != CLOSE_BRACE)
-		throw UnexpectedToken(token, "}");
+		throw MissingToken("}");
 }
 
 void	ConfigurationParser::_parseServerConfig(std::queue<t_token> &tokens,
@@ -210,7 +222,6 @@ void	ConfigurationParser::_parseServerConfig(std::queue<t_token> &tokens,
 	}
 
 	configurations.push_back(config);
-	std::cout << config << std::endl;
 }
 
 void	ConfigurationParser::_parseListen(std::queue<t_token> &tokens,
@@ -265,7 +276,8 @@ void	ConfigurationParser::_parseNames(std::queue<t_token> &tokens,
 	{
 		token = tokens.front();
 		tokens.pop();
-		config.addServerName(token.content);
+		if (token.content != "_")
+			config.addServerName(token.content);
 	}
 
 	if (tokens.front().type != SEMICOLON)
@@ -273,6 +285,7 @@ void	ConfigurationParser::_parseNames(std::queue<t_token> &tokens,
 	
 	tokens.pop();
 }
+
 
 /* ************************************************************************** */
 /* Exceptions */
@@ -353,6 +366,41 @@ ConfigurationParser::UnexpectedToken::~UnexpectedToken(void) throw() {}
 ConfigurationParser::UnexpectedToken
 	&ConfigurationParser::UnexpectedToken::operator=(
 	const UnexpectedToken &original)
+{
+	if (this == &original)
+		return (*this);
+	RuntimeError::operator=(original);
+	return (*this);
+}
+
+
+/* ************************************ */
+/* MissingToken                         */
+/* ************************************ */
+
+/* Default constructor */
+ConfigurationParser::MissingToken::MissingToken()
+	: RuntimeError("Missing token", 12) {}
+
+/* Token type constructor */
+ConfigurationParser::MissingToken::MissingToken(const std::string &type)
+	: RuntimeError("Missing token `" + type + "`", 12) {}
+
+/* Copy constructor */
+ConfigurationParser::MissingToken::MissingToken(const MissingToken &original)
+	: RuntimeError(original) {}
+
+
+/* Destructor */
+ConfigurationParser::MissingToken::~MissingToken(void) throw() {}
+
+
+/* ************************************ */
+/* Operator overloads */
+
+ConfigurationParser::MissingToken
+	&ConfigurationParser::MissingToken::operator=(
+	const MissingToken &original)
 {
 	if (this == &original)
 		return (*this);
