@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/01 14:41:57 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/01 16:26:54 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/01 16:55:12 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,9 +49,11 @@ LocationConfiguration	&LocationConfiguration::operator=(
 bool	LocationConfiguration::operator<(const LocationConfiguration &other)
 	const
 {
-	return (this->_path < other.getPath()
-		&& this->_allowedMethods < other.getAllowedMethods()
-		&& this->_autoindex < other.isAutoindex());
+	if (this->_path != other.getPath())
+		return (this->_path < other.getPath());
+	if (this->_allowedMethods != other.getAllowedMethods())
+		return (this->_allowedMethods < other.getAllowedMethods());
+	return (this->_autoindex < other.isAutoindex());
 }
 
 

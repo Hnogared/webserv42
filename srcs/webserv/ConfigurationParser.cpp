@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 10:21:20 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/01 16:35:24 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/01 16:48:54 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,7 @@ std::map<std::string, ConfigurationParser::t_locationDirectiveParser>
 	std::map<std::string, t_locationDirectiveParser>	directives;
 
 	directives["autoindex"] = &_parseAutoindex;
+	directives["limit_except"] = &_parseAllowedMethods;
 	return (directives);
 }
 
@@ -447,6 +448,33 @@ void	ConfigurationParser::_parseAutoindex(std::queue<t_token> &tokens,
 		throw UnexpectedToken(token, "on / off");
 
 	config.setAutoindex(token.content == "on");
+	tokens.pop();
+}
+
+void	ConfigurationParser::_parseAllowedMethods(std::queue<t_token> &tokens,
+	LocationConfiguration &config)
+{
+	t_token	token;
+
+	if (tokens.empty())
+		throw MissingToken("string");
+
+	if (tokens.front().type != STRING)
+		throw UnexpectedToken(tokens.front(), "string");
+
+	while (!tokens.empty() && tokens.front().type == STRING)
+	{
+		token = tokens.front();
+		tokens.pop();
+		config.addAllowedMethod(token.content);
+	}
+
+	if (tokens.empty())
+		throw MissingToken(";");
+
+	if (tokens.front().type != SEMICOLON)
+		throw UnexpectedToken(tokens.front(), ";");
+
 	tokens.pop();
 }
 
