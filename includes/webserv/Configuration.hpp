@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 09:34:06 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/01 13:37:41 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/01 16:24:44 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,13 @@
 
 # include <string>
 # include <vector>
+# include <set>
 # include <map>
 # include <iostream>
 # include <netinet/in.h>
 
 # include "net.hpp"
+# include "LocationConfiguration.hpp"
 
 namespace	webserv
 {
@@ -42,9 +44,10 @@ class	Configuration
 		sockaddr_in							getAddress(void) const;
 		std::string							getAddressString(void) const;
 		int									getPort(void) const;
-		const std::vector<std::string>		&getServerNames(void) const;
+		const std::set<std::string>			&getServerNames(void) const;
 		const std::map<int, std::string>	&getErrorRedirects(void) const;
 		unsigned long int					getClientMaxBodySize(void) const;
+		const std::set<LocationConfiguration>	&getLocations(void) const;
 
 		/* Setters */
 		int		setAddress(const std::string &address);
@@ -53,6 +56,7 @@ class	Configuration
 		void	addServerName(const std::string &serverName);
 		void	addErrorRedirect(int error, const std::string &redirect);
 		void	setClientMaxBodySize(unsigned long int size);
+		void	addLocation(const LocationConfiguration &location);
 
 		/* Public methods */
 		std::ostream	&print(std::ostream &os = std::cout) const;
@@ -60,10 +64,11 @@ class	Configuration
 
 	private:
 		/* Private attributes */
-		sockaddr_in					_address;
-		std::vector<std::string>	_serverNames;
-		std::map<int, std::string>	_errorRedirects;
-		unsigned long int			_clientMaxBodySize;
+		sockaddr_in						_address;
+		std::set<std::string>			_serverNames;
+		std::map<int, std::string>		_errorRedirects;
+		unsigned long int				_clientMaxBodySize;
+		std::set<LocationConfiguration>	_locations;
 }; // class Configuration
 
 std::ostream	&operator<<(std::ostream &os, const Configuration &config);

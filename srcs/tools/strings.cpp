@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 12:31:15 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/01 13:50:02 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/01 15:02:03 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,21 +25,6 @@ int	stoi(const std::string &str)
 
 	iss >> nbr;
 	return (nbr * (!iss.fail()));
-}
-
-std::string	join(const std::vector<std::string> &strings,
-	const std::string &sep)
-{
-	size_t		i = 0;
-	std::string	joined;
-
-	if (strings.empty())
-		return (joined);
-
-	while (i < strings.size() - 1)
-		joined += strings[i++] + sep;
-	joined += strings[i];
-	return (joined);
 }
 
 unsigned long int	bytestoul(const std::string &str)

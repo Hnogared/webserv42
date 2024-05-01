@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 10:19:18 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/01 14:23:40 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/01 16:30:27 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,8 @@ class	ConfigurationParser
 
 		/* Typedefs */
 		typedef void (*t_directiveParser)(std::queue<t_token>&, Configuration&);
+		typedef void (*t_locationDirectiveParser)(std::queue<t_token>&,
+			LocationConfiguration&);
 
 		/* Static methods */
 		static std::vector<Configuration> parse(const std::string &path);
@@ -67,11 +69,15 @@ class	ConfigurationParser
 	private:
 		/* Private attributes */
 		static const std::map<std::string, t_directiveParser> _serverDirectives;
+		static const std::map<std::string, t_locationDirectiveParser>
+			_locationDirectives;
 
 
 		/* Private methods */
 		static std::map<std::string, t_directiveParser>
 			_initializeServerDirectives(void);
+		static std::map<std::string, t_locationDirectiveParser>
+			_initializeLocationDirectives(void);
 
 		static std::queue<t_token>	_tokenizeFile(std::ifstream &file,
 			std::queue<t_token> &tokens);
@@ -93,6 +99,10 @@ class	ConfigurationParser
 			Configuration &config);
 		static void	_parseClientMaxBodySize(std::queue<t_token> &tokens,
 			Configuration &config);
+		static void	_parseLocation(std::queue<t_token> &tokens,
+			Configuration &config);
+		static void	_parseAutoindex(std::queue<t_token> &tokens,
+			LocationConfiguration &config);
 
 
 		/* [delete] */

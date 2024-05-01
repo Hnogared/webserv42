@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 10:21:20 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/01 14:26:56 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/01 16:35:24 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,18 @@
 
 namespace	webserv
 {
+
+/* ************************************************************************** */
+/* Static attributes initialization */
+
 const std::map<std::string, ConfigurationParser::t_directiveParser>
 		ConfigurationParser::_serverDirectives
 	= ConfigurationParser::_initializeServerDirectives();
+
+const std::map<std::string, ConfigurationParser::t_locationDirectiveParser>
+		ConfigurationParser::_locationDirectives
+	= ConfigurationParser::_initializeLocationDirectives();
+
 
 /* ************************************************************************** */
 /* Static methods */
@@ -76,6 +85,16 @@ std::map<std::string, ConfigurationParser::t_directiveParser>
 	directives["server_name"] = &_parseNames;
 	directives["error_page"] = &_parseErrorPage;
 	directives["client_max_body_size"] = &_parseClientMaxBodySize;
+	directives["location"] = &_parseLocation;
+	return (directives);
+}
+
+std::map<std::string, ConfigurationParser::t_locationDirectiveParser>
+	ConfigurationParser::_initializeLocationDirectives(void)
+{
+	std::map<std::string, t_locationDirectiveParser>	directives;
+
+	directives["autoindex"] = &_parseAutoindex;
 	return (directives);
 }
 
@@ -362,6 +381,72 @@ void	ConfigurationParser::_parseClientMaxBodySize(
 			+ ": client_max_body_size: " + e.what());
 	}
 
+	tokens.pop();
+}
+
+void	ConfigurationParser::_parseLocation(std::queue<t_token> &tokens,
+	Configuration &config)
+{
+	t_token					token;
+	LocationConfiguration	location;
+	std::map<std::string, t_locationDirectiveParser>::const_iterator it;
+
+	token = tokens.front();
+	tokens.pop();
+
+	if (tokens.front().type != OPEN_BRACE)
+		throw UnexpectedToken(tokens.front(), "{");
+	if (token.type != STRING)
+		throw UnexpectedToken(token, "string");
+
+	location.setPath(token.content);
+	tokens.pop();
+
+	while (!tokens.empty())
+	{
+		token = tokens.front();
+		tokens.pop();
+
+		if (token.type == CLOSE_BRACE)
+			break ;
+
+		if (token.type == STRING)
+		{
+			it = ConfigurationParser::_locationDirectives.find(token.content);
+
+			if (it != ConfigurationParser::_locationDirectives.end())
+			{
+				it->second(tokens, location);
+				continue ;
+			}
+		}
+
+		throw UnexpectedToken(token);
+	}
+
+	if (token.type != CLOSE_BRACE)
+		throw UnexpectedToken(token, "}");
+
+	config.addLocation(location);
+}
+
+void	ConfigurationParser::_parseAutoindex(std::queue<t_token> &tokens,
+	LocationConfiguration &config)
+{
+	t_token	token;
+
+	token = tokens.front();
+	tokens.pop();
+
+	if (token.type != STRING)
+		throw UnexpectedToken(token, "string");
+	if (tokens.front().type != SEMICOLON)
+		throw UnexpectedToken(tokens.front(), ";");
+
+	if (token.content != "on" && token.content != "off")
+		throw UnexpectedToken(token, "on / off");
+
+	config.setAutoindex(token.content == "on");
 	tokens.pop();
 }
 
