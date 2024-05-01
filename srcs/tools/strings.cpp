@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 12:31:15 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/26 14:38:58 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/01 13:50:02 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,44 @@ std::string	join(const std::vector<std::string> &strings,
 		joined += strings[i++] + sep;
 	joined += strings[i];
 	return (joined);
+}
+
+unsigned long int	bytestoul(const std::string &str)
+{
+	unsigned long int	nbr;
+	char				factor = 0;
+	std::istringstream	iss(str);
+
+	if (str[0] == '-')
+		throw std::invalid_argument("Negative byte string `" + str + "`");
+	
+	iss >> nbr;
+
+	if (!iss.eof())
+		iss >> factor >> std::ws;
+
+	if (iss.fail() || !iss.eof())
+		throw std::invalid_argument("Invalid byte string `" + str + "`");
+
+	switch (factor)
+	{
+		case 'K': case 'k':
+			nbr *= 1024;
+			break;
+		case 'M': case 'm':
+			nbr *= 1024 * 1024;
+			break;
+		case 'G': case 'g':
+			nbr *= 1024 * 1024 * 1024;
+			break;
+		case 0:
+			break;
+		default:
+			throw std::invalid_argument("Invalid byte factor `"
+				+ tool::strings::toStr(factor) + "`");
+	}
+
+	return (nbr);
 }
 
 } // namespace strings

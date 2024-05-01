@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 10:21:20 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/30 16:34:22 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/01 13:52:28 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -213,6 +213,10 @@ void	ConfigurationParser::_parseServerConfig(std::queue<t_token> &tokens,
 				ConfigurationParser::_parseListen(tokens, config);
 			else if (token.content == "server_name")
 				ConfigurationParser::_parseNames(tokens, config);
+			else if (token.content == "error_page")
+				ConfigurationParser::_parseErrorPage(tokens, config);
+			else if (token.content == "client_max_body_size")
+				ConfigurationParser::_parseClientMaxBodySize(tokens, config);
 			else
 				throw UnexpectedToken(token);
 			continue ;
@@ -245,7 +249,7 @@ void	ConfigurationParser::_parseListen(std::queue<t_token> &tokens,
 			config.setPort(tool::strings::stoi(token.content));
 		else if (!config.setAddress(token.content))
 			throw InvalidConfigFile(tool::strings::toStr(token.lineNbr)
-				+ ": Invalid address: `" + token.content + "`");
+				+ ": listen: Invalid address: `" + token.content + "`");
 	}
 	else
 	{
@@ -254,7 +258,7 @@ void	ConfigurationParser::_parseListen(std::queue<t_token> &tokens,
 		config.setPort(tool::strings::stoi(port));
 		if (!config.setAddress(address))
 			throw InvalidConfigFile(tool::strings::toStr(token.lineNbr)
-				+ ": Invalid address: `" + address + "`");
+				+ ": listen: Invalid address: `" + address + "`");
 	}
 
 	token = tokens.front();
@@ -280,9 +284,72 @@ void	ConfigurationParser::_parseNames(std::queue<t_token> &tokens,
 			config.addServerName(token.content);
 	}
 
-	if (tokens.front().type != SEMICOLON)
+	token = tokens.front();
+	tokens.pop();
+
+	if (token.type != SEMICOLON)
 		throw UnexpectedToken(token, ";");
-	
+}
+
+void	ConfigurationParser::_parseErrorPage(std::queue<t_token> &tokens,
+	Configuration &config)
+{
+	int					code;
+	t_token				token;
+	std::vector<int>	codes;
+
+	token = tokens.front();
+	tokens.pop();
+
+	if (token.type != STRING)
+		throw UnexpectedToken(token, "string");
+	if (tokens.front().type != STRING)
+		throw UnexpectedToken(tokens.front(), "string");
+
+	while (tokens.front().type == STRING)
+	{
+		code = tool::strings::stoi(token.content);
+		if (code < 300 || code > 599)
+			throw InvalidConfigFile(tool::strings::toStr(token.lineNbr)
+				+ ": error_page: Invalid error code: `" + token.content + "`");
+		codes.push_back(code);
+		token = tokens.front();
+		tokens.pop();
+	}
+
+	for (std::vector<int>::iterator it = codes.begin(); it != codes.end(); ++it)
+		config.addErrorRedirect(*it, token.content);
+
+	token = tokens.front();
+	tokens.pop();
+
+	if (token.type != SEMICOLON)
+		throw UnexpectedToken(token, ";");
+}
+
+void	ConfigurationParser::_parseClientMaxBodySize(
+	std::queue<t_token> &tokens, Configuration &config)
+{
+	t_token	token;
+
+	token = tokens.front();
+	tokens.pop();
+
+	if (token.type != STRING)
+		throw UnexpectedToken(token, "string");
+	if (tokens.front().type != SEMICOLON)
+		throw UnexpectedToken(tokens.front(), ";");
+
+	try
+	{
+		config.setClientMaxBodySize(tool::strings::bytestoul(token.content));
+	}
+	catch(const std::invalid_argument &e)
+	{
+		throw InvalidConfigFile(tool::strings::toStr(token.lineNbr)
+			+ ": client_max_body_size: " + e.what());
+	}
+
 	tokens.pop();
 }
 

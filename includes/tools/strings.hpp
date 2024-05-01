@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 12:31:31 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/26 14:37:10 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/01 13:09:43 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,10 @@ namespace	tool
 namespace	strings
 {
 
-int			stoi(const std::string &str);
-std::string	join(const std::vector<std::string> &strings,
+int					stoi(const std::string &str);
+std::string			join(const std::vector<std::string> &strings,
 	const std::string &sep);
+unsigned long int	bytestoul(const std::string &str);
 
 template <typename T>
 std::string	toStr(T elem);

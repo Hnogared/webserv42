@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 10:19:18 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/30 16:20:12 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/01 12:44:42 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,10 @@ class	ConfigurationParser
 		static void	_parseListen(std::queue<t_token> &tokens,
 			Configuration &config);
 		static void	_parseNames(std::queue<t_token> &tokens,
+			Configuration &config);
+		static void	_parseErrorPage(std::queue<t_token> &tokens,
+			Configuration &config);
+		static void	_parseClientMaxBodySize(std::queue<t_token> &tokens,
 			Configuration &config);
 
 

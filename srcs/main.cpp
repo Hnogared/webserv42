@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 21:49:03 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/26 14:54:09 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/01 12:33:57 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int	main()
 
 	configs = webserv::ConfigurationParser::parse("small_config.conf");
 	for (size_t i = 0; i < configs.size(); i++)
-		std::cout << configs[i] << std::endl;
+		std::cout << configs[i] << "\n" << std::endl;
 	return (0);
 }
 
