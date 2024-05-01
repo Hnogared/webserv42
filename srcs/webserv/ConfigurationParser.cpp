@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 10:21:20 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/01 13:52:28 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/01 14:26:56 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,9 @@
 
 namespace	webserv
 {
+const std::map<std::string, ConfigurationParser::t_directiveParser>
+		ConfigurationParser::_serverDirectives
+	= ConfigurationParser::_initializeServerDirectives();
 
 /* ************************************************************************** */
 /* Static methods */
@@ -63,6 +66,18 @@ std::vector<Configuration> ConfigurationParser::parse(const std::string &path)
 
 /* ************************************************************************** */
 /* Private methods */
+
+std::map<std::string, ConfigurationParser::t_directiveParser>
+	ConfigurationParser::_initializeServerDirectives(void)
+{
+	std::map<std::string, t_directiveParser>	directives;
+
+	directives["listen"] = &_parseListen;
+	directives["server_name"] = &_parseNames;
+	directives["error_page"] = &_parseErrorPage;
+	directives["client_max_body_size"] = &_parseClientMaxBodySize;
+	return (directives);
+}
 
 std::queue<ConfigurationParser::t_token>	ConfigurationParser::_tokenizeFile(
 	std::ifstream &file, std::queue<t_token> &tokens)
@@ -149,10 +164,10 @@ void	ConfigurationParser::_parseTokens(std::queue<t_token> &tokens,
 					throw UnexpectedToken(tokens.front(), "{");
 				tokens.pop();
 				ConfigurationParser::_parseHttpConfig(tokens, configurations);
+				continue ;
 			}
-			else
-				throw UnexpectedToken(token);
-			continue ;
+
+			throw UnexpectedToken(token);
 		}
 
 		throw UnexpectedToken(token);
@@ -180,10 +195,10 @@ void	ConfigurationParser::_parseHttpConfig(std::queue<t_token> &tokens,
 					throw UnexpectedToken(tokens.front(), "{");
 				tokens.pop();
 				ConfigurationParser::_parseServerConfig(tokens, configurations);
+				continue ;
 			}
-			else
-				throw UnexpectedToken(token);
-			continue ;
+
+			throw UnexpectedToken(token);
 		}
 
 		throw UnexpectedToken(token);
@@ -199,6 +214,7 @@ void	ConfigurationParser::_parseServerConfig(std::queue<t_token> &tokens,
 	t_token			token;
 	t_contextType	context = SERVER;
 	Configuration	config;
+	std::map<std::string, t_directiveParser>::const_iterator it;
 
 	while (!tokens.empty())
 	{
@@ -209,17 +225,13 @@ void	ConfigurationParser::_parseServerConfig(std::queue<t_token> &tokens,
 		
 		if (token.type == STRING)
 		{
-			if (token.content == "listen")
-				ConfigurationParser::_parseListen(tokens, config);
-			else if (token.content == "server_name")
-				ConfigurationParser::_parseNames(tokens, config);
-			else if (token.content == "error_page")
-				ConfigurationParser::_parseErrorPage(tokens, config);
-			else if (token.content == "client_max_body_size")
-				ConfigurationParser::_parseClientMaxBodySize(tokens, config);
-			else
-				throw UnexpectedToken(token);
-			continue ;
+			it = ConfigurationParser::_serverDirectives.find(token.content);
+
+			if (it != ConfigurationParser::_serverDirectives.end())
+			{
+				it->second(tokens, config);
+				continue ;
+			}
 		}
 
 		throw UnexpectedToken(token);

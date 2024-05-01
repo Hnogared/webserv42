@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 10:19:18 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/01 12:44:42 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/01 14:23:40 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,12 +57,22 @@ class	ConfigurationParser
 			std::string	content;
 		}	t_token;
 
+		/* Typedefs */
+		typedef void (*t_directiveParser)(std::queue<t_token>&, Configuration&);
+
 		/* Static methods */
 		static std::vector<Configuration> parse(const std::string &path);
 
 
 	private:
+		/* Private attributes */
+		static const std::map<std::string, t_directiveParser> _serverDirectives;
+
+
 		/* Private methods */
+		static std::map<std::string, t_directiveParser>
+			_initializeServerDirectives(void);
+
 		static std::queue<t_token>	_tokenizeFile(std::ifstream &file,
 			std::queue<t_token> &tokens);
 		static void	_tokenizeLine(const std::string &line,
