@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 23:01:55 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/19 17:32:10 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/02 11:25:39 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,7 +133,8 @@ void	HttpRequest::_parseHeaders(std::istringstream &iss_request)
 			else
 			{
 				header_name = line.substr(0, colon_pos);
-				header_value = http::trimLWS(line.substr(colon_pos + 1));
+				header_value = tool::strings::trim(line.substr(colon_pos + 1),
+					" \t\n\r");
 			}
 			this->addHeader(header_name, header_value);
 		}

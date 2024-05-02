@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 10:21:20 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/02 10:58:18 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/02 12:02:39 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,7 @@ std::map<std::string, ConfigurationParser::t_locationDirectiveParser>
 	directives["autoindex"] = &_parseAutoindex;
 	directives["limit_except"] = &_parseAllowedMethods;
 	directives["return"] = &_parseReturn;
+	directives["root"] = &_parseRoot;
 	return (directives);
 }
 
@@ -509,6 +510,37 @@ void	ConfigurationParser::_parseReturn(std::queue<t_token> &tokens,
 
 	if (token.type != SEMICOLON)
 		throw UnexpectedToken(token, ";");
+}
+
+void	ConfigurationParser::_parseRoot(std::queue<t_token> &tokens,
+	LocationConfiguration &config)
+{
+	t_token	token;
+
+	if (tokens.empty())
+		throw MissingToken("string");
+
+	token = tokens.front();
+	tokens.pop();
+
+	if (tokens.empty())
+		throw MissingToken(";");
+	if (token.type != STRING)
+		throw UnexpectedToken(token, "string");
+	if (tokens.front().type != SEMICOLON)
+		throw UnexpectedToken(tokens.front(), ";");
+
+	try
+	{
+		config.setRoot(token.content);
+	}
+	catch (const LocationConfiguration::InvalidPath &e)
+	{
+		throw InvalidConfigFile(tool::strings::toStr(token.lineNbr)
+			+ ": root: " + e.what());
+	}
+
+	tokens.pop();
 }
 
 

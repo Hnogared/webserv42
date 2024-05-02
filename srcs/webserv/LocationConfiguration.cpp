@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/01 14:41:57 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/02 11:01:09 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/02 12:03:37 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ namespace webserv
 /* Default constructor */
 LocationConfiguration::LocationConfiguration(void)
 	: _path("/"),
+	_root("."),
 	_allowedMethods(),
 	_autoindex(false),
 	_returnCode(0),
@@ -47,6 +48,7 @@ LocationConfiguration	&LocationConfiguration::operator=(
 	if (this == &original)
 		return (*this);
 	this->_path = original.getPath();
+	this->_root = original.getRoot();
 	this->_allowedMethods = original.getAllowedMethods();
 	this->_autoindex = original.isAutoindex();
 	this->_returnCode = original.getReturnCode();
@@ -59,6 +61,8 @@ bool	LocationConfiguration::operator<(const LocationConfiguration &other)
 {
 	if (this->_path != other.getPath())
 		return (this->_path < other.getPath());
+	if (this->_root != other.getRoot())
+		return (this->_root < other.getRoot());
 	if (this->_allowedMethods != other.getAllowedMethods())
 		return (this->_allowedMethods < other.getAllowedMethods());
 	if (this->_autoindex != other.isAutoindex())
@@ -75,6 +79,11 @@ bool	LocationConfiguration::operator<(const LocationConfiguration &other)
 std::string	LocationConfiguration::getPath(void) const
 {
 	return (this->_path);
+}
+
+std::string	LocationConfiguration::getRoot(void) const
+{
+	return (this->_root);
 }
 
 const std::set<std::string>	&LocationConfiguration::getAllowedMethods(void)
@@ -105,6 +114,13 @@ std::string	LocationConfiguration::getReturnMessage(void) const
 void	LocationConfiguration::setPath(const std::string &path)
 {
 	this->_path = path;
+}
+
+void	LocationConfiguration::setRoot(const std::string &root)
+{
+	if (!tool::strings::isValidPath(root))
+		throw InvalidPath("`" + root + "`: " + strerror(errno));
+	this->_root = root;
 }
 
 void	LocationConfiguration::setAllowedMethods(
@@ -147,6 +163,7 @@ bool	LocationConfiguration::isMethodAllowed(const std::string &method) const
 std::ostream	&LocationConfiguration::print(std::ostream &os) const
 {
 	os << this->_path << ":"
+		<< "\nRoot: '" << this->_root << "'"
 		<< "\nAllowed methods: ";
 
 	if (this->_allowedMethods.empty())
@@ -162,6 +179,39 @@ std::ostream	&LocationConfiguration::print(std::ostream &os) const
 			<< "] '" << this->getReturnMessage() << "'";
 	}
 	return (os);
+}
+
+
+/* ************************************************************************** */
+/* Exceptions */
+
+/* Default constructor */
+LocationConfiguration::InvalidPath::InvalidPath(void)
+	: RuntimeError("Invalid path", 23) {}
+
+/* Message constructor */
+LocationConfiguration::InvalidPath::InvalidPath(const std::string &message)
+	: RuntimeError(message, 23) {}
+
+/* Copy constructor */
+LocationConfiguration::InvalidPath::InvalidPath(const InvalidPath &original)
+	: RuntimeError(original) {}
+
+
+/* Destructor */
+LocationConfiguration::InvalidPath::~InvalidPath(void) throw() {}
+
+
+/* ************************************ */
+/* Operator overloads */
+
+/* Copy assignment operator */
+LocationConfiguration::InvalidPath
+	&LocationConfiguration::InvalidPath::operator=(const InvalidPath &original)
+{
+	if (this != &original)
+		RuntimeError::operator=(original);
+	return (*this);
 }
 
 

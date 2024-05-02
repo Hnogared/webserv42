@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 10:19:18 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/01 20:03:24 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/02 11:08:03 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,6 +109,8 @@ class	ConfigurationParser
 		static void	_parseAllowedMethods(std::queue<t_token> &tokens,
 			LocationConfiguration &config);
 		static void	_parseReturn(std::queue<t_token> &tokens,
+			LocationConfiguration &config);
+		static void	_parseRoot(std::queue<t_token> &tokens,
 			LocationConfiguration &config);
 
 

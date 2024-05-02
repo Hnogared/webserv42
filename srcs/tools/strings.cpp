@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 12:31:15 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/01 15:02:03 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/02 11:47:12 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,21 @@ unsigned long int	bytestoul(const std::string &str)
 	}
 
 	return (nbr);
+}
+
+std::string	trim(const std::string &str, const std::string &set)
+{
+	std::string::size_type	start = str.find_first_not_of(set);
+	std::string::size_type	end = str.find_last_not_of(set);
+
+	if (start == std::string::npos)
+		return ("");
+	return (str.substr(start, end - start + 1));
+}
+
+bool	isValidPath(const std::string &path)
+{
+	return (access(path.c_str(), F_OK) == 0);
 }
 
 } // namespace strings
