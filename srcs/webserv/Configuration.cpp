@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 09:35:37 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/02 16:36:51 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/02 17:49:22 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,13 +27,6 @@ Configuration::Configuration(void)
 	this->_address.sin_addr.s_addr = htonl(INADDR_ANY);
 }
 
-/* Path constructor */
-Configuration::Configuration(const std::string &path)
-{
-	(void)path;
-	//ConfigurationParser::parse(path);
-}
-
 /* Copy constructor */
 Configuration::Configuration(const Configuration &original)
 {
@@ -52,7 +45,7 @@ Configuration	&Configuration::operator=(const Configuration &original)
 {
 	if (this == &original)
 		return (*this);
-	this->_address = original.getAddress();
+	this->_address = original.getConstAddress();
 	this->_serverNames = original.getServerNames();
 	this->_root = original.getRoot();
 	this->_index = original.getIndex();
@@ -66,7 +59,12 @@ Configuration	&Configuration::operator=(const Configuration &original)
 /* ************************************************************************** */
 /* Getters */
 
-sockaddr_in	Configuration::getAddress(void) const
+sockaddr_in	&Configuration::getAddress(void)
+{
+	return (this->_address);
+}
+
+const sockaddr_in	&Configuration::getConstAddress(void) const
 {
 	return (this->_address);
 }

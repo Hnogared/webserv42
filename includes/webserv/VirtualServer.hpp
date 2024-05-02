@@ -17,11 +17,11 @@
 # include <vector>
 # include <fstream>
 # include <utility>
-# include <cerrno>
 
+# include <cerrno>
+# include <cstring>
 # include <sys/socket.h>
 # include <arpa/inet.h>
-# include <string.h>
 # include <exception>
 # include <unistd.h>
 # include <poll.h>
@@ -32,8 +32,7 @@
 # include "Socket.hpp"
 # include "Client.hpp"
 # include "HttpRequest.hpp"
-
-# define LOCK_FILE	"/tmp/webserv42.lock"
+# include "Configuration.hpp"
 
 namespace	webserv
 {
@@ -42,7 +41,7 @@ class	VirtualServer
 {
 	public:
 		/* Constructors */
-		explicit VirtualServer(int port, int backlog = 10);
+		explicit VirtualServer(const Configuration &config, int backlog = 10);
 
 		/* Destructor */
 		~VirtualServer(void);
@@ -61,24 +60,16 @@ class	VirtualServer
 
 
 	private:
-		/* Private static attributes */
-		static bool					running;
-
 		/* Private attributes */
+		bool				_running;
+		Configuration		_config;
 		Socket				_socket;
-		int					_port;
 		int					_backlog;
-		struct sockaddr_in	_server_address;
 		std::vector<Client>	_clients;
 
-		/* Private static methods */
-		static void	sigHandler(int signal);
-
-		/* [delete] Copy constructor */
-		VirtualServer(const VirtualServer &original);
-
-		/* [delete] Copy assignment operator */
-		VirtualServer	&operator=(const VirtualServer &original);
+		/* [delete] */
+		VirtualServer(const VirtualServer&);
+		VirtualServer	&operator=(const VirtualServer&);
 };
 
 } // namespace webserv

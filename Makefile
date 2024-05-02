@@ -10,19 +10,20 @@ VPATH	:=	srcs:			\
 			srcs/tools
 
 SRCS	:=	main.cpp					\
+			Server.cpp					\
 			VirtualServer.cpp			\
 			Configuration.cpp			\
 			LocationConfiguration.cpp	\
 			ConfigurationParser.cpp		\
 			Client.cpp					\
-			strings.cpp					\
-			colors.cpp					\
-			Harl.cpp					\
-			exceptions.cpp				\
 			HttpMessage.cpp				\
 			HttpRequest.cpp				\
 			HttpResponse.cpp			\
 			Socket.cpp					\
+			Harl.cpp					\
+			strings.cpp					\
+			colors.cpp					\
+			exceptions.cpp				\
 			net.cpp
 
 OBJS_DIR:=	objs

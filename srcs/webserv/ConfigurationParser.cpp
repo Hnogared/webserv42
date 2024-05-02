@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 10:21:20 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/02 16:24:08 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/02 16:54:05 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,11 +30,11 @@ const std::map<std::string, ConfigurationParser::t_locationDirectiveParser>
 /* ************************************************************************** */
 /* Static methods */
 
-std::vector<Configuration> ConfigurationParser::parse(const std::string &path)
+std::vector<Configuration> *ConfigurationParser::parse(const std::string &path)
 {
 	std::ifstream				file;
-	std::vector<Configuration>	configurations;
 	std::queue<t_token>			tokens;
+	std::vector<Configuration>	*configurations = NULL;
 
 	if (path.size() < 8 || path.substr(path.size() - 5) != ".conf")
 	{
@@ -53,13 +53,22 @@ std::vector<Configuration> ConfigurationParser::parse(const std::string &path)
 	{
 		ConfigurationParser::_tokenizeFile(file, tokens);
 		file.close();
-		ConfigurationParser::_parseTokens(tokens, configurations);
+		configurations = new std::vector<Configuration>;
+		ConfigurationParser::_parseTokens(tokens, *configurations);
 	}
 	catch (const RuntimeError &e)
 	{
 		if (file.is_open())
 			file.close();
+		delete configurations;
 		throw RuntimeError(path + ": " + e.what(), e.code());
+	}
+	catch (const std::exception &e)
+	{
+		if (file.is_open())
+			file.close();
+		delete configurations;
+		throw std::runtime_error(path + ": " + e.what());
 	}
 
 	return (configurations);

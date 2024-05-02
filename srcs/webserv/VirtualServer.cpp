@@ -15,35 +15,12 @@
 namespace	webserv
 {
 
-/* Static class attributes initialization */
-bool	VirtualServer::running = false;
-
 /* ************************************************************************** */
-/* Constructors */
 
 /* Default constructor */
-VirtualServer::VirtualServer(int port, int backlog) : _port(port), _backlog(backlog)
+VirtualServer::VirtualServer(const Configuration &config, int backlog)
+	: _config(config), _backlog(backlog)
 {
-	signal(SIGINT, sigHandler);
-
-	{
-		std::ifstream	lock_file(LOCK_FILE);
-
-		if (lock_file.is_open())
-		{
-			lock_file.close();
-			throw std::runtime_error("Another instance is already running");
-		}
-	}
-
-	{
-		std::ofstream	lock_file_out(LOCK_FILE);
-
-		if (!lock_file_out.is_open())
-			throw std::runtime_error("Failed to create lock file");
-		lock_file_out.close();
-	}
-
 	int	optval = 1;
 
 	this->_socket = Socket(socket(AF_INET, SOCK_STREAM, 0));
@@ -54,12 +31,9 @@ VirtualServer::VirtualServer(int port, int backlog) : _port(port), _backlog(back
 			+ std::string(strerror(errno)));
 	}
 
-	this->_server_address.sin_family = AF_INET;
-	this->_server_address.sin_addr.s_addr = htonl(INADDR_ANY); // All interfaces
-	this->_server_address.sin_port = htons(port);
-
-	if (bind(this->_socket.getFd(), (struct sockaddr *)&_server_address,
-		sizeof(this->_server_address)) == -1)
+	if (bind(this->_socket.getFd(),
+		(struct sockaddr *)&(this->_config.getConstAddress()),
+		sizeof(this->_config.getAddress())) == -1)
 	{
 		throw SocketError("Failed to bind socket: "
 			+ std::string(strerror(errno)));
@@ -76,7 +50,7 @@ VirtualServer::VirtualServer(int port, int backlog) : _port(port), _backlog(back
 /* Destructor */
 VirtualServer::~VirtualServer(void)
 {
-	remove(LOCK_FILE);
+	remove(WS_LOCK_FILE);
 }
 
 
@@ -85,7 +59,7 @@ VirtualServer::~VirtualServer(void)
 
 bool	VirtualServer::isRunning(void) const
 {
-	return (VirtualServer::running);
+	return (this->_running);
 }
 
 webserv::Socket	VirtualServer::getSocket(void) const
@@ -95,7 +69,7 @@ webserv::Socket	VirtualServer::getSocket(void) const
 
 int	VirtualServer::getPort(void) const
 {
-	return (this->_port);
+	return (this->_config.getPort());
 }
 
 int	VirtualServer::getBacklog(void) const
@@ -105,18 +79,24 @@ int	VirtualServer::getBacklog(void) const
 
 struct sockaddr_in	VirtualServer::getVirtualServerAddress(void) const
 {
-	return (this->_server_address);
+	return (this->_config.getConstAddress());
 }
 
 
 /* ************************************************************************** */
 /* Public methods */
 
+
+
+
+
+
+/*
 void	VirtualServer::run(void)
 {
-	VirtualServer::running = true;
+	this->_running = true;
 
-	while (VirtualServer::running)
+	while (this->_running)
 	{
 		int				res;
 		size_t			clients_count = this->_clients.size();
@@ -221,21 +201,5 @@ void	VirtualServer::handleRequest(const Client &client)
 
 	client.sendResponse(http::HttpResponse(200, "OK", "HTTP/1.1"));
 }
-
-
-/* ************************************************************************** */
-/* Private static methods */
-
- /* Method to execute when receiving signals */
-void	VirtualServer::sigHandler(int signal)
-{
-	if (signal == SIGINT)
-	{
-		remove(LOCK_FILE);
-		VirtualServer::running = false;
-
-		Harl::complain(Harl::INFO, "Received SIGINT, stopping...");
-	}
-}
-
+*/
 } // namespace webserv

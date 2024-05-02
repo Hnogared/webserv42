@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 10:19:18 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/02 16:23:54 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/02 16:59:41 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,6 @@
 # include "strings.hpp"
 # include "exceptions.hpp"
 # include "Configuration.hpp"
-
 
 namespace	webserv
 {
@@ -64,7 +63,7 @@ class	ConfigurationParser
 			LocationConfiguration&);
 
 		/* Static methods */
-		static std::vector<Configuration> parse(const std::string &path);
+		static std::vector<Configuration> *parse(const std::string &path);
 
 
 	private:

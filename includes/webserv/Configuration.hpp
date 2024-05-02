@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 09:34:06 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/02 13:34:22 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/02 17:49:57 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,6 @@ class	Configuration
 	public:
 		/* Constructors */
 		explicit Configuration(void);
-		explicit Configuration(const std::string &path);
 		Configuration(const Configuration &original);
 
 		/* Destructor */
@@ -42,7 +41,8 @@ class	Configuration
 		Configuration &operator=(const Configuration &original);
 
 		/* Getters */
-		sockaddr_in							getAddress(void) const;
+		sockaddr_in							&getAddress(void);
+		const sockaddr_in					&getConstAddress(void) const;
 		std::string							getAddressString(void) const;
 		int									getPort(void) const;
 		const std::set<std::string>			&getServerNames(void) const;
