@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/01 14:41:57 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/02 13:15:01 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/02 16:35:52 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,9 @@ LocationConfiguration::LocationConfiguration(const std::string &path)
 	_allowedMethods(),
 	_autoindex(false),
 	_returnCode(0),
-	_returnMessage("")
+	_returnMessage(""),
+	_fcgiServer(""),
+	_fcgiParams()
 {}
 
 /* Copy constructor */
@@ -55,6 +57,8 @@ LocationConfiguration	&LocationConfiguration::operator=(
 	this->_autoindex = original.isAutoindex();
 	this->_returnCode = original.getReturnCode();
 	this->_returnMessage = original.getReturnMessage();
+	this->_fcgiServer = original.getFCGIServer();
+	this->_fcgiParams = original.getFCGIParams();
 	return (*this);
 }
 
@@ -73,7 +77,11 @@ bool	LocationConfiguration::operator<(const LocationConfiguration &other)
 		return (this->_autoindex < other.isAutoindex());
 	if (this->_returnCode != other.getReturnCode())
 		return (this->_returnCode < other.getReturnCode());
-	return (this->_returnMessage < other.getReturnMessage());
+	if (this->_returnMessage != other.getReturnMessage())
+		return (this->_returnMessage < other.getReturnMessage());
+	if (this->_fcgiServer != other.getFCGIServer())
+		return (this->_fcgiServer < other.getFCGIServer());
+	return (this->_fcgiParams < other.getFCGIParams());
 }
 
 
@@ -114,6 +122,17 @@ int	LocationConfiguration::getReturnCode(void) const
 std::string	LocationConfiguration::getReturnMessage(void) const
 {
 	return (this->_returnMessage);
+}
+
+std::string	LocationConfiguration::getFCGIServer(void) const
+{
+	return (this->_fcgiServer);
+}
+
+const std::map<std::string, std::string>
+	&LocationConfiguration::getFCGIParams(void) const
+{
+	return (this->_fcgiParams);
 }
 
 
@@ -164,6 +183,23 @@ void	LocationConfiguration::setReturnMessage(const std::string
 	this->_returnMessage = returnMessage;
 }
 
+void	LocationConfiguration::setFCGIServer(const std::string &fcgiServer)
+{
+	this->_fcgiServer = fcgiServer;
+}
+
+void	LocationConfiguration::setFCGIParams(const std::map<std::string,
+	std::string> &params)
+{
+	this->_fcgiParams = params;
+}
+
+void	LocationConfiguration::addFCGIParam(const std::string &key,
+	const std::string &value)
+{
+	this->_fcgiParams[key] = value;
+}
+
 
 /* ************************************************************************** */
 /* Public methods */
@@ -176,12 +212,12 @@ bool	LocationConfiguration::isMethodAllowed(const std::string &method) const
 
 std::ostream	&LocationConfiguration::print(std::ostream &os) const
 {
-	os << "'" << this->_path << "'";
+	os << "@ " << this->_path;
 
 	if (!this->_root.empty())
-		os << "\nRoot  : '" << this->_root << "'";
+		os << "\nRoot            : " << this->_root;
 	
-	os << "\nIndex : '" << this->_index << "'"
+	os << "\nIndex           : " << this->_index
 		<< "\nAllowed methods : ";
 
 	if (this->_allowedMethods.empty())
@@ -189,12 +225,24 @@ std::ostream	&LocationConfiguration::print(std::ostream &os) const
 	else
 		os << tool::strings::join(this->_allowedMethods, ", ");
 
-	os << "\nAutoindex : " << (this->isAutoindex() ? "on" : "off");
+	os << "\nAutoindex       : " << (this->isAutoindex() ? "on" : "off");
 
 	if (this->_returnCode != 0)
 	{
-		os << "\nReturn : [" << this->getReturnCode()
-			<< "] '" << this->getReturnMessage() << "'";
+		os << "\nReturn          : [" << this->getReturnCode() << "] "
+			<< this->getReturnMessage();
+	}
+
+	if (!this->_fcgiServer.empty())
+		os << "\n\nFastCGI server  : " << this->_fcgiServer;
+
+	if (!this->_fcgiParams.empty())
+	{
+		std::map<std::string, std::string>::const_iterator	it;
+
+		os << "\nFastCGI params";
+		for (it = this->_fcgiParams.begin(); it != this->_fcgiParams.end();it++)
+			os << "\n └ " << it->first << " = " << it->second;
 	}
 	return (os);
 }

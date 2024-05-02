@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/01 14:34:11 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/02 13:12:27 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/02 16:19:35 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include <string>
 # include <set>
+# include <map>
 # include <iostream>
 
 # include <cerrno>
@@ -50,6 +51,8 @@ class	LocationConfiguration
 		bool						isAutoindex(void) const;
 		int							getReturnCode(void) const;
 		std::string					getReturnMessage(void) const;
+		std::string					getFCGIServer(void) const;
+		const std::map<std::string, std::string>	&getFCGIParams(void) const;
 
 		/* Setters */
 		void	setPath(const std::string &path);
@@ -60,6 +63,9 @@ class	LocationConfiguration
 		void	setAutoindex(bool autoindex);
 		void	setReturnCode(int returnCode);
 		void	setReturnMessage(const std::string &returnMessage);
+		void	setFCGIServer(const std::string &fcgiServer);
+		void	setFCGIParams(const std::map<std::string, std::string> &params);
+		void	addFCGIParam(const std::string &key, const std::string &value);
 
 		/* Public methods */
 		bool			isMethodAllowed(const std::string &method) const;
@@ -75,6 +81,8 @@ class	LocationConfiguration
 		bool					_autoindex;
 		int						_returnCode;
 		std::string				_returnMessage;
+		std::string				_fcgiServer;
+		std::map<std::string, std::string>	_fcgiParams;
 
 		/* [delete] */
 		LocationConfiguration(void);

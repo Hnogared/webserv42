@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 10:19:18 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/02 13:38:06 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/02 16:23:54 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,7 +120,10 @@ class	ConfigurationParser
 			LocationConfiguration &config);
 		static void	_parseLocIndex(std::queue<t_token> &tokens,
 			LocationConfiguration &config);
-
+		static void	_parseLocFCGIPass(std::queue<t_token> &tokens,
+			LocationConfiguration &config);
+		static void	_parseLocFCGIParam(std::queue<t_token> &tokens,
+			LocationConfiguration &config);
 
 		/* [delete] */
 		ConfigurationParser();

@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 09:35:37 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/02 13:34:32 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/02 16:36:51 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -184,10 +184,10 @@ std::ostream	&Configuration::print(std::ostream &os) const
 	{
 		std::map<int, std::string>::const_iterator	it;
 
-		os << "\n\nError redirects :";
+		os << "\n\nError redirects";
 		for (it = this->_errorRedirects.begin();
 				it != this->_errorRedirects.end(); it++)
-			os << "\n  " << it->first << " -> " << it->second;
+			os << "\n └ " << it->first << " -> " << it->second;
 	}
 
 

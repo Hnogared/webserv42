@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 10:21:20 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/02 13:38:32 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/02 16:24:08 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,8 @@ std::map<std::string, ConfigurationParser::t_locationDirectiveParser>
 	directives["return"] = &_parseLocReturn;
 	directives["root"] = &_parseLocRoot;
 	directives["index"] = &_parseLocIndex;
+	directives["fastcgi_pass"] = &_parseLocFCGIPass;
+	directives["fastcgi_param"] = &_parseLocFCGIParam;
 	return (directives);
 }
 
@@ -479,7 +481,7 @@ void	ConfigurationParser::_parseServerLocation(std::queue<t_token> &tokens,
 void	ConfigurationParser::_completeLocation(LocationConfiguration &locConfig,
 	const Configuration &servConfig)
 {
-	if (locConfig.getRoot().empty())
+	if (locConfig.getRoot().empty() && !servConfig.getRoot().empty())
 		locConfig.setRoot(servConfig.getRoot());
 	if (locConfig.getIndex().empty())
 		locConfig.setIndex(servConfig.getIndex());
@@ -622,6 +624,62 @@ void	ConfigurationParser::_parseLocIndex(std::queue<t_token> &tokens,
 	
 	config.setIndex(token.content);
 	tokens.pop();
+}
+
+void	ConfigurationParser::_parseLocFCGIPass(std::queue<t_token> &tokens,
+	LocationConfiguration &config)
+{
+	t_token	token;
+
+	if (tokens.empty())
+		throw MissingToken("string");
+	
+	token = tokens.front();
+	tokens.pop();
+
+	if (tokens.empty())
+		throw MissingToken(";");
+	if (token.type != STRING)
+		throw UnexpectedToken(token, "string");
+	
+	config.setFCGIServer(token.content);
+	tokens.pop();
+}
+
+void	ConfigurationParser::_parseLocFCGIParam(std::queue<t_token> &tokens,
+	LocationConfiguration &config)
+{
+	std::string	key;
+	t_token		token;
+
+	if (tokens.empty())
+		throw MissingToken("string");
+
+	token = tokens.front();
+	tokens.pop();
+
+	if (tokens.empty())
+		throw MissingToken("string");
+	if (token.type != STRING)
+		throw UnexpectedToken(token, "string");
+
+	key = token.content;
+
+	token = tokens.front();
+	tokens.pop();
+
+	if (tokens.empty())
+		throw MissingToken("string");
+	if (token.type != STRING)
+		throw UnexpectedToken(token, "string");
+
+	config.addFCGIParam(key, token.content);
+
+	token = tokens.front();
+	tokens.pop();
+
+	if (token.type != SEMICOLON)
+		throw UnexpectedToken(token, ";");
 }
 
 
