@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 10:21:20 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/02 12:02:39 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/02 13:38:32 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,11 +74,13 @@ std::map<std::string, ConfigurationParser::t_serverDirectiveParser>
 {
 	std::map<std::string, t_serverDirectiveParser>	directives;
 
-	directives["listen"] = &_parseListen;
-	directives["server_name"] = &_parseNames;
-	directives["error_page"] = &_parseErrorPage;
-	directives["client_max_body_size"] = &_parseClientMaxBodySize;
-	directives["location"] = &_parseLocation;
+	directives["listen"] = &_parseServerListen;
+	directives["server_name"] = &_parseServerNames;
+	directives["error_page"] = &_parseServerErrorPage;
+	directives["client_max_body_size"] = &_parseServerClientMaxBodySize;
+	directives["location"] = &_parseServerLocation;
+	directives["root"] = &_parseServerRoot;
+	directives["index"] = &_parseServerIndex;
 	return (directives);
 }
 
@@ -87,10 +89,11 @@ std::map<std::string, ConfigurationParser::t_locationDirectiveParser>
 {
 	std::map<std::string, t_locationDirectiveParser>	directives;
 
-	directives["autoindex"] = &_parseAutoindex;
-	directives["limit_except"] = &_parseAllowedMethods;
-	directives["return"] = &_parseReturn;
-	directives["root"] = &_parseRoot;
+	directives["autoindex"] = &_parseLocAutoindex;
+	directives["limit_except"] = &_parseLocAllowedMethods;
+	directives["return"] = &_parseLocReturn;
+	directives["root"] = &_parseLocRoot;
+	directives["index"] = &_parseLocIndex;
 	return (directives);
 }
 
@@ -229,7 +232,7 @@ void	ConfigurationParser::_parseServerConfig(std::queue<t_token> &tokens,
 	t_token			token;
 	t_contextType	context = SERVER;
 	Configuration	config;
-	std::map<std::string, t_serverDirectiveParser>::const_iterator it;
+	std::map<std::string, t_serverDirectiveParser>::const_iterator dirIt;
 
 	while (!tokens.empty())
 	{
@@ -240,11 +243,11 @@ void	ConfigurationParser::_parseServerConfig(std::queue<t_token> &tokens,
 		
 		if (token.type == STRING)
 		{
-			it = ConfigurationParser::_serverDirectives.find(token.content);
+			dirIt = ConfigurationParser::_serverDirectives.find(token.content);
 
-			if (it != ConfigurationParser::_serverDirectives.end())
+			if (dirIt != ConfigurationParser::_serverDirectives.end())
 			{
-				it->second(tokens, config);
+				dirIt->second(tokens, config);
 				continue ;
 			}
 		}
@@ -255,7 +258,7 @@ void	ConfigurationParser::_parseServerConfig(std::queue<t_token> &tokens,
 	configurations.push_back(config);
 }
 
-void	ConfigurationParser::_parseListen(std::queue<t_token> &tokens,
+void	ConfigurationParser::_parseServerListen(std::queue<t_token> &tokens,
 	Configuration &config)
 {
 	size_t		pos;
@@ -295,7 +298,7 @@ void	ConfigurationParser::_parseListen(std::queue<t_token> &tokens,
 		throw UnexpectedToken(token, ";");
 }
 
-void	ConfigurationParser::_parseNames(std::queue<t_token> &tokens,
+void	ConfigurationParser::_parseServerNames(std::queue<t_token> &tokens,
 	Configuration &config)
 {
 	t_token		token;
@@ -318,7 +321,7 @@ void	ConfigurationParser::_parseNames(std::queue<t_token> &tokens,
 		throw UnexpectedToken(token, ";");
 }
 
-void	ConfigurationParser::_parseErrorPage(std::queue<t_token> &tokens,
+void	ConfigurationParser::_parseServerErrorPage(std::queue<t_token> &tokens,
 	Configuration &config)
 {
 	int					code;
@@ -354,7 +357,7 @@ void	ConfigurationParser::_parseErrorPage(std::queue<t_token> &tokens,
 		throw UnexpectedToken(token, ";");
 }
 
-void	ConfigurationParser::_parseClientMaxBodySize(
+void	ConfigurationParser::_parseServerClientMaxBodySize(
 	std::queue<t_token> &tokens, Configuration &config)
 {
 	t_token	token;
@@ -380,11 +383,56 @@ void	ConfigurationParser::_parseClientMaxBodySize(
 	tokens.pop();
 }
 
-void	ConfigurationParser::_parseLocation(std::queue<t_token> &tokens,
+void	ConfigurationParser::_parseServerRoot(std::queue<t_token> &tokens,
 	Configuration &config)
 {
-	t_token					token;
-	LocationConfiguration	location;
+	t_token	token;
+
+	token = tokens.front();
+	tokens.pop();
+
+	if (token.type != STRING)
+		throw UnexpectedToken(token, "string");
+	if (tokens.front().type != SEMICOLON)
+		throw UnexpectedToken(tokens.front(), ";");
+
+	try
+	{
+		config.setRoot(token.content);
+	}
+	catch (const InvalidPath &e)
+	{
+		throw InvalidConfigFile(tool::strings::toStr(token.lineNbr)
+			+ ": root: " + e.what());
+	}
+
+	tokens.pop();
+}
+
+void	ConfigurationParser::_parseServerIndex(std::queue<t_token> &tokens,
+	Configuration &config)
+{
+	t_token	token;
+
+	if (tokens.empty())
+		throw MissingToken("string");
+
+	token = tokens.front();
+	tokens.pop();
+
+	if (token.type != STRING)
+		throw UnexpectedToken(token, "string");
+	if (tokens.front().type != SEMICOLON)
+		throw UnexpectedToken(tokens.front(), ";");
+
+	config.setIndex(token.content);
+	tokens.pop();
+}
+
+void	ConfigurationParser::_parseServerLocation(std::queue<t_token> &tokens,
+	Configuration &config)
+{
+	t_token	token;
 	std::map<std::string, t_locationDirectiveParser>::const_iterator it;
 
 	token = tokens.front();
@@ -395,7 +443,7 @@ void	ConfigurationParser::_parseLocation(std::queue<t_token> &tokens,
 	if (token.type != STRING)
 		throw UnexpectedToken(token, "string");
 
-	location.setPath(token.content);
+	LocationConfiguration	location(token.content);
 	tokens.pop();
 
 	while (!tokens.empty())
@@ -423,10 +471,21 @@ void	ConfigurationParser::_parseLocation(std::queue<t_token> &tokens,
 	if (token.type != CLOSE_BRACE)
 		throw UnexpectedToken(token, "}");
 
+	ConfigurationParser::_completeLocation(location, config);
+
 	config.addLocation(location);
 }
 
-void	ConfigurationParser::_parseAutoindex(std::queue<t_token> &tokens,
+void	ConfigurationParser::_completeLocation(LocationConfiguration &locConfig,
+	const Configuration &servConfig)
+{
+	if (locConfig.getRoot().empty())
+		locConfig.setRoot(servConfig.getRoot());
+	if (locConfig.getIndex().empty())
+		locConfig.setIndex(servConfig.getIndex());
+}
+
+void	ConfigurationParser::_parseLocAutoindex(std::queue<t_token> &tokens,
 	LocationConfiguration &config)
 {
 	t_token	token;
@@ -446,8 +505,8 @@ void	ConfigurationParser::_parseAutoindex(std::queue<t_token> &tokens,
 	tokens.pop();
 }
 
-void	ConfigurationParser::_parseAllowedMethods(std::queue<t_token> &tokens,
-	LocationConfiguration &config)
+void	ConfigurationParser::_parseLocAllowedMethods(
+	std::queue<t_token> &tokens, LocationConfiguration &config)
 {
 	t_token	token;
 
@@ -473,7 +532,7 @@ void	ConfigurationParser::_parseAllowedMethods(std::queue<t_token> &tokens,
 	tokens.pop();
 }
 
-void	ConfigurationParser::_parseReturn(std::queue<t_token> &tokens,
+void	ConfigurationParser::_parseLocReturn(std::queue<t_token> &tokens,
 	LocationConfiguration &config)
 {
 	int		code;
@@ -512,7 +571,7 @@ void	ConfigurationParser::_parseReturn(std::queue<t_token> &tokens,
 		throw UnexpectedToken(token, ";");
 }
 
-void	ConfigurationParser::_parseRoot(std::queue<t_token> &tokens,
+void	ConfigurationParser::_parseLocRoot(std::queue<t_token> &tokens,
 	LocationConfiguration &config)
 {
 	t_token	token;
@@ -534,12 +593,34 @@ void	ConfigurationParser::_parseRoot(std::queue<t_token> &tokens,
 	{
 		config.setRoot(token.content);
 	}
-	catch (const LocationConfiguration::InvalidPath &e)
+	catch (const InvalidPath &e)
 	{
 		throw InvalidConfigFile(tool::strings::toStr(token.lineNbr)
 			+ ": root: " + e.what());
 	}
 
+	tokens.pop();
+}
+
+void	ConfigurationParser::_parseLocIndex(std::queue<t_token> &tokens,
+	LocationConfiguration &config)
+{
+	t_token	token;
+
+	if (tokens.empty())
+		throw MissingToken("string");
+
+	token = tokens.front();
+	tokens.pop();
+
+	if (tokens.empty())
+		throw MissingToken(";");
+	if (token.type != STRING)
+		throw UnexpectedToken(token, "string");
+	if (tokens.front().type != SEMICOLON)
+		throw UnexpectedToken(tokens.front(), ";");
+	
+	config.setIndex(token.content);
 	tokens.pop();
 }
 

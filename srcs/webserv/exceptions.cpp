@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 21:06:56 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/26 12:54:37 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/02 12:35:28 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -207,6 +207,37 @@ SocketConnectionClosed	&SocketConnectionClosed::operator=(
 	if (this == &original)
 		return (*this);
 	SocketError::operator=(original);
+	return (*this);
+}
+
+
+/* ************************************************************************** */
+/* Invalid Path                                                               */
+/* ************************************************************************** */
+
+/* Default constructor */
+InvalidPath::InvalidPath(void) : RuntimeError("Invalid path", 23) {}
+
+/* Message constructor */
+InvalidPath::InvalidPath(const std::string &message)
+	: RuntimeError(message, 23) {}
+
+/* Copy constructor */
+InvalidPath::InvalidPath(const InvalidPath &original): RuntimeError(original) {}
+
+
+/* Destructor */
+InvalidPath::~InvalidPath(void) throw() {}
+
+
+/* ************************************************************************** */
+/* Operator overloads */
+
+/* Copy assignment operator */
+InvalidPath	&InvalidPath::operator=(const InvalidPath &original)
+{
+	if (this != &original)
+		RuntimeError::operator=(original);
 	return (*this);
 }
 

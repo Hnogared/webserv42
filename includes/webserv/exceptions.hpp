@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 21:03:07 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/26 12:53:37 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/02 12:36:50 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,6 +106,22 @@ class	SocketConnectionClosed : public SocketError
 		/* Operator overloads */
 		SocketConnectionClosed	&operator=(const SocketConnectionClosed
 				&original);
+};
+
+
+class	InvalidPath : public RuntimeError
+{
+	public:
+		/* Constructors */
+		explicit InvalidPath(void);
+		explicit InvalidPath(const std::string &message);
+		InvalidPath(const InvalidPath &original);
+
+		/* Destructor */
+		~InvalidPath(void) throw();
+
+		/* Operator overloads */
+		InvalidPath	&operator=(const InvalidPath &original);
 };
 
 } // namespace webserv

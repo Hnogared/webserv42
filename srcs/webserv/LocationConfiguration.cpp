@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/01 14:41:57 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/02 12:03:37 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/02 13:15:01 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,11 @@ namespace webserv
 
 /* ************************************************************************** */
 
-/* Default constructor */
-LocationConfiguration::LocationConfiguration(void)
-	: _path("/"),
-	_root("."),
+/* Path constructor */
+LocationConfiguration::LocationConfiguration(const std::string &path)
+	: _path(path),
+	_root(""),
+	_index(WS_DFL_INDEX),
 	_allowedMethods(),
 	_autoindex(false),
 	_returnCode(0),
@@ -49,6 +50,7 @@ LocationConfiguration	&LocationConfiguration::operator=(
 		return (*this);
 	this->_path = original.getPath();
 	this->_root = original.getRoot();
+	this->_index = original.getIndex();
 	this->_allowedMethods = original.getAllowedMethods();
 	this->_autoindex = original.isAutoindex();
 	this->_returnCode = original.getReturnCode();
@@ -63,6 +65,8 @@ bool	LocationConfiguration::operator<(const LocationConfiguration &other)
 		return (this->_path < other.getPath());
 	if (this->_root != other.getRoot())
 		return (this->_root < other.getRoot());
+	if (this->_index != other.getIndex())
+		return (this->_index < other.getIndex());
 	if (this->_allowedMethods != other.getAllowedMethods())
 		return (this->_allowedMethods < other.getAllowedMethods());
 	if (this->_autoindex != other.isAutoindex())
@@ -84,6 +88,11 @@ std::string	LocationConfiguration::getPath(void) const
 std::string	LocationConfiguration::getRoot(void) const
 {
 	return (this->_root);
+}
+
+std::string	LocationConfiguration::getIndex(void) const
+{
+	return (this->_index);
 }
 
 const std::set<std::string>	&LocationConfiguration::getAllowedMethods(void)
@@ -121,6 +130,11 @@ void	LocationConfiguration::setRoot(const std::string &root)
 	if (!tool::strings::isValidPath(root))
 		throw InvalidPath("`" + root + "`: " + strerror(errno));
 	this->_root = root;
+}
+
+void	LocationConfiguration::setIndex(const std::string &index)
+{
+	this->_index = index;
 }
 
 void	LocationConfiguration::setAllowedMethods(
@@ -162,56 +176,27 @@ bool	LocationConfiguration::isMethodAllowed(const std::string &method) const
 
 std::ostream	&LocationConfiguration::print(std::ostream &os) const
 {
-	os << this->_path << ":"
-		<< "\nRoot: '" << this->_root << "'"
-		<< "\nAllowed methods: ";
+	os << "'" << this->_path << "'";
+
+	if (!this->_root.empty())
+		os << "\nRoot  : '" << this->_root << "'";
+	
+	os << "\nIndex : '" << this->_index << "'"
+		<< "\nAllowed methods : ";
 
 	if (this->_allowedMethods.empty())
 		os << "all";
 	else
 		os << tool::strings::join(this->_allowedMethods, ", ");
 
-	os << "\nAutoindex: " << (this->isAutoindex() ? "on" : "off");
+	os << "\nAutoindex : " << (this->isAutoindex() ? "on" : "off");
 
 	if (this->_returnCode != 0)
 	{
-		os << "\nReturn: [" << this->getReturnCode()
+		os << "\nReturn : [" << this->getReturnCode()
 			<< "] '" << this->getReturnMessage() << "'";
 	}
 	return (os);
-}
-
-
-/* ************************************************************************** */
-/* Exceptions */
-
-/* Default constructor */
-LocationConfiguration::InvalidPath::InvalidPath(void)
-	: RuntimeError("Invalid path", 23) {}
-
-/* Message constructor */
-LocationConfiguration::InvalidPath::InvalidPath(const std::string &message)
-	: RuntimeError(message, 23) {}
-
-/* Copy constructor */
-LocationConfiguration::InvalidPath::InvalidPath(const InvalidPath &original)
-	: RuntimeError(original) {}
-
-
-/* Destructor */
-LocationConfiguration::InvalidPath::~InvalidPath(void) throw() {}
-
-
-/* ************************************ */
-/* Operator overloads */
-
-/* Copy assignment operator */
-LocationConfiguration::InvalidPath
-	&LocationConfiguration::InvalidPath::operator=(const InvalidPath &original)
-{
-	if (this != &original)
-		RuntimeError::operator=(original);
-	return (*this);
 }
 
 

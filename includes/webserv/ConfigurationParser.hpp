@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 10:19:18 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/02 11:08:03 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/02 13:38:06 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 # define CONFIGURATIONPARSER_HPP
 
 # include <cerrno>
-# include <string.h>
+# include <cstring>
 
 # include <string>
 # include <vector>
@@ -93,24 +93,32 @@ class	ConfigurationParser
 
 		static void	_parseServerConfig(std::queue<t_token> &tokens,
 			std::vector<Configuration> &configurations);
-		static void	_parseListen(std::queue<t_token> &tokens,
+		static void	_parseServerListen(std::queue<t_token> &tokens,
 			Configuration &config);
-		static void	_parseNames(std::queue<t_token> &tokens,
+		static void	_parseServerNames(std::queue<t_token> &tokens,
 			Configuration &config);
-		static void	_parseErrorPage(std::queue<t_token> &tokens,
+		static void	_parseServerErrorPage(std::queue<t_token> &tokens,
 			Configuration &config);
-		static void	_parseClientMaxBodySize(std::queue<t_token> &tokens,
+		static void	_parseServerClientMaxBodySize(std::queue<t_token> &tokens,
+			Configuration &config);
+		static void	_parseServerRoot(std::queue<t_token> &tokens,
+			Configuration &config);
+		static void	_parseServerIndex(std::queue<t_token> &tokens,
+			Configuration &config);
+		static void	_parseServerLocation(std::queue<t_token> &tokens,
 			Configuration &config);
 
-		static void	_parseLocation(std::queue<t_token> &tokens,
-			Configuration &config);
-		static void	_parseAutoindex(std::queue<t_token> &tokens,
+		static void	_completeLocation(LocationConfiguration &locConfig,
+			const Configuration &servConfig);
+		static void	_parseLocAutoindex(std::queue<t_token> &tokens,
 			LocationConfiguration &config);
-		static void	_parseAllowedMethods(std::queue<t_token> &tokens,
+		static void	_parseLocAllowedMethods(std::queue<t_token> &tokens,
 			LocationConfiguration &config);
-		static void	_parseReturn(std::queue<t_token> &tokens,
+		static void	_parseLocReturn(std::queue<t_token> &tokens,
 			LocationConfiguration &config);
-		static void	_parseRoot(std::queue<t_token> &tokens,
+		static void	_parseLocRoot(std::queue<t_token> &tokens,
+			LocationConfiguration &config);
+		static void	_parseLocIndex(std::queue<t_token> &tokens,
 			LocationConfiguration &config);
 
 

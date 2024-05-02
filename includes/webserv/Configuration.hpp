@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 09:34:06 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/01 16:24:44 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/02 13:34:22 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # include <iostream>
 # include <netinet/in.h>
 
+# include "webserv.hpp"
 # include "net.hpp"
 # include "LocationConfiguration.hpp"
 
@@ -45,6 +46,8 @@ class	Configuration
 		std::string							getAddressString(void) const;
 		int									getPort(void) const;
 		const std::set<std::string>			&getServerNames(void) const;
+		std::string							getRoot(void) const;
+		std::string							getIndex(void) const;
 		const std::map<int, std::string>	&getErrorRedirects(void) const;
 		unsigned long int					getClientMaxBodySize(void) const;
 		const std::set<LocationConfiguration>	&getLocations(void) const;
@@ -54,6 +57,8 @@ class	Configuration
 		void	setAddress(const sockaddr_in &address);
 		void	setPort(int port);
 		void	addServerName(const std::string &serverName);
+		void	setRoot(const std::string &root);
+		void	setIndex(const std::string &index);
 		void	addErrorRedirect(int error, const std::string &redirect);
 		void	setClientMaxBodySize(unsigned long int size);
 		void	addLocation(const LocationConfiguration &location);
@@ -66,6 +71,8 @@ class	Configuration
 		/* Private attributes */
 		sockaddr_in						_address;
 		std::set<std::string>			_serverNames;
+		std::string						_root;
+		std::string						_index;
 		std::map<int, std::string>		_errorRedirects;
 		unsigned long int				_clientMaxBodySize;
 		std::set<LocationConfiguration>	_locations;

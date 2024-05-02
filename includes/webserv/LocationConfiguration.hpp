@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/01 14:34:11 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/02 12:00:41 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/02 13:12:27 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # include <cerrno>
 # include <cstring>
 
+# include "webserv.hpp"
 # include "strings.hpp"
 # include "exceptions.hpp"
 
@@ -30,7 +31,7 @@ class	LocationConfiguration
 {
 	public:
 		/* Constructors */
-		explicit LocationConfiguration(void);
+		explicit LocationConfiguration(const std::string &path);
 		LocationConfiguration(const LocationConfiguration &original);
 		
 		/* Destructor */
@@ -44,6 +45,7 @@ class	LocationConfiguration
 		/* Getters */
 		std::string					getPath(void) const;
 		std::string					getRoot(void) const;
+		std::string					getIndex(void) const;
 		const std::set<std::string>	&getAllowedMethods(void) const;
 		bool						isAutoindex(void) const;
 		int							getReturnCode(void) const;
@@ -52,6 +54,7 @@ class	LocationConfiguration
 		/* Setters */
 		void	setPath(const std::string &path);
 		void	setRoot(const std::string &root);
+		void	setIndex(const std::string &index);
 		void	setAllowedMethods(const std::set<std::string> &allowedMethods);
 		void	addAllowedMethod(const std::string &method);
 		void	setAutoindex(bool autoindex);
@@ -67,28 +70,14 @@ class	LocationConfiguration
 		/* Private attributes */
 		std::string				_path;
 		std::string				_root;
+		std::string				_index;
 		std::set<std::string>	_allowedMethods;
 		bool					_autoindex;
 		int						_returnCode;
 		std::string				_returnMessage;
 
-
-	/* Exceptions */
-	public:
-		class	InvalidPath : public RuntimeError
-		{
-			public:
-				/* Constructors */
-				explicit InvalidPath(void);
-				explicit InvalidPath(const std::string &message);
-				InvalidPath(const InvalidPath &original);
-
-				/* Destructor */
-				~InvalidPath(void) throw();
-
-				/* Operator overloads */
-				InvalidPath	&operator=(const InvalidPath &original);
-		}; // class InvalidPath
+		/* [delete] */
+		LocationConfiguration(void);
 }; // class LocationConfiguration
 
 std::ostream	&operator<<(std::ostream &os, const LocationConfiguration
