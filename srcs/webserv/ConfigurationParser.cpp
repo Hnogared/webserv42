@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 10:21:20 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/01 16:48:54 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/02 10:58:18 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ namespace	webserv
 /* ************************************************************************** */
 /* Static attributes initialization */
 
-const std::map<std::string, ConfigurationParser::t_directiveParser>
+const std::map<std::string, ConfigurationParser::t_serverDirectiveParser>
 		ConfigurationParser::_serverDirectives
 	= ConfigurationParser::_initializeServerDirectives();
 
@@ -53,19 +53,12 @@ std::vector<Configuration> ConfigurationParser::parse(const std::string &path)
 	{
 		ConfigurationParser::_tokenizeFile(file, tokens);
 		file.close();
-	}
-	catch(const RuntimeError& e)
-	{
-		file.close();
-		throw RuntimeError(path + ": " + e.what(), e.code());
-	}
-
-	try
-	{
 		ConfigurationParser::_parseTokens(tokens, configurations);
 	}
 	catch (const RuntimeError &e)
 	{
+		if (file.is_open())
+			file.close();
 		throw RuntimeError(path + ": " + e.what(), e.code());
 	}
 
@@ -76,10 +69,10 @@ std::vector<Configuration> ConfigurationParser::parse(const std::string &path)
 /* ************************************************************************** */
 /* Private methods */
 
-std::map<std::string, ConfigurationParser::t_directiveParser>
+std::map<std::string, ConfigurationParser::t_serverDirectiveParser>
 	ConfigurationParser::_initializeServerDirectives(void)
 {
-	std::map<std::string, t_directiveParser>	directives;
+	std::map<std::string, t_serverDirectiveParser>	directives;
 
 	directives["listen"] = &_parseListen;
 	directives["server_name"] = &_parseNames;
@@ -96,6 +89,7 @@ std::map<std::string, ConfigurationParser::t_locationDirectiveParser>
 
 	directives["autoindex"] = &_parseAutoindex;
 	directives["limit_except"] = &_parseAllowedMethods;
+	directives["return"] = &_parseReturn;
 	return (directives);
 }
 
@@ -234,7 +228,7 @@ void	ConfigurationParser::_parseServerConfig(std::queue<t_token> &tokens,
 	t_token			token;
 	t_contextType	context = SERVER;
 	Configuration	config;
-	std::map<std::string, t_directiveParser>::const_iterator it;
+	std::map<std::string, t_serverDirectiveParser>::const_iterator it;
 
 	while (!tokens.empty())
 	{
@@ -476,6 +470,45 @@ void	ConfigurationParser::_parseAllowedMethods(std::queue<t_token> &tokens,
 		throw UnexpectedToken(tokens.front(), ";");
 
 	tokens.pop();
+}
+
+void	ConfigurationParser::_parseReturn(std::queue<t_token> &tokens,
+	LocationConfiguration &config)
+{
+	int		code;
+	t_token	token;
+
+	if (tokens.empty())
+		throw MissingToken("string");
+	
+	token = tokens.front();
+	tokens.pop();
+
+	if (tokens.empty())
+		throw MissingToken("string");
+
+	code = tool::strings::stoi(token.content);
+	if (code < 100 || code > 599)
+		throw InvalidConfigFile(tool::strings::toStr(token.lineNbr)
+			+ ": return: Invalid status code: `" + token.content + "`");
+
+	config.setReturnCode(code);
+
+	token = tokens.front();
+	tokens.pop();
+
+	if (token.type == SEMICOLON)
+		return ;
+	if (token.type != STRING)
+		throw UnexpectedToken(token, "string");
+	
+	config.setReturnMessage(token.content);
+
+	token = tokens.front();
+	tokens.pop();
+
+	if (token.type != SEMICOLON)
+		throw UnexpectedToken(token, ";");
 }
 
 

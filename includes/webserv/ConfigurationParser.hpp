@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 10:19:18 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/01 16:41:46 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/01 20:03:24 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,8 @@ class	ConfigurationParser
 		}	t_token;
 
 		/* Typedefs */
-		typedef void (*t_directiveParser)(std::queue<t_token>&, Configuration&);
+		typedef void (*t_serverDirectiveParser)(std::queue<t_token>&,
+			Configuration&);
 		typedef void (*t_locationDirectiveParser)(std::queue<t_token>&,
 			LocationConfiguration&);
 
@@ -68,13 +69,14 @@ class	ConfigurationParser
 
 	private:
 		/* Private attributes */
-		static const std::map<std::string, t_directiveParser> _serverDirectives;
+		static const std::map<std::string, t_serverDirectiveParser>
+			_serverDirectives;
 		static const std::map<std::string, t_locationDirectiveParser>
 			_locationDirectives;
 
 
 		/* Private methods */
-		static std::map<std::string, t_directiveParser>
+		static std::map<std::string, t_serverDirectiveParser>
 			_initializeServerDirectives(void);
 		static std::map<std::string, t_locationDirectiveParser>
 			_initializeLocationDirectives(void);
@@ -105,6 +107,8 @@ class	ConfigurationParser
 		static void	_parseAutoindex(std::queue<t_token> &tokens,
 			LocationConfiguration &config);
 		static void	_parseAllowedMethods(std::queue<t_token> &tokens,
+			LocationConfiguration &config);
+		static void	_parseReturn(std::queue<t_token> &tokens,
 			LocationConfiguration &config);
 
 
