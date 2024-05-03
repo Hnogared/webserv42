@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 21:49:03 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/02 16:54:32 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/03 12:27:23 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,65 +14,45 @@
 #include <memory>
 
 #include "Harl.hpp"
-#include "VirtualServer.hpp"
+#include "Server.hpp"
 #include "ConfigurationParser.hpp"
 
-int	main()
-{
-	std::vector<webserv::Configuration>	*configs;
-
-	configs = webserv::ConfigurationParser::parse("small_config.conf");
-	for (size_t i = 0; i < configs->size(); i++)
-		std::cout << (*configs)[i] << "\n" << std::endl;
-	
-	delete configs;
-	return (0);
-}
-
-/*
 int	main(int argc, char **argv)
 {
+	webserv::Server	*server_p = NULL;
+
 	if (argc > 2)
 	{
 		Harl::complain(Harl::ERROR,
-			"Usage: ./webserv [OPT<configuration_file>]");
+			"Usage: ./webserv [configuration_file.conf - OPTIONAL]");
 		return (1);
 	}
 
 	try
 	{
-		std::auto_ptr<webserv::VirtualServer> server(new webserv::VirtualServer(8080));
+		if (argc == 2)
+			server_p = new webserv::Server(argv[1]);
+		else
+			server_p = new webserv::Server();
 
-		std::cout << "Listening on port " << server->getPort() << "..."
-			<< std::endl;
-
-		try
+		if (server_p)
 		{
-			server->run();
-		}
-		catch(const webserv::RuntimeError &e)
-		{
-			Harl::complain(Harl::ERROR, e.what());
-			return (e.code());
-		}
-		catch(const std::exception &e)
-		{
-			Harl::complain(Harl::ERROR, e.what());
-			return (2);
+			server_p->run();
+			delete server_p;
 		}
 	}
 	catch(const webserv::RuntimeError &e)
 	{
 		Harl::complain(Harl::ERROR, e.what());
+		delete server_p;
 		return (e.code());
 	}
 	catch(const std::exception &e)
 	{
 		Harl::complain(Harl::ERROR, e.what());
-		return (3);
+		delete server_p;
+		return (2);
 	}
 
-	(void)argv;
 	return (0);
 }
-*/

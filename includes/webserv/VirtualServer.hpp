@@ -47,21 +47,19 @@ class	VirtualServer
 		~VirtualServer(void);
 
 		/* Getters */
-		bool				isRunning(void) const;
 		Socket				getSocket(void) const;
 		int					getPort(void) const;
 		int					getBacklog(void) const;
 		struct sockaddr_in	getVirtualServerAddress(void) const;
+		const Configuration	&getConfiguration(void) const;
 
 		/* Public methods */
-		void	run(void);
 		void	acceptConnection(void);
 		void	handleRequest(const Client &client);
 
 
 	private:
 		/* Private attributes */
-		bool				_running;
 		Configuration		_config;
 		Socket				_socket;
 		int					_backlog;

@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 16:58:31 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/02 17:28:31 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/03 11:23:19 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # define WS_DFL_HOST	"127.0.0.1"
 # define WS_DFL_INDEX	"index.html"
 
-# define WS_LOCK_FILE	"/tmp/webserv42.lock"
+# define WS_LOCK_FILE		"/tmp/webserv42.lock"
+# define WS_DFL_CONFIG_PATH	"webserv.conf"
 
 #endif // WEBSERVDEFAULTSETTINGS_HPP

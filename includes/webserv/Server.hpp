@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 12:40:13 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/02 17:46:43 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/03 12:24:28 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,23 +25,28 @@ class	Server
 {
 	public:
 		/* Constructors */
-		explicit Server(const std::string &config_path);
+		explicit Server(const std::string &config_path = WS_DFL_CONFIG_PATH);
 
 		/* Destructor */
 		~Server(void);
 
+		/* Public methods */
+		void	run(void);
+
+
 	private:
 		/* Private static attributes */
+		static bool	_initialized;
 		static bool	_running;
-		
+
 		/* Private attributes */
 		std::vector<VirtualServer*>	_virtualServers;
 
 		/* Private methods */
-		static void	sigHandler(int signal);
+		void		_init(const std::string &config_path);
+		static void	_sigHandler(int signal);
 
 		/* [delete] */
-		Server(void);
 		Server(const Server&);
 		Server	&operator=(const Server&);
 }; // class Server

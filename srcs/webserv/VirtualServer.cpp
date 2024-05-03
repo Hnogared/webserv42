@@ -48,19 +48,11 @@ VirtualServer::VirtualServer(const Configuration &config, int backlog)
 
 
 /* Destructor */
-VirtualServer::~VirtualServer(void)
-{
-	remove(WS_LOCK_FILE);
-}
+VirtualServer::~VirtualServer(void) {}
 
 
 /* ************************************************************************** */
 /* Getters */
-
-bool	VirtualServer::isRunning(void) const
-{
-	return (this->_running);
-}
 
 webserv::Socket	VirtualServer::getSocket(void) const
 {
@@ -80,6 +72,11 @@ int	VirtualServer::getBacklog(void) const
 struct sockaddr_in	VirtualServer::getVirtualServerAddress(void) const
 {
 	return (this->_config.getConstAddress());
+}
+
+const Configuration	&VirtualServer::getConfiguration(void) const
+{
+	return (this->_config);
 }
 
 
