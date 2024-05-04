@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 10:21:20 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/04 18:09:54 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/04 18:15:49 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -258,7 +258,6 @@ void	ConfigurationParser::_parseServerConfig(std::queue<t_token> &tokens,
 	std::vector<Configuration> &configurations)
 {
 	t_token			token;
-	t_contextType	context = SERVER;
 	Configuration	config;
 	std::map<std::string, t_serverDirectiveParser>::const_iterator dirIt;
 
@@ -266,7 +265,7 @@ void	ConfigurationParser::_parseServerConfig(std::queue<t_token> &tokens,
 	{
 		token = tokens.front();
 		tokens.pop();
-		if (token.type == CLOSE_BRACE && context == SERVER)
+		if (token.type == CLOSE_BRACE)
 			break ;
 		
 		if (token.type == STRING)
