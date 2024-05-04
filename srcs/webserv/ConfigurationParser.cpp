@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 10:21:20 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/04 16:14:58 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/04 18:02:31 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,39 +36,35 @@ std::vector<Configuration> *ConfigurationParser::parse(const std::string &path)
 	std::queue<t_token>			tokens;
 	std::vector<Configuration>	*configurations = NULL;
 
-	if (path.size() < 8 || path.substr(path.size() - 5) != ".conf")
-	{
-		throw InvalidConfigFile(path + ": Invalid file extension. "
-			"Expected `.conf`");
-	}
-
-	file.open(path.c_str());
-	if (!file.is_open())
-	{
-		throw InvalidConfigFile(path + ": Failed to open file: "
-			+ strerror(errno));
-	}
-
 	try
 	{
+		Harl::complain(Harl::INFO, "Parsing configuration file: " + path);
+
+		ConfigurationParser::_openConfigFile(path, file);
 		ConfigurationParser::_tokenizeFile(file, tokens);
 		file.close();
+
 		configurations = new std::vector<Configuration>;
 		ConfigurationParser::_parseTokens(tokens, *configurations);
 	}
-	catch (const RuntimeError &e)
+	catch (const ConfigException &e)
 	{
-		if (file.is_open())
-			file.close();
 		delete configurations;
-		throw RuntimeError(path + ": " + e.what(), e.code());
+		file.close();
+
+		if (path == WS_DFL_CONFIG_PATH)
+			throw;
+
+		Harl::complain(Harl::ERROR, path + ": " + e.what());
+		Harl::complain(Harl::INFO, "Fall back to default configuration file");
+		
+		return (ConfigurationParser::parse(WS_DFL_CONFIG_PATH));
 	}
 	catch (const std::exception &e)
 	{
-		if (file.is_open())
-			file.close();
 		delete configurations;
-		throw std::runtime_error(path + ": " + e.what());
+		file.close();
+		throw;
 	}
 
 	return (configurations);
@@ -107,6 +103,19 @@ std::map<std::string, ConfigurationParser::t_locationDirectiveParser>
 	directives["fastcgi_pass"] = &_parseLocFCGIPass;
 	directives["fastcgi_param"] = &_parseLocFCGIParam;
 	return (directives);
+}
+
+void	ConfigurationParser::_openConfigFile(const std::string &path,
+	std::ifstream &file)
+{
+	if (path.size() < 8 || path.substr(path.size() - 5) != ".conf")
+		throw InvalidConfigFile(path + ": Invalid file extension. "
+			"Expected `.conf`");
+
+	file.open(path.c_str());
+	if (!file.is_open())
+		throw InvalidConfigFile(path + ": Failed to open file: "
+			+ strerror(errno));
 }
 
 std::queue<ConfigurationParser::t_token>	ConfigurationParser::_tokenizeFile(
@@ -162,7 +171,7 @@ void	ConfigurationParser::_tokenizeLine(const std::string &line,
 			case '"': case '\'':
 				end = line.find(line[pos], pos + 1);
 				if (end == std::string::npos)
-					throw MissingToken(tool::strings::toStr(line[pos]));
+					throw MissingToken("", tool::strings::toStr(line[pos]));
 				tokens.push((t_token){lineNbr, STRING,
 					line.substr(pos + 1, end - pos - 1)});
 				pos = end + 1;
@@ -191,16 +200,16 @@ void	ConfigurationParser::_parseTokens(std::queue<t_token> &tokens,
 			if (token.content == "http")
 			{
 				if (tokens.front().type != OPEN_BRACE)
-					throw UnexpectedToken(tokens.front(), "{");
+					throw UnexpectedToken(tokens.front(), "http", "{");
 				tokens.pop();
 				ConfigurationParser::_parseHttpConfig(tokens, configurations);
 				continue ;
 			}
 
-			throw UnexpectedToken(token);
+			throw UnexpectedToken(token, "GLOBAL_CONTEXT");
 		}
 
-		throw UnexpectedToken(token);
+		throw UnexpectedToken(token, "GLOBAL_CONTEXT");
 	}
 }
 
@@ -222,20 +231,20 @@ void	ConfigurationParser::_parseHttpConfig(std::queue<t_token> &tokens,
 			if (token.content == "server")
 			{
 				if (tokens.front().type != OPEN_BRACE)
-					throw UnexpectedToken(tokens.front(), "{");
+					throw UnexpectedToken(tokens.front(), "server", "{");
 				tokens.pop();
 				ConfigurationParser::_parseServerConfig(tokens, configurations);
 				continue ;
 			}
 
-			throw UnexpectedToken(token);
+			throw UnexpectedToken(token, "HTTP_CONTEXT");
 		}
 
-		throw UnexpectedToken(token);
+		throw UnexpectedToken(token, "HTTP_CONTEXT");
 	}
 
 	if (token.type != CLOSE_BRACE)
-		throw MissingToken("}");
+		throw MissingToken("http", "}");
 }
 
 void	ConfigurationParser::_parseServerConfig(std::queue<t_token> &tokens,
@@ -264,7 +273,7 @@ void	ConfigurationParser::_parseServerConfig(std::queue<t_token> &tokens,
 			}
 		}
 
-		throw UnexpectedToken(token);
+		throw UnexpectedToken(token, "SERVER_CONTEXT");
 	}
 
 	configurations.push_back(config);
@@ -280,7 +289,7 @@ void	ConfigurationParser::_parseServerListen(std::queue<t_token> &tokens,
 	tokens.pop();
 
 	if (token.type != STRING)
-		throw UnexpectedToken(token, "string");
+		throw UnexpectedToken(token, "listen", "string");
 
 	
 	try
@@ -302,15 +311,14 @@ void	ConfigurationParser::_parseServerListen(std::queue<t_token> &tokens,
 	}
 	catch(const std::exception& e)
 	{
-		throw InvalidConfigFile(tool::strings::toStr(token.lineNbr)
-			+ ": listen: " + e.what());
+		throw InvalidConfigFile(token.lineNbr, "listen", e.what());
 	}
 
 	token = tokens.front();
 	tokens.pop();
 
 	if (token.type != SEMICOLON)
-		throw UnexpectedToken(token, ";");
+		throw UnexpectedToken(token, "listen", ";");
 }
 
 void	ConfigurationParser::_parseServerNames(std::queue<t_token> &tokens,
@@ -319,7 +327,7 @@ void	ConfigurationParser::_parseServerNames(std::queue<t_token> &tokens,
 	t_token		token;
 
 	if (tokens.front().type != STRING)
-		throw UnexpectedToken(token, "string");
+		throw UnexpectedToken(token, "server_names", "string");
 
 	while (tokens.front().type == STRING)
 	{
@@ -333,7 +341,7 @@ void	ConfigurationParser::_parseServerNames(std::queue<t_token> &tokens,
 	tokens.pop();
 
 	if (token.type != SEMICOLON)
-		throw UnexpectedToken(token, ";");
+		throw UnexpectedToken(token, "server_names", ";");
 }
 
 void	ConfigurationParser::_parseServerErrorPage(std::queue<t_token> &tokens,
@@ -347,9 +355,9 @@ void	ConfigurationParser::_parseServerErrorPage(std::queue<t_token> &tokens,
 	tokens.pop();
 
 	if (token.type != STRING)
-		throw UnexpectedToken(token, "string");
+		throw UnexpectedToken(token, "error_page", "string");
 	if (tokens.front().type != STRING)
-		throw UnexpectedToken(tokens.front(), "string");
+		throw UnexpectedToken(tokens.front(), "error_page", "string");
 
 	try
 	{
@@ -365,15 +373,14 @@ void	ConfigurationParser::_parseServerErrorPage(std::queue<t_token> &tokens,
 	}
 	catch (const std::exception &e)
 	{
-		throw InvalidConfigFile(tool::strings::toStr(token.lineNbr)
-			+ ": error_page: " + e.what());
+		throw InvalidConfigFile(token.lineNbr, "error_page", e.what());
 	}
 
 	token = tokens.front();
 	tokens.pop();
 
 	if (token.type != SEMICOLON)
-		throw UnexpectedToken(token, ";");
+		throw UnexpectedToken(token, "error_page", ";");
 }
 
 void	ConfigurationParser::_parseServerClientMaxBodySize(
@@ -385,9 +392,9 @@ void	ConfigurationParser::_parseServerClientMaxBodySize(
 	tokens.pop();
 
 	if (token.type != STRING)
-		throw UnexpectedToken(token, "string");
+		throw UnexpectedToken(token, "client_max_body_size", "string");
 	if (tokens.front().type != SEMICOLON)
-		throw UnexpectedToken(tokens.front(), ";");
+		throw UnexpectedToken(tokens.front(), "client_max_body_size", ";");
 
 	try
 	{
@@ -395,8 +402,7 @@ void	ConfigurationParser::_parseServerClientMaxBodySize(
 	}
 	catch(const std::invalid_argument &e)
 	{
-		throw InvalidConfigFile(tool::strings::toStr(token.lineNbr)
-			+ ": client_max_body_size: " + e.what());
+		throw InvalidConfigFile(token.lineNbr, "client_max_body_size",e.what());
 	}
 
 	tokens.pop();
@@ -411,9 +417,9 @@ void	ConfigurationParser::_parseServerRoot(std::queue<t_token> &tokens,
 	tokens.pop();
 
 	if (token.type != STRING)
-		throw UnexpectedToken(token, "string");
+		throw UnexpectedToken(token, "root", "string");
 	if (tokens.front().type != SEMICOLON)
-		throw UnexpectedToken(tokens.front(), ";");
+		throw UnexpectedToken(tokens.front(), "root", ";");
 
 	try
 	{
@@ -421,8 +427,7 @@ void	ConfigurationParser::_parseServerRoot(std::queue<t_token> &tokens,
 	}
 	catch (const InvalidPath &e)
 	{
-		throw InvalidConfigFile(tool::strings::toStr(token.lineNbr)
-			+ ": root: " + e.what());
+		throw InvalidConfigFile(token.lineNbr, "root", e.what());
 	}
 
 	tokens.pop();
@@ -434,15 +439,15 @@ void	ConfigurationParser::_parseServerIndex(std::queue<t_token> &tokens,
 	t_token	token;
 
 	if (tokens.empty())
-		throw MissingToken("string");
+		throw MissingToken("index", "string");
 
 	token = tokens.front();
 	tokens.pop();
 
 	if (token.type != STRING)
-		throw UnexpectedToken(token, "string");
+		throw UnexpectedToken(token, "index", "string");
 	if (tokens.front().type != SEMICOLON)
-		throw UnexpectedToken(tokens.front(), ";");
+		throw UnexpectedToken(tokens.front(), "index", ";");
 
 	config.setIndex(token.content);
 	tokens.pop();
@@ -457,9 +462,9 @@ void	ConfigurationParser::_parseServerBacklog(std::queue<t_token> &tokens,
 	tokens.pop();
 
 	if (token.type != STRING)
-		throw UnexpectedToken(token, "string");
+		throw UnexpectedToken(token, "backlog", "string");
 	if (tokens.front().type != SEMICOLON)
-		throw UnexpectedToken(tokens.front(), ";");
+		throw UnexpectedToken(tokens.front(), "backlog", ";");
 
 	try
 	{
@@ -467,8 +472,7 @@ void	ConfigurationParser::_parseServerBacklog(std::queue<t_token> &tokens,
 	}
 	catch(const std::exception& e)
 	{
-		throw InvalidConfigFile(tool::strings::toStr(token.lineNbr)
-			+ ": backlog: " + e.what());
+		throw InvalidConfigFile(token.lineNbr, "backlog", e.what());
 	}
 	
 	tokens.pop();
@@ -484,9 +488,9 @@ void	ConfigurationParser::_parseServerLocation(std::queue<t_token> &tokens,
 	tokens.pop();
 
 	if (tokens.front().type != OPEN_BRACE)
-		throw UnexpectedToken(tokens.front(), "{");
+		throw UnexpectedToken(tokens.front(), "location", "{");
 	if (token.type != STRING)
-		throw UnexpectedToken(token, "string");
+		throw UnexpectedToken(token, "location", "string");
 
 	LocationConfiguration	location(token.content);
 	tokens.pop();
@@ -510,11 +514,11 @@ void	ConfigurationParser::_parseServerLocation(std::queue<t_token> &tokens,
 			}
 		}
 
-		throw UnexpectedToken(token);
+		throw UnexpectedToken(token, "LOCATION_CONTEXT");
 	}
 
 	if (token.type != CLOSE_BRACE)
-		throw UnexpectedToken(token, "}");
+		throw UnexpectedToken(token, "location", "}");
 
 	ConfigurationParser::_completeLocation(location, config);
 
@@ -539,12 +543,12 @@ void	ConfigurationParser::_parseLocAutoindex(std::queue<t_token> &tokens,
 	tokens.pop();
 
 	if (token.type != STRING)
-		throw UnexpectedToken(token, "string");
+		throw UnexpectedToken(token, "autoindex" ,"string");
 	if (tokens.front().type != SEMICOLON)
-		throw UnexpectedToken(tokens.front(), ";");
+		throw UnexpectedToken(tokens.front(), "autoindex", ";");
 
 	if (token.content != "on" && token.content != "off")
-		throw UnexpectedToken(token, "on / off");
+		throw UnexpectedToken(token, "autoindex", "on / off");
 
 	config.setAutoindex(token.content == "on");
 	tokens.pop();
@@ -556,10 +560,10 @@ void	ConfigurationParser::_parseLocAllowedMethods(
 	t_token	token;
 
 	if (tokens.empty())
-		throw MissingToken("string");
+		throw MissingToken("limit_except", "string");
 
 	if (tokens.front().type != STRING)
-		throw UnexpectedToken(tokens.front(), "string");
+		throw UnexpectedToken(tokens.front(), "limit_except", "string");
 
 	while (!tokens.empty() && tokens.front().type == STRING)
 	{
@@ -569,10 +573,10 @@ void	ConfigurationParser::_parseLocAllowedMethods(
 	}
 
 	if (tokens.empty())
-		throw MissingToken(";");
+		throw MissingToken("limit_except", ";");
 
 	if (tokens.front().type != SEMICOLON)
-		throw UnexpectedToken(tokens.front(), ";");
+		throw UnexpectedToken(tokens.front(), "limit_except", ";");
 
 	tokens.pop();
 }
@@ -583,13 +587,13 @@ void	ConfigurationParser::_parseLocReturn(std::queue<t_token> &tokens,
 	t_token	token;
 
 	if (tokens.empty())
-		throw MissingToken("string");
+		throw MissingToken("return", "string");
 	
 	token = tokens.front();
 	tokens.pop();
 
 	if (tokens.empty())
-		throw MissingToken("string");
+		throw MissingToken("return", "string");
 
 	try
 	{
@@ -597,8 +601,7 @@ void	ConfigurationParser::_parseLocReturn(std::queue<t_token> &tokens,
 	}
 	catch(const std::exception& e)
 	{
-		throw InvalidConfigFile(tool::strings::toStr(token.lineNbr)
-			+ ": return: " + e.what());
+		throw InvalidConfigFile(token.lineNbr, "return", e.what());
 	}
 
 	token = tokens.front();
@@ -607,7 +610,7 @@ void	ConfigurationParser::_parseLocReturn(std::queue<t_token> &tokens,
 	if (token.type == SEMICOLON)
 		return ;
 	if (token.type != STRING)
-		throw UnexpectedToken(token, "string");
+		throw UnexpectedToken(token, "return", "string");
 	
 	config.setReturnMessage(token.content);
 
@@ -615,7 +618,7 @@ void	ConfigurationParser::_parseLocReturn(std::queue<t_token> &tokens,
 	tokens.pop();
 
 	if (token.type != SEMICOLON)
-		throw UnexpectedToken(token, ";");
+		throw UnexpectedToken(token, "return", ";");
 }
 
 void	ConfigurationParser::_parseLocRoot(std::queue<t_token> &tokens,
@@ -624,17 +627,17 @@ void	ConfigurationParser::_parseLocRoot(std::queue<t_token> &tokens,
 	t_token	token;
 
 	if (tokens.empty())
-		throw MissingToken("string");
+		throw MissingToken("root", "string");
 
 	token = tokens.front();
 	tokens.pop();
 
 	if (tokens.empty())
-		throw MissingToken(";");
+		throw MissingToken("root", ";");
 	if (token.type != STRING)
-		throw UnexpectedToken(token, "string");
+		throw UnexpectedToken(token, "root", "string");
 	if (tokens.front().type != SEMICOLON)
-		throw UnexpectedToken(tokens.front(), ";");
+		throw UnexpectedToken(tokens.front(), "root", ";");
 
 	try
 	{
@@ -642,8 +645,7 @@ void	ConfigurationParser::_parseLocRoot(std::queue<t_token> &tokens,
 	}
 	catch (const InvalidPath &e)
 	{
-		throw InvalidConfigFile(tool::strings::toStr(token.lineNbr)
-			+ ": root: " + e.what());
+		throw InvalidConfigFile(token.lineNbr, "root", e.what());
 	}
 
 	tokens.pop();
@@ -655,17 +657,17 @@ void	ConfigurationParser::_parseLocIndex(std::queue<t_token> &tokens,
 	t_token	token;
 
 	if (tokens.empty())
-		throw MissingToken("string");
+		throw MissingToken("index", "string");
 
 	token = tokens.front();
 	tokens.pop();
 
 	if (tokens.empty())
-		throw MissingToken(";");
+		throw MissingToken("index", ";");
 	if (token.type != STRING)
-		throw UnexpectedToken(token, "string");
+		throw UnexpectedToken(token, "index", "string");
 	if (tokens.front().type != SEMICOLON)
-		throw UnexpectedToken(tokens.front(), ";");
+		throw UnexpectedToken(tokens.front(), "index", ";");
 	
 	config.setIndex(token.content);
 	tokens.pop();
@@ -677,15 +679,15 @@ void	ConfigurationParser::_parseLocFCGIPass(std::queue<t_token> &tokens,
 	t_token	token;
 
 	if (tokens.empty())
-		throw MissingToken("string");
+		throw MissingToken("fastcgi_pass", "string");
 	
 	token = tokens.front();
 	tokens.pop();
 
 	if (tokens.empty())
-		throw MissingToken(";");
+		throw MissingToken("fastcgi_pass", ";");
 	if (token.type != STRING)
-		throw UnexpectedToken(token, "string");
+		throw UnexpectedToken(token, "fastcgi_pass", "string");
 	
 	config.setFCGIServer(token.content);
 	tokens.pop();
@@ -698,15 +700,15 @@ void	ConfigurationParser::_parseLocFCGIParam(std::queue<t_token> &tokens,
 	t_token		token;
 
 	if (tokens.empty())
-		throw MissingToken("string");
+		throw MissingToken("fastcgi_param", "string");
 
 	token = tokens.front();
 	tokens.pop();
 
 	if (tokens.empty())
-		throw MissingToken("string");
+		throw MissingToken("fastcgi_param", "string");
 	if (token.type != STRING)
-		throw UnexpectedToken(token, "string");
+		throw UnexpectedToken(token, "fastcgi_param", "string");
 
 	key = token.content;
 
@@ -714,9 +716,9 @@ void	ConfigurationParser::_parseLocFCGIParam(std::queue<t_token> &tokens,
 	tokens.pop();
 
 	if (tokens.empty())
-		throw MissingToken("string");
+		throw MissingToken("fastcgi_param", "string");
 	if (token.type != STRING)
-		throw UnexpectedToken(token, "string");
+		throw UnexpectedToken(token, "fastcgi_param", "string");
 
 	config.addFCGIParam(key, token.content);
 
@@ -724,7 +726,7 @@ void	ConfigurationParser::_parseLocFCGIParam(std::queue<t_token> &tokens,
 	tokens.pop();
 
 	if (token.type != SEMICOLON)
-		throw UnexpectedToken(token, ";");
+		throw UnexpectedToken(token, "fastcgi_param", ";");
 }
 
 
@@ -732,22 +734,63 @@ void	ConfigurationParser::_parseLocFCGIParam(std::queue<t_token> &tokens,
 /* Exceptions */
 
 /* ************************************ */
+/* ConfigException                      */
+/* ************************************ */
+
+/* Default constructor */
+ConfigurationParser::ConfigException::ConfigException()
+	: RuntimeError("Invalid configuration file", 10) {}
+
+/* Message constructor */
+ConfigurationParser::ConfigException::ConfigException(
+		const std::string &message, int code) : RuntimeError(message, code) {}
+
+/* Copy constructor */
+ConfigurationParser::ConfigException::ConfigException(
+	const ConfigException &original) : RuntimeError(original) {}
+
+
+/* Destructor */
+ConfigurationParser::ConfigException::~ConfigException(void) throw() {}
+
+
+/* ************************************ */
+/* Operator overloads */
+
+ConfigurationParser::ConfigException
+		&ConfigurationParser::ConfigException::operator=(
+	const ConfigException &original)
+{
+	if (this == &original)
+		return (*this);
+	RuntimeError::operator=(original);
+	return (*this);
+}
+
+
+/* ************************************ */
 /* InvalidConfigFile                    */
 /* ************************************ */
 
 /* Default constructor */
 ConfigurationParser::InvalidConfigFile::InvalidConfigFile()
-	: RuntimeError("Invalid configuration file", 10) {}
+	: ConfigException("Invalid configuration file", 10) {}
 
 /* Message constructor */
 ConfigurationParser::InvalidConfigFile::InvalidConfigFile(
 		const std::string &message)
-	: RuntimeError(message, 10) {}
+	: ConfigException(message, 10) {}
+
+/* Line and message constructor */
+ConfigurationParser::InvalidConfigFile::InvalidConfigFile(int lineNbr,
+	const std::string &context, const std::string &message)
+	: ConfigException(tool::strings::toStr(lineNbr) + ": " + context + ": "
+		+ message) {}
 
 /* Copy constructor */
 ConfigurationParser::InvalidConfigFile::InvalidConfigFile(
 	const InvalidConfigFile &original)
-	: RuntimeError(original) {}
+	: ConfigException(original) {}
 
 
 /* Destructor */
@@ -763,7 +806,7 @@ ConfigurationParser::InvalidConfigFile
 {
 	if (this == &original)
 		return (*this);
-	RuntimeError::operator=(original);
+	ConfigException::operator=(original);
 	return (*this);
 }
 
@@ -774,27 +817,30 @@ ConfigurationParser::InvalidConfigFile
 
 /* Default constructor */
 ConfigurationParser::UnexpectedToken::UnexpectedToken()
-	: RuntimeError("Invalid token", 11) {}
+	: ConfigException("Invalid token", 11) {}
 
 /* Message constructor */
 ConfigurationParser::UnexpectedToken::UnexpectedToken(const std::string &msg)
-	: RuntimeError(msg, 11) {}
+	: ConfigException(msg, 11) {}
 
 /* Token constructor */
-ConfigurationParser::UnexpectedToken::UnexpectedToken(const t_token &token)
-	: RuntimeError(tool::strings::toStr(token.lineNbr) + ": Unexpected token `"
-		+ token.content + "`", 11) {}
+ConfigurationParser::UnexpectedToken::UnexpectedToken(const t_token &token,
+		const std::string &context)
+	: ConfigException(tool::strings::toStr(token.lineNbr)
+		+ ": " + context + ": Unexpected token `" + token.content + "`", 11) {}
 
 /* Token and message constructor */
 ConfigurationParser::UnexpectedToken::UnexpectedToken(const t_token &token,
-		const std::string &exp)
-	: RuntimeError(tool::strings::toStr(token.lineNbr) + ": Unexpected token `"
-		+ token.content + "`. Expected `" + exp + "`", 11) {}
+		const std::string &context, const std::string &exp)
+	: ConfigException(tool::strings::toStr(token.lineNbr)
+		+ ": " + context
+		+ ": Unexpected token `" + token.content
+		+ "`. Expected `" + exp + "`", 11) {}
 
 /* Copy constructor */
 ConfigurationParser::UnexpectedToken::UnexpectedToken(
 		const UnexpectedToken &original)
-	: RuntimeError(original) {}
+	: ConfigException(original) {}
 
 
 /* Destructor */
@@ -810,7 +856,7 @@ ConfigurationParser::UnexpectedToken
 {
 	if (this == &original)
 		return (*this);
-	RuntimeError::operator=(original);
+	ConfigException::operator=(original);
 	return (*this);
 }
 
@@ -821,15 +867,16 @@ ConfigurationParser::UnexpectedToken
 
 /* Default constructor */
 ConfigurationParser::MissingToken::MissingToken()
-	: RuntimeError("Missing token", 12) {}
+	: ConfigException("Missing token", 12) {}
 
 /* Token type constructor */
-ConfigurationParser::MissingToken::MissingToken(const std::string &type)
-	: RuntimeError("Missing token `" + type + "`", 12) {}
+ConfigurationParser::MissingToken::MissingToken(const std::string &context,
+		const std::string &type)
+	: ConfigException(context + ": Missing token `" + type + "`", 12) {}
 
 /* Copy constructor */
 ConfigurationParser::MissingToken::MissingToken(const MissingToken &original)
-	: RuntimeError(original) {}
+	: ConfigException(original) {}
 
 
 /* Destructor */
@@ -845,7 +892,7 @@ ConfigurationParser::MissingToken
 {
 	if (this == &original)
 		return (*this);
-	RuntimeError::operator=(original);
+	ConfigException::operator=(original);
 	return (*this);
 }
 

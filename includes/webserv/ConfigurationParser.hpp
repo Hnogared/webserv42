@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 10:19:18 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/03 12:42:13 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/04 17:56:11 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 # include <fstream>
 # include <iostream>
 
+# include "Harl.hpp"
 # include "strings.hpp"
 # include "exceptions.hpp"
 # include "Configuration.hpp"
@@ -80,6 +81,9 @@ class	ConfigurationParser
 		static std::map<std::string, t_locationDirectiveParser>
 			_initializeLocationDirectives(void);
 
+		static void	_openConfigFile(const std::string &path,
+			std::ifstream &file);
+
 		static std::queue<t_token>	_tokenizeFile(std::ifstream &file,
 			std::queue<t_token> &tokens);
 		static void	_tokenizeLine(const std::string &line,
@@ -135,12 +139,30 @@ class	ConfigurationParser
 
 	/* Exceptions */
 	public:
-		class	InvalidConfigFile : public RuntimeError
+		class	ConfigException : public RuntimeError
+		{
+			public:
+				/* Constructors */
+				explicit ConfigException();
+				explicit ConfigException(const std::string &message,
+					int code = 10);
+				ConfigException(const ConfigException &original);
+
+				/* Destructor */
+				~ConfigException() throw();
+		
+				/* Operator overloads */
+				ConfigException	&operator=(const ConfigException &original);
+		}; // class ConfigException
+
+		class	InvalidConfigFile : public ConfigException
 		{
 			public:
 				/* Constructors */
 				explicit InvalidConfigFile();
 				explicit InvalidConfigFile(const std::string &message);
+				InvalidConfigFile(int lineNbr, const std::string &context,
+					const std::string &message);
 				InvalidConfigFile(const InvalidConfigFile &original);
 	
 				/* Destructor */
@@ -151,14 +173,16 @@ class	ConfigurationParser
 					const InvalidConfigFile &original);
 		}; // class InvalidConfigFile
 	
-		class	UnexpectedToken : public RuntimeError
+		class	UnexpectedToken : public ConfigException
 		{
 			public:
 				/* Constructors */
 				explicit UnexpectedToken();
 				explicit UnexpectedToken(const std::string &message);
-				UnexpectedToken(const t_token &token);
-				UnexpectedToken(const t_token &token, const std::string &exp);
+				UnexpectedToken(const t_token &token,
+					const std::string &context);
+				UnexpectedToken(const t_token &token,
+					const std::string &context, const std::string &exp);
 				UnexpectedToken(const UnexpectedToken &original);
 	
 				/* Destructor */
@@ -168,12 +192,13 @@ class	ConfigurationParser
 				UnexpectedToken	&operator=(const UnexpectedToken &original);
 		}; // class UnexpectedToken
 
-		class	MissingToken : public RuntimeError
+		class	MissingToken : public ConfigException
 		{
 			public:
 				/* Constructors */
 				explicit MissingToken();
-				explicit MissingToken(const std::string &type);
+				explicit MissingToken(const std::string &context,
+					const std::string &type);
 				MissingToken(const t_token &token);
 				MissingToken(const t_token &token, const std::string &exp);
 				MissingToken(const MissingToken &original);
