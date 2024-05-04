@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 10:21:20 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/02 16:54:05 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/04 16:14:58 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,9 +87,10 @@ std::map<std::string, ConfigurationParser::t_serverDirectiveParser>
 	directives["server_name"] = &_parseServerNames;
 	directives["error_page"] = &_parseServerErrorPage;
 	directives["client_max_body_size"] = &_parseServerClientMaxBodySize;
-	directives["location"] = &_parseServerLocation;
 	directives["root"] = &_parseServerRoot;
 	directives["index"] = &_parseServerIndex;
+	directives["backlog"] = &_parseServerBacklog;
+	directives["location"] = &_parseServerLocation;
 	return (directives);
 }
 
@@ -273,8 +274,6 @@ void	ConfigurationParser::_parseServerListen(std::queue<t_token> &tokens,
 	Configuration &config)
 {
 	size_t		pos;
-	std::string	port = "";
-	std::string	address = "";
 	t_token		token;
 
 	token = tokens.front();
@@ -283,23 +282,28 @@ void	ConfigurationParser::_parseServerListen(std::queue<t_token> &tokens,
 	if (token.type != STRING)
 		throw UnexpectedToken(token, "string");
 
-	pos = token.content.find(':');
-	if (pos == std::string::npos)
+	
+	try
 	{
-		if (token.content.find('.') == std::string::npos)
-			config.setPort(tool::strings::stoi(token.content));
-		else if (!config.setAddress(token.content))
-			throw InvalidConfigFile(tool::strings::toStr(token.lineNbr)
-				+ ": listen: Invalid address: `" + token.content + "`");
+		pos = token.content.find(':');
+
+		if (pos == std::string::npos)
+		{
+			if (token.content.find('.') != std::string::npos)
+				config.setAddress(token.content);
+			else
+				config.setPort(tool::strings::stoi(token.content));
+		}
+		else
+		{
+			config.setPort(tool::strings::stoi(token.content.substr(pos + 1)));
+			config.setAddress(token.content.substr(0, pos));
+		}
 	}
-	else
+	catch(const std::exception& e)
 	{
-		address = token.content.substr(0, pos);
-		port = token.content.substr(pos + 1);
-		config.setPort(tool::strings::stoi(port));
-		if (!config.setAddress(address))
-			throw InvalidConfigFile(tool::strings::toStr(token.lineNbr)
-				+ ": listen: Invalid address: `" + address + "`");
+		throw InvalidConfigFile(tool::strings::toStr(token.lineNbr)
+			+ ": listen: " + e.what());
 	}
 
 	token = tokens.front();
@@ -335,9 +339,9 @@ void	ConfigurationParser::_parseServerNames(std::queue<t_token> &tokens,
 void	ConfigurationParser::_parseServerErrorPage(std::queue<t_token> &tokens,
 	Configuration &config)
 {
-	int					code;
-	t_token				token;
-	std::vector<int>	codes;
+	t_token						token;
+	std::vector<int>			codes;
+	std::vector<int>::iterator	it;
 
 	token = tokens.front();
 	tokens.pop();
@@ -347,19 +351,23 @@ void	ConfigurationParser::_parseServerErrorPage(std::queue<t_token> &tokens,
 	if (tokens.front().type != STRING)
 		throw UnexpectedToken(tokens.front(), "string");
 
-	while (tokens.front().type == STRING)
+	try
 	{
-		code = tool::strings::stoi(token.content);
-		if (code < 300 || code > 599)
-			throw InvalidConfigFile(tool::strings::toStr(token.lineNbr)
-				+ ": error_page: Invalid error code: `" + token.content + "`");
-		codes.push_back(code);
-		token = tokens.front();
-		tokens.pop();
-	}
+		while (tokens.front().type == STRING)
+		{
+			codes.push_back(tool::strings::stoi(token.content));
+			token = tokens.front();
+			tokens.pop();
+		}
 
-	for (std::vector<int>::iterator it = codes.begin(); it != codes.end(); ++it)
-		config.addErrorRedirect(*it, token.content);
+		for (it = codes.begin(); it != codes.end(); ++it)
+			config.addErrorRedirect(*it, token.content);
+	}
+	catch (const std::exception &e)
+	{
+		throw InvalidConfigFile(tool::strings::toStr(token.lineNbr)
+			+ ": error_page: " + e.what());
+	}
 
 	token = tokens.front();
 	tokens.pop();
@@ -437,6 +445,32 @@ void	ConfigurationParser::_parseServerIndex(std::queue<t_token> &tokens,
 		throw UnexpectedToken(tokens.front(), ";");
 
 	config.setIndex(token.content);
+	tokens.pop();
+}
+
+void	ConfigurationParser::_parseServerBacklog(std::queue<t_token> &tokens,
+	Configuration &config)
+{
+	t_token	token;
+
+	token = tokens.front();
+	tokens.pop();
+
+	if (token.type != STRING)
+		throw UnexpectedToken(token, "string");
+	if (tokens.front().type != SEMICOLON)
+		throw UnexpectedToken(tokens.front(), ";");
+
+	try
+	{
+		config.setBacklog(tool::strings::stoui(token.content));
+	}
+	catch(const std::exception& e)
+	{
+		throw InvalidConfigFile(tool::strings::toStr(token.lineNbr)
+			+ ": backlog: " + e.what());
+	}
+	
 	tokens.pop();
 }
 
@@ -546,7 +580,6 @@ void	ConfigurationParser::_parseLocAllowedMethods(
 void	ConfigurationParser::_parseLocReturn(std::queue<t_token> &tokens,
 	LocationConfiguration &config)
 {
-	int		code;
 	t_token	token;
 
 	if (tokens.empty())
@@ -558,12 +591,15 @@ void	ConfigurationParser::_parseLocReturn(std::queue<t_token> &tokens,
 	if (tokens.empty())
 		throw MissingToken("string");
 
-	code = tool::strings::stoi(token.content);
-	if (code < 100 || code > 599)
+	try
+	{
+		config.setReturnCode(tool::strings::stoi(token.content));
+	}
+	catch(const std::exception& e)
+	{
 		throw InvalidConfigFile(tool::strings::toStr(token.lineNbr)
-			+ ": return: Invalid status code: `" + token.content + "`");
-
-	config.setReturnCode(code);
+			+ ": return: " + e.what());
+	}
 
 	token = tokens.front();
 	tokens.pop();

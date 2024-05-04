@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 10:19:18 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/02 16:59:41 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/03 12:42:13 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,8 @@ class	ConfigurationParser
 		static void	_parseServerRoot(std::queue<t_token> &tokens,
 			Configuration &config);
 		static void	_parseServerIndex(std::queue<t_token> &tokens,
+			Configuration &config);
+		static void	_parseServerBacklog(std::queue<t_token> &tokens,
 			Configuration &config);
 		static void	_parseServerLocation(std::queue<t_token> &tokens,
 			Configuration &config);

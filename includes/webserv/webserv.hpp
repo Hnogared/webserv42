@@ -6,21 +6,23 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 16:58:31 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/03 11:23:19 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/03 12:36:08 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef WEBSERVDEFAULTSETTINGS_HPP
-# define WEBSERVDEFAULTSETTINGS_HPP
+#ifndef WEBSERV_HPP
+# define WEBSERV_HPP
 
 # define WS_VERSION	"1.0.0"
 # define WS_NAME	"webserv"
 
-# define WS_DFL_PORT	8080
-# define WS_DFL_HOST	"127.0.0.1"
-# define WS_DFL_INDEX	"index.html"
+# define WS_DFL_PORT		8080
+# define WS_DFL_HOST		"127.0.0.1"
+# define WS_DFL_INDEX		"index.html"
+# define WS_DFL_C_MAX_BODY	0
+# define WS_DFL_BACKLOG		10
 
 # define WS_LOCK_FILE		"/tmp/webserv42.lock"
 # define WS_DFL_CONFIG_PATH	"webserv.conf"
 
-#endif // WEBSERVDEFAULTSETTINGS_HPP
+#endif // WEBSERV_HPP

@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 09:35:37 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/02 17:49:22 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/04 16:12:25 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,8 @@ namespace	webserv
 
 /* Default constructor */
 Configuration::Configuration(void)
-	: _root(""), _index(WS_DFL_INDEX), _clientMaxBodySize(0)
+	: _backlog(WS_DFL_BACKLOG), _root(""), _index(WS_DFL_INDEX),
+	_clientMaxBodySize(WS_DFL_C_MAX_BODY)
 {
 	this->_address.sin_family = AF_INET;
 	this->_address.sin_port = htons(WS_DFL_PORT);
@@ -46,6 +47,7 @@ Configuration	&Configuration::operator=(const Configuration &original)
 	if (this == &original)
 		return (*this);
 	this->_address = original.getConstAddress();
+	this->_backlog = original.getBacklog();
 	this->_serverNames = original.getServerNames();
 	this->_root = original.getRoot();
 	this->_index = original.getIndex();
@@ -77,6 +79,11 @@ std::string	Configuration::getAddressString(void) const
 int	Configuration::getPort(void) const
 {
 	return (ntohs(this->_address.sin_port));
+}
+
+unsigned int	Configuration::getBacklog(void) const
+{
+	return (this->_backlog);
 }
 
 const std::set<std::string>	&Configuration::getServerNames(void) const
@@ -113,9 +120,10 @@ const std::set<LocationConfiguration>	&Configuration::getLocations(void) const
 /* ************************************************************************** */
 /* Setters */
 
-int	Configuration::setAddress(const std::string &address)
+void	Configuration::setAddress(const std::string &address)
 {
-	return (tool::net::inet_aton(address, this->_address.sin_addr));
+	if (!tool::net::inet_aton(address, this->_address.sin_addr))
+		throw std::invalid_argument("Invalid adress `" + address + "`");
 }
 
 void	Configuration::setAddress(const sockaddr_in &address)
@@ -126,6 +134,11 @@ void	Configuration::setAddress(const sockaddr_in &address)
 void	Configuration::setPort(int port)
 {
 	this->_address.sin_port = htons(port);
+}
+
+void	Configuration::setBacklog(unsigned int backlog)
+{
+	this->_backlog = backlog;
 }
 
 void	Configuration::addServerName(const std::string &serverName)
@@ -147,6 +160,11 @@ void	Configuration::setIndex(const std::string &index)
 
 void	Configuration::addErrorRedirect(int error, const std::string &redirect)
 {
+	if (error < 300 || error > 599)
+	{
+		throw std::invalid_argument("Invalid error code `"
+			+ tool::strings::toStr(error) + "`");
+	}
 	this->_errorRedirects[error] = redirect;
 }
 
@@ -166,16 +184,17 @@ void	Configuration::addLocation(const LocationConfiguration &location)
 
 std::ostream	&Configuration::print(std::ostream &os) const
 {
-	os << "=================================\nAddr  : "
-		<< this->getAddressString() << "\nPort  : " << this->getPort();
+	os << "=================================\nAddr    : "
+		<< this->getAddressString() << "\nPort    : " << this->getPort()
+		<< "\nBacklog : " << this->getBacklog();
 	
 	if (!this->_serverNames.empty())
-		os << "\nNames : " << tool::strings::join(this->_serverNames, ", ");
+		os << "\nNames   : " << tool::strings::join(this->_serverNames, ", ");
 
 	if (!this->_root.empty())
-		os << "\nRoot  : '" << this->_root << "'";
+		os << "\nRoot    : '" << this->_root << "'";
 	
-	os << "\nIndex : '" << this->_index << "'"
+	os << "\nIndex   : '" << this->_index << "'"
 		<< "\nClient max body size : " << this->_clientMaxBodySize;
 
 	if (!this->_errorRedirects.empty())

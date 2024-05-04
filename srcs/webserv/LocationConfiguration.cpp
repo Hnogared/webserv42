@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/01 14:41:57 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/02 16:35:52 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/03 12:53:14 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,6 +174,11 @@ void	LocationConfiguration::setAutoindex(bool autoindexState)
 
 void	LocationConfiguration::setReturnCode(int returnCode)
 {
+	if (returnCode < 100 || returnCode > 599)
+	{
+		throw std::invalid_argument("Invalid return code `"
+			+ tool::strings::toStr(returnCode) + "`");
+	}
 	this->_returnCode = returnCode;
 }
 

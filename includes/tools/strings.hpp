@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 12:31:31 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/02 11:44:42 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/03 12:43:38 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ namespace	strings
 {
 
 int					stoi(const std::string &str);
+unsigned int		stoui(const std::string &str);
 unsigned long int	bytestoul(const std::string &str);
 std::string			trim(const std::string &str, const std::string &set);
 bool				isValidPath(const std::string &path);

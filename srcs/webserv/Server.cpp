@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 17:06:34 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/03 12:25:20 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/04 16:10:46 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ void	Server::run(void)
 
 void	Server::_init(const std::string &config_path)
 {
-	std::vector<Configuration>					*configs;
+	std::vector<Configuration>					*configs = NULL;
 	std::vector<Configuration>::const_iterator	it;
 
 	signal(SIGINT, Server::_sigHandler);
@@ -87,12 +87,12 @@ void	Server::_init(const std::string &config_path)
 
 		for (it = configs->begin(); it != configs->end(); it++)
 			this->_virtualServers.push_back(new VirtualServer(*it));
-
 		delete configs;
 	}
 	catch(const std::exception& e)
 	{
 		delete configs;
+		remove(WS_LOCK_FILE);
 		throw;
 	}
 

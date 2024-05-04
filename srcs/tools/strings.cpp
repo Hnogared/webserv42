@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 12:31:15 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/02 11:47:12 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/03 12:48:37 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,27 @@ int	stoi(const std::string &str)
 	std::istringstream	iss(str);
 
 	iss >> nbr;
-	return (nbr * (!iss.fail()));
+
+	if (iss.fail() || !iss.eof())
+		throw std::invalid_argument("Invalid int string `" + str + "`");
+
+	return (nbr);
+}
+
+unsigned int	stoui(const std::string &str)
+{
+	unsigned int		nbr;
+	std::istringstream	iss(str);
+
+	if (str[0] == '-')
+		throw std::invalid_argument("Negative uint string `" + str + "`");
+
+	iss >> nbr;
+
+	if (iss.fail() || !iss.eof())
+		throw std::invalid_argument("Invalid uint string `" + str + "`");
+
+	return (nbr);
 }
 
 unsigned long int	bytestoul(const std::string &str)

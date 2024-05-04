@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 09:34:06 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/02 17:49:57 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/03 12:57:58 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ class	Configuration
 		const sockaddr_in					&getConstAddress(void) const;
 		std::string							getAddressString(void) const;
 		int									getPort(void) const;
+		unsigned int						getBacklog(void) const;
 		const std::set<std::string>			&getServerNames(void) const;
 		std::string							getRoot(void) const;
 		std::string							getIndex(void) const;
@@ -53,8 +54,9 @@ class	Configuration
 		const std::set<LocationConfiguration>	&getLocations(void) const;
 
 		/* Setters */
-		int		setAddress(const std::string &address);
+		void	setAddress(const std::string &address);
 		void	setAddress(const sockaddr_in &address);
+		void	setBacklog(unsigned int backlog);
 		void	setPort(int port);
 		void	addServerName(const std::string &serverName);
 		void	setRoot(const std::string &root);
@@ -70,6 +72,7 @@ class	Configuration
 	private:
 		/* Private attributes */
 		sockaddr_in						_address;
+		unsigned int					_backlog;
 		std::set<std::string>			_serverNames;
 		std::string						_root;
 		std::string						_index;
