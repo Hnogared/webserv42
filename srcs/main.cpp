@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 21:49:03 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/03 12:32:13 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/04 18:08:16 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,13 +43,11 @@ int	main(int argc, char **argv)
 	}
 	catch(const webserv::RuntimeError &e)
 	{
-		Harl::complain(Harl::ERROR, e.what());
 		delete server_p;
 		return (e.code());
 	}
 	catch(const std::exception &e)
 	{
-		Harl::complain(Harl::ERROR, e.what());
 		delete server_p;
 		return (2);
 	}
