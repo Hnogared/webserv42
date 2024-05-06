@@ -18,8 +18,7 @@ namespace	webserv
 /* ************************************************************************** */
 
 /* Default constructor */
-VirtualServer::VirtualServer(const Configuration &config, int backlog)
-	: _config(config), _backlog(backlog)
+VirtualServer::VirtualServer(const Configuration &config) : _config(config)
 {
 	int	optval = 1;
 
@@ -39,7 +38,7 @@ VirtualServer::VirtualServer(const Configuration &config, int backlog)
 			+ std::string(strerror(errno)));
 	}
 
-	if (listen(this->_socket.getFd(), backlog) == -1)
+	if (listen(this->_socket.getFd(), this->_config.getBacklog()) == -1)
 	{
 		throw SocketError("Failed to listen on socket: "
 			+ std::string(strerror(errno)));
@@ -59,21 +58,6 @@ webserv::Socket	VirtualServer::getSocket(void) const
 	return (this->_socket);
 }
 
-int	VirtualServer::getPort(void) const
-{
-	return (this->_config.getPort());
-}
-
-int	VirtualServer::getBacklog(void) const
-{
-	return (this->_backlog);
-}
-
-struct sockaddr_in	VirtualServer::getVirtualServerAddress(void) const
-{
-	return (this->_config.getConstAddress());
-}
-
 const Configuration	&VirtualServer::getConfiguration(void) const
 {
 	return (this->_config);
@@ -83,54 +67,43 @@ const Configuration	&VirtualServer::getConfiguration(void) const
 /* ************************************************************************** */
 /* Public methods */
 
-
-
-
-
-
-/*
-void	VirtualServer::run(void)
+void	VirtualServer::update(void)
 {
-	this->_running = true;
+	int				res;
+	size_t			clients_count = this->_clients.size();
+	struct pollfd	poll_fds[clients_count + 1];
 
-	while (this->_running)
+	poll_fds[0].fd = this->_socket.getFd();
+	poll_fds[0].events = POLLIN;
+
+	for (size_t i = 1; i < clients_count + 1; i++)
 	{
-		int				res;
-		size_t			clients_count = this->_clients.size();
-		struct pollfd	poll_fds[clients_count + 1];
+		poll_fds[i].fd = this->_clients[i - 1].getSocketFd();
+		poll_fds[i].events = POLLIN;
+	}
 
-		poll_fds[0].fd = this->_socket.getFd();
-		poll_fds[0].events = POLLIN;
+	res = poll(poll_fds, clients_count + 1, 100);
 
+	if (res == -1)
+		throw SocketError("Failed poll: " + std::string(strerror(errno)));
+
+	if (res)
+	{
+		if (poll_fds[0].revents & POLLIN)
+			this->_acceptConnection();
 		for (size_t i = 1; i < clients_count + 1; i++)
 		{
-			poll_fds[i].fd = this->_clients[i - 1].getSocketFd();
-			poll_fds[i].events = POLLIN;
-		}
-
-		res = poll(poll_fds, clients_count + 1, -1); // Wait indefinitely
-		
-		if (!VirtualServer::running)
-			break;
-		
-		if (res == -1)
-			throw SocketError("Failed poll: " + std::string(strerror(errno)));
-
-		if (res)
-		{
-			if (poll_fds[0].revents & POLLIN)
-				this->acceptConnection();
-			for (size_t i = 1; i < clients_count + 1; i++)
-			{
-				if (poll_fds[i].revents & POLLIN)
-					this->handleRequest(this->_clients[i - 1]);
-			}
+			if (poll_fds[i].revents & POLLIN)
+				this->_handleRequest(this->_clients[i - 1]);
 		}
 	}
 }
 
 
-void	VirtualServer::acceptConnection(void)
+/* ************************************************************************** */
+/* Private methods */
+
+void	VirtualServer::_acceptConnection(void)
 {
 	int					client_fd;
 	struct sockaddr_in	client_address;
@@ -163,8 +136,7 @@ void	VirtualServer::acceptConnection(void)
 		+ " CONN ACCEPTED");
 }
 
-
-void	VirtualServer::handleRequest(const Client &client)
+void	VirtualServer::_handleRequest(const Client &client)
 {
 	http::HttpRequest request;
 
@@ -198,5 +170,5 @@ void	VirtualServer::handleRequest(const Client &client)
 
 	client.sendResponse(http::HttpResponse(200, "OK", "HTTP/1.1"));
 }
-*/
+
 } // namespace webserv

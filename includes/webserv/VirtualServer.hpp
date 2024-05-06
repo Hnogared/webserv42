@@ -41,29 +41,28 @@ class	VirtualServer
 {
 	public:
 		/* Constructors */
-		explicit VirtualServer(const Configuration &config, int backlog = 10);
+		explicit VirtualServer(const Configuration &config);
 
 		/* Destructor */
 		~VirtualServer(void);
 
 		/* Getters */
 		Socket				getSocket(void) const;
-		int					getPort(void) const;
-		int					getBacklog(void) const;
-		struct sockaddr_in	getVirtualServerAddress(void) const;
 		const Configuration	&getConfiguration(void) const;
 
 		/* Public methods */
-		void	acceptConnection(void);
-		void	handleRequest(const Client &client);
+		void	update(void);
 
 
 	private:
 		/* Private attributes */
 		Configuration		_config;
 		Socket				_socket;
-		int					_backlog;
 		std::vector<Client>	_clients;
+
+		/* Private methods */
+		void	_acceptConnection(void);
+		void	_handleRequest(const Client &client);
 
 		/* [delete] */
 		VirtualServer(const VirtualServer&);

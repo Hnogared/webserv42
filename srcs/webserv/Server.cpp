@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 17:06:34 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/06 11:27:20 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/06 12:09:46 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,8 +64,17 @@ Server::~Server(void)
 
 void	Server::run(void)
 {
+	std::vector<VirtualServer*>::iterator	it;
+
 	Server::_running = true;
-	while (Server::_running) ;
+	while (Server::_running)
+	{
+		for (it = this->_virtualServers.begin();
+			it != this->_virtualServers.end(); it++)
+		{
+			(*it)->update();
+		}
+	}
 }
 
 
