@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 17:06:34 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/04 16:10:46 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/06 11:27:20 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ bool	Server::_running = false;
 /* ************************************************************************** */
 
 /* Config path constructor */
-Server::Server(const std::string &config_path)
+Server::Server(const std::string &configPath)
 {
 	if (Server::_initialized)
 		throw RuntimeError("Another instance is already initialized", 11);
@@ -44,7 +44,7 @@ Server::Server(const std::string &config_path)
 		lock_file_out.close();
 	}
 
-	this->_init(config_path);
+	this->_init(configPath);
 }
 
 
@@ -72,7 +72,7 @@ void	Server::run(void)
 /* ************************************************************************** */
 /* Private methods */
 
-void	Server::_init(const std::string &config_path)
+void	Server::_init(const std::string &configPath)
 {
 	std::vector<Configuration>					*configs = NULL;
 	std::vector<Configuration>::const_iterator	it;
@@ -83,13 +83,13 @@ void	Server::_init(const std::string &config_path)
 
 	try
 	{
-		configs = ConfigurationParser::parse(config_path);
+		configs = Server::_makeConfigs(configPath);
 
 		for (it = configs->begin(); it != configs->end(); it++)
 			this->_virtualServers.push_back(new VirtualServer(*it));
 		delete configs;
 	}
-	catch(const std::exception& e)
+	catch(const std::exception &e)
 	{
 		delete configs;
 		remove(WS_LOCK_FILE);
@@ -97,6 +97,41 @@ void	Server::_init(const std::string &config_path)
 	}
 
 	Server::_initialized = true;
+}
+
+std::vector<Configuration>	*Server::_makeConfigs(const std::string &configPath)
+{
+	std::vector<Configuration>	*configs = NULL;
+
+	Harl::complain(Harl::INFO, "Parsing configuration file: " + configPath);
+
+	try
+	{
+		configs = ConfigurationParser::parse(configPath);
+	}
+	catch (const ConfigurationParser::ConfigException &e)
+	{
+		Harl::complain(Harl::ERROR, configPath + ": " + e.what());
+
+		if (configPath == WS_DFL_CONFIG_PATH)
+		{
+			Harl::complain(Harl::ERROR, "Invalid default configuration file. "
+				"Abort.");
+			throw;
+		}
+
+		Harl::complain(Harl::INFO, "Fall back to default configuration file");
+		return (Server::_makeConfigs(WS_DFL_CONFIG_PATH));
+	}
+	catch (const std::exception &e)
+	{
+		Harl::complain(Harl::ERROR, configPath + ": " + e.what() + ". Abort.");
+		throw;
+	}
+	
+	Harl::complain(Harl::INFO, "Parsed configuration file: " + configPath);
+
+	return (configs);
 }
 
 /* Method to execute when receiving signals */

@@ -6,16 +6,14 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 21:49:03 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/04 18:08:16 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/06 11:25:19 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <iostream>
 #include <memory>
 
-#include "Harl.hpp"
 #include "Server.hpp"
-#include "ConfigurationParser.hpp"
 
 int	main(int argc, char **argv)
 {

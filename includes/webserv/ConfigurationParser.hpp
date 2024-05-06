@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 10:19:18 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/04 18:17:20 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/06 11:24:54 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@
 # include <fstream>
 # include <iostream>
 
-# include "Harl.hpp"
 # include "strings.hpp"
 # include "exceptions.hpp"
 # include "Configuration.hpp"

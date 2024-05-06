@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 10:21:20 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/04 18:15:49 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/06 11:19:14 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,8 +38,6 @@ std::vector<Configuration> *ConfigurationParser::parse(const std::string &path)
 
 	try
 	{
-		Harl::complain(Harl::INFO, "Parsing configuration file: " + path);
-
 		ConfigurationParser::_openConfigFile(path, file);
 		ConfigurationParser::_tokenizeFile(file, tokens);
 		file.close();
@@ -47,28 +45,8 @@ std::vector<Configuration> *ConfigurationParser::parse(const std::string &path)
 		configurations = new std::vector<Configuration>;
 		ConfigurationParser::_parseTokens(tokens, *configurations);
 	}
-	catch (const ConfigException &e)
-	{
-		Harl::complain(Harl::ERROR, path + ": " + e.what());
-
-		delete configurations;
-		file.close();
-
-		if (path == WS_DFL_CONFIG_PATH)
-		{
-			Harl::complain(Harl::ERROR, "Invalid default configuration file. "
-				"Abort.");
-			throw;
-		}
-
-		Harl::complain(Harl::INFO, "Fall back to default configuration file");
-		
-		return (ConfigurationParser::parse(WS_DFL_CONFIG_PATH));
-	}
 	catch (const std::exception &e)
 	{
-		Harl::complain(Harl::ERROR, path + ": " + e.what() + ". Abort.");
-
 		delete configurations;
 		file.close();
 		throw;

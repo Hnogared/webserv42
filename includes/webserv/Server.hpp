@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 12:40:13 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/03 12:24:28 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/06 11:28:34 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ class	Server
 {
 	public:
 		/* Constructors */
-		explicit Server(const std::string &config_path = WS_DFL_CONFIG_PATH);
+		explicit Server(const std::string &configPath = WS_DFL_CONFIG_PATH);
 
 		/* Destructor */
 		~Server(void);
@@ -35,15 +35,15 @@ class	Server
 
 
 	private:
-		/* Private static attributes */
-		static bool	_initialized;
-		static bool	_running;
-
 		/* Private attributes */
+		static bool					_initialized;
+		static bool					_running;
 		std::vector<VirtualServer*>	_virtualServers;
 
 		/* Private methods */
-		void		_init(const std::string &config_path);
+		void		_init(const std::string &configPath);
+		static std::vector<Configuration>	*_makeConfigs(const std::string
+			&configPath);
 		static void	_sigHandler(int signal);
 
 		/* [delete] */
