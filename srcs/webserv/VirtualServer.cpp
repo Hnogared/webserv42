@@ -53,14 +53,19 @@ VirtualServer::~VirtualServer(void) {}
 /* ************************************************************************** */
 /* Getters */
 
+const Configuration	&VirtualServer::getConfiguration(void) const
+{
+	return (this->_config);
+}
+
 webserv::Socket	VirtualServer::getSocket(void) const
 {
 	return (this->_socket);
 }
 
-const Configuration	&VirtualServer::getConfiguration(void) const
+const std::vector<Client>	&VirtualServer::getClients(void) const
 {
-	return (this->_config);
+	return (this->_clients);
 }
 
 
@@ -90,11 +95,11 @@ void	VirtualServer::update(void)
 	if (res)
 	{
 		if (poll_fds[0].revents & POLLIN)
-			this->_acceptConnection();
+			this->acceptConnection();
 		for (size_t i = 1; i < clients_count + 1; i++)
 		{
 			if (poll_fds[i].revents & POLLIN)
-				this->_handleRequest(this->_clients[i - 1]);
+				this->handleRequest(this->_clients[i - 1]);
 		}
 	}
 }
@@ -103,7 +108,7 @@ void	VirtualServer::update(void)
 /* ************************************************************************** */
 /* Private methods */
 
-void	VirtualServer::_acceptConnection(void)
+void	VirtualServer::acceptConnection(void)
 {
 	int					client_fd;
 	struct sockaddr_in	client_address;
@@ -136,7 +141,7 @@ void	VirtualServer::_acceptConnection(void)
 		+ " CONN ACCEPTED");
 }
 
-void	VirtualServer::_handleRequest(const Client &client)
+void	VirtualServer::handleRequest(const Client &client)
 {
 	http::HttpRequest request;
 

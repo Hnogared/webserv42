@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 17:06:34 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/06 12:09:46 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/06 17:43:03 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,15 +64,55 @@ Server::~Server(void)
 
 void	Server::run(void)
 {
-	std::vector<VirtualServer*>::iterator	it;
+	int					fdId;
+	int					serverId;
+	int					res;
+	int					totalFdsCount;
+	std::vector<pollfd>	fds;
+	std::vector<size_t>	clientsCounts(this->_virtualServers.size(), 0);
+	std::vector<size_t>::const_iterator	it;
 
 	Server::_running = true;
 	while (Server::_running)
 	{
-		for (it = this->_virtualServers.begin();
-			it != this->_virtualServers.end(); it++)
+		this->_updateClientsCounts(clientsCounts);
+		this->_updateVServersFds(fds, clientsCounts);
+
+		totalFdsCount = clientsCounts.size();
+		for (size_t i = 0; i < clientsCounts.size(); i++)
+			totalFdsCount += clientsCounts[i];
+
+		res = poll(fds.data(), totalFdsCount, -1);
+
+		if (Server::_running && res == -1)
+			throw SocketError("Failed poll: " + std::string(strerror(errno)));
+
+		if (res)
 		{
-			(*it)->update();
+			for (size_t i = 0; res && i < clientsCounts.size(); i++)
+			{
+				if (!fds[i].revents & POLLIN)
+					continue ;
+				res--;
+				this->_virtualServers[i]->acceptConnection();
+			}
+
+			fdId = clientsCounts.size();
+			serverId = 0;
+			for (it = clientsCounts.begin(); res && it != clientsCounts.end();
+				it++)
+			{
+				for (size_t i = 0; res && i < *it; i++)
+				{
+					if (!fds[fdId + i].revents & POLLIN)
+						continue ;
+					res--;
+					this->_virtualServers[serverId]->handleRequest(
+						this->_virtualServers[serverId]->getClients()[i]);
+				}
+				fdId += *it;
+				serverId++;
+			}
 		}
 	}
 }
@@ -108,6 +148,49 @@ void	Server::_init(const std::string &configPath)
 	Server::_initialized = true;
 }
 
+void	Server::_updateClientsCounts(std::vector<size_t> &clientsCounts) const
+{
+	size_t	serversCount = this->_virtualServers.size();
+
+	if (clientsCounts.size() != serversCount)
+		clientsCounts.resize(serversCount, 0);
+
+	for (size_t i = 0; i < serversCount; i++)
+		clientsCounts[i] = (this->_virtualServers[i])->getClients().size();
+}
+
+void	Server::_updateVServersFds(std::vector<pollfd> &fds,
+	const std::vector<size_t> &clientsCounts) const
+{
+	size_t	i, j, fdId;
+	size_t	size;
+
+	size = clientsCounts.size();
+	i = size;
+	while (i)
+		size += clientsCounts[i-- - 1];
+
+	if (fds.capacity() != size)
+		fds.resize(size);
+
+	for (i = 0; i < this->_virtualServers.size(); i++)
+	{
+		fds[i].fd = (this->_virtualServers[i])->getSocket().getFd();
+		fds[i].events = POLLIN;
+	}
+
+	fdId = i;
+	for (i = 0; i < clientsCounts.size(); i++)
+	{
+		for (j = 0; j < clientsCounts[i]; j++)
+		{
+			fds[fdId].fd
+				= (this->_virtualServers[i])->getClients()[j].getSocketFd();
+			fds[fdId++].events = POLLIN;
+		}
+	}
+}
+
 std::vector<Configuration>	*Server::_makeConfigs(const std::string &configPath)
 {
 	std::vector<Configuration>	*configs = NULL;
@@ -124,9 +207,9 @@ std::vector<Configuration>	*Server::_makeConfigs(const std::string &configPath)
 
 		if (configPath == WS_DFL_CONFIG_PATH)
 		{
-			Harl::complain(Harl::ERROR, "Invalid default configuration file. "
-				"Abort.");
-			throw;
+			throw ConfigurationParser::ConfigException(
+				"Invalid default configuration file: " + configPath + ": "
+				+ e.what());
 		}
 
 		Harl::complain(Harl::INFO, "Fall back to default configuration file");

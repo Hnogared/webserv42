@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 12:40:13 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/06 12:07:24 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/06 16:32:22 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,11 @@ class	Server
 		std::vector<VirtualServer*>	_virtualServers;
 
 		/* Private methods */
-		void		_init(const std::string &configPath);
+		void	_init(const std::string &configPath);
+		void	_updateClientsCounts(std::vector<size_t> &clientsCounts) const;
+		void	_updateVServersFds(std::vector<pollfd> &fds,
+			const std::vector<size_t> &clientsCounts) const;
+
 		static std::vector<Configuration>	*_makeConfigs(const std::string
 			&configPath);
 		static void	_sigHandler(int signal);

@@ -47,11 +47,14 @@ class	VirtualServer
 		~VirtualServer(void);
 
 		/* Getters */
-		Socket				getSocket(void) const;
-		const Configuration	&getConfiguration(void) const;
+		const Configuration			&getConfiguration(void) const;
+		Socket						getSocket(void) const;
+		const std::vector<Client>	&getClients(void) const;
 
 		/* Public methods */
 		void	update(void);
+		void	acceptConnection(void);
+		void	handleRequest(const Client &client);
 
 
 	private:
@@ -60,14 +63,10 @@ class	VirtualServer
 		Socket				_socket;
 		std::vector<Client>	_clients;
 
-		/* Private methods */
-		void	_acceptConnection(void);
-		void	_handleRequest(const Client &client);
-
 		/* [delete] */
 		VirtualServer(const VirtualServer&);
 		VirtualServer	&operator=(const VirtualServer&);
-};
+}; // class VirtualServer
 
 } // namespace webserv
 
