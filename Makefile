@@ -24,7 +24,8 @@ SRCS	:=	main.cpp					\
 			strings.cpp					\
 			colors.cpp					\
 			exceptions.cpp				\
-			net.cpp
+			net.cpp						\
+			files.cpp
 
 OBJS_DIR:=	objs
 OBJS	:=	$(addprefix $(OBJS_DIR)/, $(SRCS:.cpp=.o))

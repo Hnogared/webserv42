@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 23:28:04 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/07 19:03:47 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/07 22:57:18 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,23 +170,23 @@ void	HttpResponse::_buildHeadersAndBody(void)
 {
 	int	codeFamily = this->_statusCode / 100;
 
-	this->addHeader("Server", WS_SERVER_NAME "/" WS_SERVER_VERSION);
+	this->setHeader("Server", WS_SERVER_NAME "/" WS_SERVER_VERSION);
 
 	switch (codeFamily)
 	{
 		case 1:
-			this->addHeader("Connection", "Upgrade");
-			this->addHeader("Content-Type", "text/plain");
+			this->setHeader("Connection", "Upgrade");
+			this->setHeader("Content-Type", "text/plain");
 			break;
 
 		case 2: case 3:
-			this->addHeader("Connection", "Keep-Alive");
-			this->addHeader("Content-Type", "text/html");
+			this->setHeader("Connection", "Keep-Alive");
+			this->setHeader("Content-Type", "text/html");
 			break;
 		
 		case 4: case 5:
-			this->addHeader("Connection", "Close");
-			this->addHeader("Content-Type", "text/html");
+			this->setHeader("Connection", "Close");
+			this->setHeader("Content-Type", "text/html");
 			break;
 
 		default:
@@ -201,7 +201,7 @@ void	HttpResponse::_buildHeadersAndBody(void)
 	else
 		this->setBody(this->getStatusLine());
 
-	this->addHeader("Content-Length",
+	this->setHeader("Content-Length",
 		tool::strings::toStr(this->getBody().size()));
 }
 

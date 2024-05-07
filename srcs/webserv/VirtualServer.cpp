@@ -143,7 +143,7 @@ void	VirtualServer::acceptConnection(void)
 
 void	VirtualServer::handleRequest(const Client &client)
 {
-	http::HttpRequest request;
+	http::HttpRequest	request;
 
 	try
 	{
@@ -167,13 +167,119 @@ void	VirtualServer::handleRequest(const Client &client)
 	Harl::complain(Harl::INFO, client.getAddrStr(Client::PEER) + " REQ '"
 		+ request.getStatusLine() + "'");
 
+	this->_sendResponse(client, request);
+
+//	client.sendResponse(http::HttpResponse(200));
+}
+
+
+/* ************************************************************************** */
+/* Private methods */
+
+void	VirtualServer::_sendResponse(const Client &client,
+	const http::HttpRequest &request)
+{
+	std::string	uri = request.getTarget();
+
 	if (!request.isValid())
 	{
 		client.sendResponse(http::HttpResponse(400));
 		return ;
 	}
 
-	client.sendResponse(http::HttpResponse(200, "OK"));
+	if (request.getVersion() != WS_HTTP_VERSION)
+	{
+		client.sendResponse(http::HttpResponse(505));
+		return ;
+	}
+
+	if (*(uri.end() - 1) == '/')
+	{
+		this->_sendDirectoryResponse(client, request);
+		return ;
+	}
+
+	http::HttpResponse	response(200);
+
+	client.sendResponse(response);
+}
+
+void	VirtualServer::_sendDirectoryResponse(const Client &client,
+	const http::HttpRequest &request)
+{
+	std::string	uri = request.getTarget();
+	std::string	path;
+	std::set<LocationConfiguration>::const_iterator	location;
+
+	for (location = this->_config.getLocations().begin();
+		location != this->_config.getLocations().end(); location++)
+	{
+		if (location->getPath() != uri)
+			continue ;
+
+		if (!location->getIndex().empty())
+		{
+			path = location->getRoot() + uri + location->getIndex();
+
+			try
+			{
+				http::HttpResponse	response(200);
+
+				response.setBody(tool::files::readFile(path));
+				response.setHeader("Content-Length",
+					tool::strings::toStr(response.getBody().size()));
+
+				client.sendResponse(response);
+				return ;
+			}
+			catch(const std::exception& /* e */) {}
+		}
+
+		if (location->isAutoindex())
+		{
+			path = location->getRoot() + uri;
+			this->_sendDirectoryListing(client, uri, path);
+			return ;
+		}
+	}
+
+	client.sendResponse(http::HttpResponse(404));
+}
+
+void	VirtualServer::_sendDirectoryListing(const Client &client,
+	const std::string &uri, const std::string &path)
+{
+	std::string		body;
+	DIR				*dir;
+	struct dirent	*entry;
+
+	dir = opendir(path.c_str());
+	if (!dir)
+	{
+		client.sendResponse(http::HttpResponse(404));
+		return ;
+	}
+
+	body = "<html>\n"
+		"<head><title>Index of " + uri + "</title></head>\n"
+		"<body><h1>Index of " + uri + "</h1><hr><pre>";
+
+	while ((entry = readdir(dir)))
+	{
+		body += "<a href=\"" + uri + entry->d_name + "\">"
+			+ entry->d_name + "</a><br>";
+	}
+
+	body += "</pre><hr></body></html>";
+
+	closedir(dir);
+
+	http::HttpResponse	response(200);
+
+	response.setBody(body);
+	response.setHeader("Content-Length", tool::strings::toStr(body.size()));
+
+	client.sendResponse(response);
 }
 
 } // namespace webserv

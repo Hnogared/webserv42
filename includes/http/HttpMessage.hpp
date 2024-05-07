@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/08 18:20:17 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/07 15:17:49 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/07 22:55:38 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ class	HttpMessage
 		void	setVersion(const std::string &version);
 		void	setStatusLine(const std::string &statusLine);
 		void	addHeader(const std::string &key, const std::string &val);
+		void	setHeader(const std::string &key, const std::string &val);
 		void	setBody(const std::string &body);
 		void	setValidity(bool isValid);
 

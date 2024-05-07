@@ -26,8 +26,10 @@
 # include <unistd.h>
 # include <poll.h>
 # include <signal.h>
+# include <dirent.h>
 
 # include "exceptions.hpp"
+# include "files.hpp"
 # include "Harl.hpp"
 # include "Socket.hpp"
 # include "Client.hpp"
@@ -62,6 +64,14 @@ class	VirtualServer
 		Configuration		_config;
 		Socket				_socket;
 		std::vector<Client>	_clients;
+
+		/* Private methods */
+		void	_sendResponse(const Client &client,
+			const http::HttpRequest &request);
+		void	_sendDirectoryResponse(const Client &client,
+			const http::HttpRequest &request);
+		void	_sendDirectoryListing(const Client &client,
+			const std::string &uri, const std::string &path);
 
 		/* [delete] */
 		VirtualServer(const VirtualServer&);

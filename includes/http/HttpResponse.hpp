@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 23:20:31 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/07 19:04:49 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/07 19:05:58 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,6 @@
 
 # include "HttpMessage.hpp"
 # include "strings.hpp"
-
-
-# include "Harl.hpp"
 
 namespace	http
 {

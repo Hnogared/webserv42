@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/08 18:25:00 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/07 15:29:13 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/07 22:55:17 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,6 +112,11 @@ void	HttpMessage::addHeader(const std::string &key, const std::string &val)
 		this->_headers[key] += "," + val;
 	else
 		this->_headers[key] = val;
+}
+
+void	HttpMessage::setHeader(const std::string &key, const std::string &val)
+{
+	this->_headers[key] = val;
 }
 
 void	HttpMessage::setBody(const std::string &body)
