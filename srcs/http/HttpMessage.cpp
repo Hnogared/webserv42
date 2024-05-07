@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/08 18:25:00 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/19 17:25:34 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/07 15:29:13 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,15 +16,14 @@ namespace	http
 {
 
 /* ************************************************************************** */
-/* Constructors */
 
 /* Default constructor */
 HttpMessage::HttpMessage(void) {}
 
 /* Version + message constructor */
-HttpMessage::HttpMessage(const std::string &status_line,
+HttpMessage::HttpMessage(const std::string &statusLine,
 		const std::string &version)
-	: _version(version), _status_line(status_line) {}
+	: _version(version), _statusLine(statusLine) {}
 
 /* Copy constructor */
 HttpMessage::HttpMessage(const HttpMessage &original)
@@ -47,10 +46,10 @@ HttpMessage	&HttpMessage::operator=(const HttpMessage &original)
 		return (*this);
 
 	this->_version = original.getVersion();
-	this->_status_line = original.getStatusLine();
+	this->_statusLine = original.getStatusLine();
 	this->_headers = original.getHeaders();
 	this->_body = original.getBody();
-	this->_is_valid = original.isValid();
+	this->_isValid = original.isValid();
 	return (*this);
 }
 
@@ -65,7 +64,7 @@ std::string	HttpMessage::getVersion(void) const
 
 std::string	HttpMessage::getStatusLine(void) const
 {
-	return (this->_status_line);
+	return (this->_statusLine);
 }
 
 std::string	HttpMessage::getHeader(const std::string &key) const
@@ -90,7 +89,7 @@ std::string	HttpMessage::getBody(void) const
 
 bool	HttpMessage::isValid(void) const
 {
-	return (this->_is_valid);
+	return (this->_isValid);
 }
 
 
@@ -102,9 +101,9 @@ void	HttpMessage::setVersion(const std::string &version)
 	this->_version = version;
 }
 
-void	HttpMessage::setStatusLine(const std::string &status_line)
+void	HttpMessage::setStatusLine(const std::string &statusLine)
 {
-	this->_status_line = status_line;
+	this->_statusLine = statusLine;
 }
 
 void	HttpMessage::addHeader(const std::string &key, const std::string &val)
@@ -122,7 +121,7 @@ void	HttpMessage::setBody(const std::string &body)
 
 void	HttpMessage::setValidity(bool is_valid)
 {
-	this->_is_valid = is_valid;
+	this->_isValid = is_valid;
 }
 
 

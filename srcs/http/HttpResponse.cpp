@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 23:28:04 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/07 14:58:42 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/07 19:03:47 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,17 +24,20 @@ const std::map<int, std::string>	HttpResponse::_statusLines
 /* ************************************************************************** */
 
 /* Status code + status line constructor */
-HttpResponse::HttpResponse(int status_code, const std::string &status_line)
-	: HttpMessage(status_line), _statusCode(status_code)
+HttpResponse::HttpResponse(int statusCode, const std::string &statusLine)
+	: HttpMessage(statusLine), _statusCode(statusCode)
 {
-	if (status_code < 100 || status_code > 599)
+	if (statusCode < 100 || statusCode > 599)
 		throw std::invalid_argument("Invalid status code");
-	
+
+	if (statusLine.empty())
+		this->setStatusLine(HttpResponse::_statusLines.at(statusCode));
+
 	this->_buildHeadersAndBody();
 }
 
 /* Copy constructor */
-HttpResponse::HttpResponse(const HttpResponse &original) : HttpMessage()
+HttpResponse::HttpResponse(const HttpResponse &original) : HttpMessage("")
 {
 	*this = original;
 }
@@ -140,13 +143,13 @@ std::map<int, std::string>	HttpResponse::_initStatusLines(void)
 	return (statusLines);
 }
 
-std::string	HttpResponse::_makeBody(int statusCode)
+std::string	HttpResponse::_makeBody(int statusCode,
+	const std::string &statusLine)
 {
 	std::string	body;
 	std::string	message;
 
-	message = tool::strings::toStr(statusCode) + " "
-		+ HttpResponse::_statusLines.at(statusCode);
+	message = tool::strings::toStr(statusCode) + " " + statusLine;
 
 	body = "<html>\n"
 		"<head><title>" + message + "</title></head>\n"
@@ -191,13 +194,12 @@ void	HttpResponse::_buildHeadersAndBody(void)
 	}
 
 	if (this->_statusCode >= 400 && this->_statusCode <= 599)
-		this->setBody(HttpResponse::_makeBody(this->_statusCode));
+	{
+		this->setBody(HttpResponse::_makeBody(this->_statusCode,
+			this->getStatusLine()));
+	}
 	else
-		this->setBody(this->_statusLines.at(this->_statusCode));
-
-	this->setStatusLine(this->getVersion() + " "
-		+ tool::strings::toStr(this->_statusCode) + " "
-		+ this->_statusLines.at(this->_statusCode));
+		this->setBody(this->getStatusLine());
 
 	this->addHeader("Content-Length",
 		tool::strings::toStr(this->getBody().size()));

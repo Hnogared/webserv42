@@ -169,7 +169,7 @@ void	VirtualServer::handleRequest(const Client &client)
 
 	if (!request.isValid())
 	{
-		client.sendResponse(http::HttpResponse(400, "Bad Request"));
+		client.sendResponse(http::HttpResponse(400));
 		return ;
 	}
 

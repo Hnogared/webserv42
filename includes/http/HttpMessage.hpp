@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/08 18:20:17 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/07 13:28:35 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/07 15:17:49 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ class	HttpMessage
 	public:
 		/* Constructors */
 		explicit HttpMessage(void);
-		explicit HttpMessage(const std::string &status_line,
+		explicit HttpMessage(const std::string &statusLine,
 			const std::string &version = WS_HTTP_VERSION);
 		HttpMessage(const HttpMessage &original);
 
@@ -48,19 +48,19 @@ class	HttpMessage
 
 		/* Setters */
 		void	setVersion(const std::string &version);
-		void	setStatusLine(const std::string &status_line);
+		void	setStatusLine(const std::string &statusLine);
 		void	addHeader(const std::string &key, const std::string &val);
 		void	setBody(const std::string &body);
-		void	setValidity(bool is_valid);
+		void	setValidity(bool isValid);
 
 
 	private:
 		/* Private attributes */
 		std::string							_version;
-		std::string							_status_line;
+		std::string							_statusLine;
 		std::map<std::string, std::string>	_headers;
 		std::string							_body;
-		bool								_is_valid;
+		bool								_isValid;
 };
 
 std::ostream	&operator<<(std::ostream &out, const HttpMessage &http_msg);
