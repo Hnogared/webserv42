@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 23:20:31 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/08 18:34:36 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/07 14:48:02 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,9 @@
 
 # include <string>
 # include <sstream>
-# include <map>
 
 # include "HttpMessage.hpp"
+# include "strings.hpp"
 
 namespace	http
 {
@@ -26,8 +26,7 @@ class	HttpResponse : public HttpMessage
 {
 	public:
 		/* Constructors */
-		HttpResponse(int status_code, const std::string &status_line,
-			const std::string &version);
+		HttpResponse(int status_code, const std::string &status_line);
 		HttpResponse(const HttpResponse &original);
 
 		/* Destructor */
@@ -45,7 +44,15 @@ class	HttpResponse : public HttpMessage
 
 	private:
 		/* Private attributes */
-		int	_status_code;
+		static const std::map<int, std::string>	_statusLines;
+		int										_statusCode;
+
+		/* Private static methods */
+		static std::map<int, std::string>	_initStatusLines(void);
+		static std::string					_makeBody(int statusCode);
+
+		/* Private methods */
+		void	_buildHeadersAndBody(void);
 };
 
 } // namespace http

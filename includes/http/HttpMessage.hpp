@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/08 18:20:17 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/19 17:25:29 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/07 13:28:35 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@
 # include <string>
 # include <map>
 
+# include "webserv.hpp"
+
 namespace	http
 {
 
@@ -26,7 +28,7 @@ class	HttpMessage
 		/* Constructors */
 		explicit HttpMessage(void);
 		explicit HttpMessage(const std::string &status_line,
-			const std::string &version);
+			const std::string &version = WS_HTTP_VERSION);
 		HttpMessage(const HttpMessage &original);
 
 		/* Destructor */

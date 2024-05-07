@@ -169,11 +169,11 @@ void	VirtualServer::handleRequest(const Client &client)
 
 	if (!request.isValid())
 	{
-		client.sendResponse(http::HttpResponse(400, "Bad Request", "HTTP/1.1"));
+		client.sendResponse(http::HttpResponse(400, "Bad Request"));
 		return ;
 	}
 
-	client.sendResponse(http::HttpResponse(200, "OK", "HTTP/1.1"));
+	client.sendResponse(http::HttpResponse(200, "OK"));
 }
 
 } // namespace webserv
