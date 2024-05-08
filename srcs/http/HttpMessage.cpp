@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/08 18:25:00 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/07 22:55:17 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/08 17:17:00 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,14 +119,16 @@ void	HttpMessage::setHeader(const std::string &key, const std::string &val)
 	this->_headers[key] = val;
 }
 
-void	HttpMessage::setBody(const std::string &body)
-{
-	this->_body = body;
-}
-
 void	HttpMessage::setValidity(bool is_valid)
 {
 	this->_isValid = is_valid;
+}
+
+/* Virtual setters */
+
+void	HttpMessage::setBody(const std::string &body)
+{
+	this->_body = body;
 }
 
 

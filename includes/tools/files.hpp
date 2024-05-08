@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/07 23:04:43 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/07 23:17:09 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/08 16:42:48 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ namespace	files
 {
 
 std::string	readFile(const std::string &filePath);
+std::string	joinPaths(const std::string &path1, const std::string &path2);
 
 } // namespace files
 

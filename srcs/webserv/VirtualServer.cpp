@@ -150,12 +150,16 @@ void	VirtualServer::handleRequest(const Client &client)
 	{
 		this->_log(Harl::INFO, &client, "REQ '" + std::string(e.what()) + "' "
 			+ tool::strings::toStr(e.code()));
+
 		client.sendResponse(http::HttpResponse(e.code()));
+		this->_clients.erase(std::remove(this->_clients.begin(),
+			this->_clients.end(), client), this->_clients.end());
 		return ;
 	}
 	catch (const SocketConnectionClosed &e)
 	{
 		this->_log(Harl::INFO, &client, "CONN CLOSED");
+
 		this->_clients.erase(std::remove(this->_clients.begin(),
 			this->_clients.end(), client), this->_clients.end());
 		return ;
@@ -164,13 +168,14 @@ void	VirtualServer::handleRequest(const Client &client)
 	{
 		this->_log(Harl::ERROR, &client, "500 - Failed to fetch request: "
 			+ std::string(e.what()));
+
 		client.sendResponse(http::HttpResponse(500));
+		this->_clients.erase(std::remove(this->_clients.begin(),
+			this->_clients.end(), client), this->_clients.end());
 		return ;
 	}
 
 	this->_sendResponse(client, request);
-
-//	client.sendResponse(http::HttpResponse(200));
 }
 
 
@@ -237,16 +242,14 @@ void	VirtualServer::_sendDirectoryResponse(const Client &client,
 
 		if (!location->getIndex().empty())
 		{
-			path = location->getRoot() + uri + location->getIndex();
+			path = tool::files::joinPaths(location->getRoot(), uri);
+			path = tool::files::joinPaths(path, location->getIndex());
 
 			try
 			{
 				http::HttpResponse	response(200);
 
 				response.setBody(tool::files::readFile(path));
-				response.setHeader("Content-Length",
-					tool::strings::toStr(response.getBody().size()));
-
 				client.sendResponse(response);
 				return ;
 			}
@@ -255,7 +258,7 @@ void	VirtualServer::_sendDirectoryResponse(const Client &client,
 
 		if (location->isAutoindex())
 		{
-			path = location->getRoot() + uri;
+			path = tool::files::joinPaths(location->getRoot(), uri);
 			this->_sendDirectoryListing(client, uri, path);
 			return ;
 		}
@@ -281,7 +284,9 @@ void	VirtualServer::_sendDirectoryListing(const Client &client,
 
 	body = "<html>\n"
 		"<head><title>Index of " + uri + "</title></head>\n"
-		"<body><h1>Index of " + uri + "</h1><hr><pre>";
+		"<body>\n"
+		"  <h1>Index of " + uri + "</h1>\n"
+		"  <hr><pre>\n";
 
 	while ((entry = readdir(dir)))
 	{
@@ -294,20 +299,20 @@ void	VirtualServer::_sendDirectoryListing(const Client &client,
 				icon = "&#128193;";
 				break;
 		}
-		body += "<span>" + icon + " " + "</span>"
+		body += "  <span>" + icon + " " + "</span>"
 			+ "<a href=\"" + uri + entry->d_name + "\">"
-			+ entry->d_name + "</a><br>";
+			+ entry->d_name + "</a><br>\n";
 	}
 
-	body += "</pre><hr></body></html>";
+	body += "  </pre><hr>\n"
+		"</body>\n"
+		"</html>\n";
 
 	closedir(dir);
 
 	http::HttpResponse	response(200);
 
 	response.setBody(body);
-	response.setHeader("Content-Length", tool::strings::toStr(body.size()));
-
 	client.sendResponse(response);
 }
 

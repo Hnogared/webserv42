@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 23:28:04 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/07 22:57:18 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/08 17:23:22 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,16 @@ std::string	HttpResponse::toString(void) const
 	
 	result << "\r\n" << this->getBody();
 	return (result.str());
+}
+
+
+/* ************************************************************************** */
+/* HttpMessage virtual methods overrides */
+
+void	HttpResponse::setBody(const std::string &body)
+{
+	this->HttpMessage::setBody(body);
+	this->setHeader("Content-Length", tool::strings::toStr(body.size()));
 }
 
 
@@ -193,16 +203,14 @@ void	HttpResponse::_buildHeadersAndBody(void)
 			break;
 	}
 
-	if (this->_statusCode >= 400 && this->_statusCode <= 599)
+	if (this->_statusCode < 400)
 	{
-		this->setBody(HttpResponse::_makeBody(this->_statusCode,
-			this->getStatusLine()));
-	}
-	else
 		this->setBody(this->getStatusLine());
+		return ;
+	}
 
-	this->setHeader("Content-Length",
-		tool::strings::toStr(this->getBody().size()));
+	this->setBody(HttpResponse::_makeBody(this->_statusCode,
+		this->getStatusLine()));
 }
 
 } // namespace http
