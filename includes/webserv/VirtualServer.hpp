@@ -66,6 +66,9 @@ class	VirtualServer
 		std::vector<Client>	_clients;
 
 		/* Private methods */
+
+		void	_log(Harl::e_level level, const Client *client,
+			const std::string &message);
 		void	_sendResponse(const Client &client,
 			const http::HttpRequest &request);
 		void	_sendDirectoryResponse(const Client &client,

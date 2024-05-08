@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 22:57:07 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/08 04:13:10 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/08 12:05:42 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,6 @@ class	HttpRequest : public HttpMessage
 	public:
 		/* Constructors */
 		explicit HttpRequest(void);
-		//explicit HttpRequest(const std::string &request);
 		HttpRequest(const HttpRequest &original);
 
 		/* Destructor */
@@ -57,19 +56,52 @@ class	HttpRequest : public HttpMessage
 
 	/* Exceptions */
 	public:
-		class	InvalidRequest : public webserv::RuntimeError
+		class	RequestException : public webserv::RuntimeError
 		{
 			public:
 				/* Constructors */
-				explicit InvalidRequest(void);
-				InvalidRequest(const InvalidRequest &original);
+				explicit RequestException(void);
+				explicit RequestException(const std::string &message,
+					int code = 21);
+				RequestException(const RequestException &original);
 
 				/* Destructor */
-				~InvalidRequest(void) throw();
+				~RequestException(void) throw();
 
 				/* Operator overloads */
-				InvalidRequest	&operator=(const InvalidRequest &original);
+				RequestException	&operator=(const RequestException
+					&original);
+		}; // class RequestException
+
+		class	BadRequest : public RequestException
+		{
+			public:
+				/* Constructors */
+				explicit BadRequest(void);
+				explicit BadRequest(const std::string &msg);
+				BadRequest(const BadRequest &original);
+
+				/* Destructor */
+				~BadRequest(void) throw();
+
+				/* Operator overloads */
+				BadRequest	&operator=(const BadRequest &original);
 		}; // class IvalidRequest
+		
+		class	BodyTooLarge : public RequestException
+		{
+			public:
+				/* Constructors */
+				explicit BodyTooLarge(void);
+				explicit BodyTooLarge(const std::string &msg);
+				BodyTooLarge(const BodyTooLarge &original);
+
+				/* Destructor */
+				~BodyTooLarge(void) throw();
+
+				/* Operator overloads */
+				BodyTooLarge	&operator=(const BodyTooLarge &original);
+		}; // class BodyTooLarge
 }; // class HttpRequest
 
 } // namespace http

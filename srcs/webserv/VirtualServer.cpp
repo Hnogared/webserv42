@@ -118,7 +118,7 @@ void	VirtualServer::acceptConnection(void)
 			(struct sockaddr *)&client_address, &client_address_len);
 	if (client_fd == -1)
 	{
-		Harl::complain(Harl::ERROR, "Failed client connection: "
+		this->_log(Harl::ERROR, NULL, "Failed client connection: "
 			+ std::string(strerror(errno)));
 		return ;
 	}
@@ -129,16 +129,13 @@ void	VirtualServer::acceptConnection(void)
 	}
 	catch (const std::exception &e)
 	{
-		std::stringstream error_message;
-
 		close(client_fd);
-		error_message << "Failed client connection: " << e.what();
-		Harl::complain(Harl::ERROR, error_message.str());
+		this->_log(Harl::ERROR, NULL, "Failed client connection: "
+			+ std::string(e.what()));
 		return ;
 	}
 
-	Harl::complain(Harl::INFO, this->_clients.back().getAddrStr(Client::PEER)
-		+ " CONN ACCEPTED");
+	this->_log(Harl::INFO, &(this->_clients.back()), "CONN ACCEPTED");
 }
 
 void	VirtualServer::handleRequest(const Client &client)
@@ -149,37 +146,27 @@ void	VirtualServer::handleRequest(const Client &client)
 	{
 		request = client.fetchRequest(this->_config.getClientMaxBodySize());
 	}
-	catch (const http::HttpRequest::InvalidRequest &e)
+	catch (const http::HttpRequest::RequestException &e)
 	{
-		Harl::complain(Harl::INFO, client.getAddrStr(Client::PEER)
-			+ " REQ INVALID");
-		client.sendResponse(http::HttpResponse(400));
-		return ;
-	}
-	catch (const Client::RequestBodyTooLarge &e)
-	{
-		Harl::complain(Harl::INFO, client.getAddrStr(Client::PEER)
-			+ " REQ BODY TOO LARGE");
-		client.sendResponse(http::HttpResponse(413));
+		this->_log(Harl::INFO, &client, "REQ '" + std::string(e.what()) + "' "
+			+ tool::strings::toStr(e.code()));
+		client.sendResponse(http::HttpResponse(e.code()));
 		return ;
 	}
 	catch (const SocketConnectionClosed &e)
 	{
-		Harl::complain(Harl::INFO, client.getAddrStr(Client::PEER)
-			+ " CONN CLOSED");
+		this->_log(Harl::INFO, &client, "CONN CLOSED");
 		this->_clients.erase(std::remove(this->_clients.begin(),
 			this->_clients.end(), client), this->_clients.end());
 		return ;
 	}
 	catch(const std::exception& e)
 	{
-		Harl::complain(Harl::ERROR, client.getAddrStr(Client::PEER)
-			+ " Failed to fetch request: " + e.what());
+		this->_log(Harl::ERROR, &client, "500 - Failed to fetch request: "
+			+ std::string(e.what()));
+		client.sendResponse(http::HttpResponse(500));
 		return ;
 	}
-
-	Harl::complain(Harl::INFO, client.getAddrStr(Client::PEER) + " REQ '"
-		+ request.getStatusLine() + "'");
 
 	this->_sendResponse(client, request);
 
@@ -190,10 +177,27 @@ void	VirtualServer::handleRequest(const Client &client)
 /* ************************************************************************** */
 /* Private methods */
 
+void	VirtualServer::_log(Harl::e_level level, const Client *client,
+	const std::string &message)
+{
+	std::string	dispMessage;
+
+	if (client)
+		dispMessage = client->getAddrStr(Client::PEER) + "  " + message;
+	else
+		dispMessage = message;
+
+	Harl::complain(level, dispMessage);
+}
+
 void	VirtualServer::_sendResponse(const Client &client,
 	const http::HttpRequest &request)
 {
+	std::string	message;
 	std::string	uri = request.getTarget();
+
+	message = client.getAddrStr(Client::PEER) + " REQ '"
+		+ request.getStatusLine() + "'";
 
 	if (!request.isValid())
 	{

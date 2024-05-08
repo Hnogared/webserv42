@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 14:43:33 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/08 05:55:47 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/08 12:30:58 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,9 +111,16 @@ http::HttpRequest	Client::fetchRequest(size_t maxBodySize) const
 	if (content.empty())
 		throw SocketConnectionClosed();
 
-	pos = content.find("\r\n");
-	temp = content.substr(0, pos);
-	request.parseRequestLine(temp);
+	try
+	{
+		pos = content.find("\r\n");
+		temp = content.substr(0, pos);
+		request.parseRequestLine(temp);
+	}
+	catch (const http::HttpRequest::RequestException &e)
+	{
+		throw http::HttpRequest::BadRequest(temp);
+	}
 
 	content = content.substr(pos + 2);
 
@@ -134,8 +141,16 @@ http::HttpRequest	Client::fetchRequest(size_t maxBodySize) const
 		content += temp;
 	}
 
-	temp = content.substr(0, pos);
-	request.parseHeaders(temp);
+	try
+	{
+		temp = content.substr(0, pos);
+		request.parseHeaders(temp);
+	}
+	catch (const http::HttpRequest::BadRequest &e)
+	{
+		throw http::HttpRequest::BadRequest(request.getStatusLine());
+	}
+
 	content = content.substr(pos + 4 - 2 * (pos == 0));
 
 	if (request.getMethod() != "POST")
@@ -143,7 +158,7 @@ http::HttpRequest	Client::fetchRequest(size_t maxBodySize) const
 
 	bodySize = tool::strings::stoi(request.getHeader("Content-Length"));
 	if (bodySize > maxBodySize)
-		throw RequestBodyTooLarge();
+		throw http::HttpRequest::BodyTooLarge(request.getStatusLine());
 
 	while (content.size() < bodySize)
 	{
@@ -179,47 +194,7 @@ std::string	Client::_readRequestBlock(size_t maxBuffSize) const
 	}
 	
 	buffer[bytesRead] = '\0';
-
 	return (std::string(buffer));
-}
-
-
-/* ************************************************************************** */
-/* Exceptions                                                                 */
-/* ************************************************************************** */
-
-/* ***************************** */
-/* RequestBodyTooLarge           */
-/* ***************************** */
-
-/* Default constructor */
-Client::RequestBodyTooLarge::RequestBodyTooLarge(void)
-	: RuntimeError("Request body is too large", 22) {}
-
-/* Message constructor */
-Client::RequestBodyTooLarge::RequestBodyTooLarge(const std::string &msg)
-	: RuntimeError(msg, 22) {}
-
-/* Copy constructor */
-Client::RequestBodyTooLarge::RequestBodyTooLarge(
-		const RequestBodyTooLarge &original)
-	: RuntimeError(original) {}
-
-
-/* Destructor */
-Client::RequestBodyTooLarge::~RequestBodyTooLarge(void) throw() {}
-
-
-/* ***************************** */
-/* Operator overloads */
-
-Client::RequestBodyTooLarge	&Client::RequestBodyTooLarge::operator=(
-		const RequestBodyTooLarge &original)
-{
-	if (this == &original)
-		return (*this);
-	RuntimeError::operator=(original);
-	return (*this);
 }
 
 } // namespace webserv

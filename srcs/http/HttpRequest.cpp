@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 23:01:55 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/08 05:15:28 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/08 12:09:38 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,18 +24,6 @@ HttpRequest::HttpRequest(void)
 {
 	this->setValidity(true);
 }
-
-/* Request constructor */
-// HttpRequest::HttpRequest(const std::string &request)
-// 	: HttpMessage(), _method(), _target()
-// {
-// 	std::istringstream	iss_request(request);
-
-// 	this->setValidity(true);
-// 	this->_parseRequestLine(iss_request);
-// 	this->_parseHeaders(iss_request);
-// 	this->setBody(iss_request.str());
-// }
 
 /* Copy constructor */
 HttpRequest::HttpRequest(const HttpRequest &original) : HttpMessage()
@@ -84,7 +72,7 @@ std::string	HttpRequest::getTarget(void) const
 void	HttpRequest::parseRequestLine(std::string &line)
 {
 	if (std::count(line.begin(), line.end(), ' ') != 2)
-		throw InvalidRequest();
+		throw BadRequest();
 
 	this->setStatusLine(line);
 
@@ -93,7 +81,7 @@ void	HttpRequest::parseRequestLine(std::string &line)
 
 	lineStream >> this->_method >> this->_target >> version;
 	if (this->_method.empty() || this->_target.empty() || version.empty())
-		throw InvalidRequest();
+		throw BadRequest();
 
 	this->setVersion(version);
 }
@@ -112,7 +100,7 @@ void	HttpRequest::parseHeaders(std::string &headers)
 			std::string				header_value;
 
 			if (colon_pos == std::string::npos)
-				throw InvalidRequest();
+				throw BadRequest();
 
 			header_name = line.substr(0, colon_pos);
 			header_value = tool::strings::trim(line.substr(colon_pos + 1),
@@ -123,7 +111,7 @@ void	HttpRequest::parseHeaders(std::string &headers)
 
 	if ((this->_method == "POST" && this->getHeader("Content-Length").empty())
 			|| this->getHeader("Host").empty())
-		throw InvalidRequest();
+		throw BadRequest();
 }
 
 
@@ -132,31 +120,105 @@ void	HttpRequest::parseHeaders(std::string &headers)
 /* ************************************************************************** */
 
 /* ***************************** */
-/* InvalidRequest                */
+/* RequestException              */
 /* ***************************** */
 
 /* Default constructor */
-HttpRequest::InvalidRequest::InvalidRequest(void)
-	: RuntimeError("Invalid request", 22) {}
+HttpRequest::RequestException::RequestException(void)
+	: RuntimeError("Request error", 21) {}
+
+/* Message and code constructor */
+HttpRequest::RequestException::RequestException(const std::string &msg,
+		int code)
+	: RuntimeError(msg, code) {}
 
 /* Copy constructor */
-HttpRequest::InvalidRequest::InvalidRequest(const InvalidRequest &original)
+HttpRequest::RequestException::RequestException(const RequestException
+		&original)
 	: RuntimeError(original) {}
 
 
 /* Destructor */
-HttpRequest::InvalidRequest::~InvalidRequest(void) throw() {}
+HttpRequest::RequestException::~RequestException(void) throw() {}
 
 
 /* ***************************** */
 /* Operator overloads */
 
-HttpRequest::InvalidRequest	&HttpRequest::InvalidRequest::operator=(
-	const InvalidRequest &original)
+HttpRequest::RequestException	&HttpRequest::RequestException::operator=(
+	const RequestException &original)
 {
 	if (this == &original)
 		return (*this);
 	RuntimeError::operator=(original);
+	return (*this);
+}
+
+
+/* ***************************** */
+/* BadRequest                    */
+/* ***************************** */
+
+/* Default constructor */
+HttpRequest::BadRequest::BadRequest(void)
+	: RequestException("Invalid request", 400) {}
+
+/* Message constructor */
+HttpRequest::BadRequest::BadRequest(const std::string &msg)
+	: RequestException(msg, 400) {}
+
+/* Copy constructor */
+HttpRequest::BadRequest::BadRequest(const BadRequest &original)
+	: RequestException(original) {}
+
+
+/* Destructor */
+HttpRequest::BadRequest::~BadRequest(void) throw() {}
+
+
+/* ***************************** */
+/* Operator overloads */
+
+HttpRequest::BadRequest	&HttpRequest::BadRequest::operator=(
+	const BadRequest &original)
+{
+	if (this == &original)
+		return (*this);
+	RequestException::operator=(original);
+	return (*this);
+}
+
+
+/* ***************************** */
+/* BodyTooLarge                  */
+/* ***************************** */
+
+/* Default constructor */
+HttpRequest::BodyTooLarge::BodyTooLarge(void)
+	: RequestException("Request body is too large", 413) {}
+
+/* Message constructor */
+HttpRequest::BodyTooLarge::BodyTooLarge(const std::string &msg)
+	: RequestException(msg, 413) {}
+
+/* Copy constructor */
+HttpRequest::BodyTooLarge::BodyTooLarge(const BodyTooLarge &original)
+	: RequestException(original) {}
+
+
+/* Destructor */
+HttpRequest::BodyTooLarge::~BodyTooLarge(void) throw() {}
+
+
+/* ***************************** */
+/* Operator overloads */
+
+HttpRequest::BodyTooLarge	&HttpRequest::BodyTooLarge::operator=(
+	const BodyTooLarge &original)
+{
+	if (this == &original)
+		return (*this);
+	RequestException::operator=(original);
 	return (*this);
 }
 
