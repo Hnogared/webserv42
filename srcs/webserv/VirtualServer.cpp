@@ -147,7 +147,21 @@ void	VirtualServer::handleRequest(const Client &client)
 
 	try
 	{
-		request = client.fetchRequest();
+		request = client.fetchRequest(this->_config.getClientMaxBodySize());
+	}
+	catch (const http::HttpRequest::InvalidRequest &e)
+	{
+		Harl::complain(Harl::INFO, client.getAddrStr(Client::PEER)
+			+ " REQ INVALID");
+		client.sendResponse(http::HttpResponse(400));
+		return ;
+	}
+	catch (const Client::RequestBodyTooLarge &e)
+	{
+		Harl::complain(Harl::INFO, client.getAddrStr(Client::PEER)
+			+ " REQ BODY TOO LARGE");
+		client.sendResponse(http::HttpResponse(413));
+		return ;
 	}
 	catch (const SocketConnectionClosed &e)
 	{

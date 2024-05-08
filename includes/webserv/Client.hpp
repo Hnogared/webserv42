@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 14:42:17 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/09 19:56:58 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/08 05:00:16 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,12 @@
 # include <iostream>
 # include <cerrno>
 # include <sstream>
+# include <string>
 
 # include <string.h>
 # include <sys/socket.h>
 
+# include "webserv.hpp"
 # include "net.hpp"
 # include "exceptions.hpp"
 # include "Harl.hpp"
@@ -59,13 +61,35 @@ class	Client
 		/* Public methods */
 		void				sendResponse(const http::HttpResponse
 			&response) const;
-		http::HttpRequest	fetchRequest(void) const;
+		http::HttpRequest	fetchRequest(size_t maxBodySize) const;
 
 
 	private:
 		/* Private attributes */
 		Socket	_socket;
-};
+
+		/* Private methods */
+		std::string	_readRequestBlock(size_t maxBuffSize = 0) const;
+
+
+	/* Exceptions */
+	public:
+		class	RequestBodyTooLarge : public RuntimeError
+		{
+			public:
+				/* Constructors */
+				explicit RequestBodyTooLarge(void);
+				explicit RequestBodyTooLarge(const std::string &msg);
+				RequestBodyTooLarge(const RequestBodyTooLarge &original);
+
+				/* Destructor */
+				virtual ~RequestBodyTooLarge(void) throw();
+
+				/* Operator overloads */
+				RequestBodyTooLarge	&operator=(const RequestBodyTooLarge
+					&original);
+		}; // class RequestBodyTooLarge
+}; // class Client
 
 } // namespace webserv
 

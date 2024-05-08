@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 14:43:33 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/26 12:42:35 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/08 05:55:47 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,23 +98,128 @@ void	Client::sendResponse(const http::HttpResponse &response) const
 	}
 }
 
-http::HttpRequest	Client::fetchRequest(void) const
+http::HttpRequest	Client::fetchRequest(size_t maxBodySize) const
 {
-	char	buffer[1024];
-	ssize_t	bytes_read;
+	size_t				bodySize;
+	size_t				pos;
+	std::string			content;
+	std::string			temp;
+	http::HttpRequest	request;
 
-	bytes_read = recv(this->_socket.getFd(), buffer, sizeof(buffer), 0);
-	if (bytes_read < 0)
+	content = this->_readRequestBlock();
+
+	if (content.empty())
+		throw SocketConnectionClosed();
+
+	pos = content.find("\r\n");
+	temp = content.substr(0, pos);
+	request.parseRequestLine(temp);
+
+	content = content.substr(pos + 2);
+
+	while (true)
 	{
-		throw SocketError("Failed to receive client data: "
-			+ std::string(strerror(errno)));
+		pos = content.find("\r\n");
+		if (pos == 0)
+			break;
+
+		pos = content.find("\r\n\r\n");
+		if (pos != std::string::npos)
+			break;
+
+		temp = this->_readRequestBlock();
+		if (temp.empty())
+			break;
+
+		content += temp;
 	}
 
-	if (bytes_read == 0)
-		throw SocketConnectionClosed(std::string(strerror(errno)));
+	temp = content.substr(0, pos);
+	request.parseHeaders(temp);
+	content = content.substr(pos + 4 - 2 * (pos == 0));
 
-	buffer[bytes_read] = '\0';
-	return (http::HttpRequest(buffer));
+	if (request.getMethod() != "POST")
+		return (request);
+
+	bodySize = tool::strings::stoi(request.getHeader("Content-Length"));
+	if (bodySize > maxBodySize)
+		throw RequestBodyTooLarge();
+
+	while (content.size() < bodySize)
+	{
+		temp = this->_readRequestBlock(bodySize - content.size());
+		if (temp.empty())
+			break;
+
+		content += temp;
+	}
+
+	request.setBody(content);
+	return (request);
+}
+
+
+/* ************************************************************************** */
+/* Private methods */
+
+std::string	Client::_readRequestBlock(size_t maxBuffSize) const
+{
+	int		bytesRead;
+	char	buffer[WS_CLIENT_BUFF_SIZE];
+
+	if (maxBuffSize == 0 || WS_CLIENT_BUFF_SIZE - 1 < maxBuffSize)
+		maxBuffSize = WS_CLIENT_BUFF_SIZE - 1;
+
+	bytesRead = recv(this->_socket.getFd(), buffer, maxBuffSize, 0);
+
+	if (bytesRead < 0)
+	{
+		throw RuntimeError("Failed to receive data from client: "
+			+ std::string(strerror(errno)), errno);
+	}
+	
+	buffer[bytesRead] = '\0';
+
+	return (std::string(buffer));
+}
+
+
+/* ************************************************************************** */
+/* Exceptions                                                                 */
+/* ************************************************************************** */
+
+/* ***************************** */
+/* RequestBodyTooLarge           */
+/* ***************************** */
+
+/* Default constructor */
+Client::RequestBodyTooLarge::RequestBodyTooLarge(void)
+	: RuntimeError("Request body is too large", 22) {}
+
+/* Message constructor */
+Client::RequestBodyTooLarge::RequestBodyTooLarge(const std::string &msg)
+	: RuntimeError(msg, 22) {}
+
+/* Copy constructor */
+Client::RequestBodyTooLarge::RequestBodyTooLarge(
+		const RequestBodyTooLarge &original)
+	: RuntimeError(original) {}
+
+
+/* Destructor */
+Client::RequestBodyTooLarge::~RequestBodyTooLarge(void) throw() {}
+
+
+/* ***************************** */
+/* Operator overloads */
+
+Client::RequestBodyTooLarge	&Client::RequestBodyTooLarge::operator=(
+		const RequestBodyTooLarge &original)
+{
+	if (this == &original)
+		return (*this);
+	RuntimeError::operator=(original);
+	return (*this);
 }
 
 } // namespace webserv

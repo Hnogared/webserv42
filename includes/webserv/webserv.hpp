@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 16:58:31 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/07 13:33:40 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/08 03:03:13 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,5 +26,9 @@
 # define WS_DFL_CONFIG_PATH	"webserv.conf"
 
 # define WS_HTTP_VERSION	"HTTP/1.1"
+
+# define WS_CLIENT_TIMEOUT_SEC	5
+# define WS_CLIENT_TIMEOUT_USEC	0
+# define WS_CLIENT_BUFF_SIZE	1024
 
 #endif // WEBSERV_HPP
