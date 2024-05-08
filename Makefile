@@ -12,6 +12,7 @@ VPATH	:=	srcs:			\
 SRCS	:=	main.cpp					\
 			Server.cpp					\
 			VirtualServer.cpp			\
+			VirtualServerManager.cpp	\
 			Configuration.cpp			\
 			LocationConfiguration.cpp	\
 			ConfigurationParser.cpp		\

@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 12:40:13 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/06 16:32:22 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/08 21:59:10 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,10 @@
 # define SERVER_HPP
 
 # include <vector>
+# include <map>
 
 # include "ConfigurationParser.hpp"
-# include "VirtualServer.hpp"
+# include "VirtualServerManager.hpp"
 
 namespace	webserv
 {
@@ -36,12 +37,13 @@ class	Server
 
 	private:
 		/* Private attributes */
-		static bool					_initialized;
-		static bool					_running;
-		std::vector<VirtualServer*>	_virtualServers;
+		static bool							_initialized;
+		static bool							_running;
+		std::map<std::pair<std::string, int>, VirtualServerManager*> _managers;
 
 		/* Private methods */
 		void	_init(const std::string &configPath);
+		void	_initVirtualServer(const Configuration &config);
 		void	_updateClientsCounts(std::vector<size_t> &clientsCounts) const;
 		void	_updateVServersFds(std::vector<pollfd> &fds,
 			const std::vector<size_t> &clientsCounts) const;

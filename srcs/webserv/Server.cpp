@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 17:06:34 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/06 17:43:03 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/08 22:05:47 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,10 +51,11 @@ Server::Server(const std::string &configPath)
 /* Destructor */
 Server::~Server(void)
 {
-	std::vector<VirtualServer*>::iterator	it = this->_virtualServers.begin();
+	std::map<std::pair<std::string, int>, VirtualServerManager*>::iterator	it;
 
-	while (it != this->_virtualServers.end())
-		delete *(it++);
+	for (it = this->_managers.begin(); it != this->_managers.end(); it++)
+		delete it->second;
+
 	remove(WS_LOCK_FILE);
 	Server::_initialized = false;
 }
@@ -62,6 +63,7 @@ Server::~Server(void)
 /* ************************************************************************** */
 /* Public methods */
 
+/*
 void	Server::run(void)
 {
 	int					fdId;
@@ -116,6 +118,7 @@ void	Server::run(void)
 		}
 	}
 }
+*/
 
 
 /* ************************************************************************** */
@@ -135,7 +138,7 @@ void	Server::_init(const std::string &configPath)
 		configs = Server::_makeConfigs(configPath);
 
 		for (it = configs->begin(); it != configs->end(); it++)
-			this->_virtualServers.push_back(new VirtualServer(*it));
+			this->_initVirtualServer(*it);
 		delete configs;
 	}
 	catch(const std::exception &e)
@@ -148,6 +151,33 @@ void	Server::_init(const std::string &configPath)
 	Server::_initialized = true;
 }
 
+void	Server::_initVirtualServer(const Configuration &config)
+{
+	VirtualServer				*server = new VirtualServer(config);
+	std::pair<std::string, int>	key;
+
+	if (!server)
+		throw std::bad_alloc();
+
+	key = std::make_pair(config.getAddressString(), config.getPort());
+
+	if (this->_managers.find(key) == this->_managers.end())
+	{
+		VirtualServerManager* manager = new VirtualServerManager();
+
+		if (!manager)
+		{
+			delete server;
+			throw std::bad_alloc();
+		}
+
+		this->_managers[key] = manager;
+	}
+
+	this->_managers[key]->addServer(server);
+}
+
+/*
 void	Server::_updateClientsCounts(std::vector<size_t> &clientsCounts) const
 {
 	size_t	serversCount = this->_virtualServers.size();
@@ -190,6 +220,7 @@ void	Server::_updateVServersFds(std::vector<pollfd> &fds,
 		}
 	}
 }
+*/
 
 std::vector<Configuration>	*Server::_makeConfigs(const std::string &configPath)
 {

@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 21:49:03 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/06 16:44:43 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/08 21:51:07 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ int	main(int argc, char **argv)
 
 		if (server_p)
 		{
-			server_p->run();
+		//	server_p->run();
 			delete server_p;
 		}
 	}

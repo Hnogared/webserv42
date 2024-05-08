@@ -17,37 +17,53 @@ namespace	webserv
 
 /* ************************************************************************** */
 
-/* Default constructor */
-VirtualServer::VirtualServer(const Configuration &config) : _config(config)
-{
-	int	optval = 1;
+/* Configuration constructor */
+VirtualServer::VirtualServer(const Configuration &config) : _config(config) {}
+	// int	optval = 1;
 
-	this->_socket = Socket(socket(AF_INET, SOCK_STREAM, 0));
-	if (this->_socket.getFd() < 0 || setsockopt(this->_socket.getFd(),
-		SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) < 0)
-	{
-		throw SocketCreationError("Failed to create socket: "
-			+ std::string(strerror(errno)));
-	}
+	// this->_socket = Socket(socket(AF_INET, SOCK_STREAM, 0));
+	// if (this->_socket.getFd() < 0 || setsockopt(this->_socket.getFd(),
+	// 	SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) < 0)
+	// {
+	// 	throw SocketCreationError("Failed to create socket: "
+	// 		+ std::string(strerror(errno)));
+	// }
 
-	if (bind(this->_socket.getFd(),
-		(struct sockaddr *)&(this->_config.getConstAddress()),
-		sizeof(this->_config.getAddress())) == -1)
-	{
-		throw SocketError("Failed to bind socket: "
-			+ std::string(strerror(errno)));
-	}
+	// if (bind(this->_socket.getFd(),
+	// 	(struct sockaddr *)&(this->_config.getConstAddress()),
+	// 	sizeof(this->_config.getAddress())) == -1)
+	// {
+	// 	throw SocketError("Failed to bind socket: "
+	// 		+ std::string(strerror(errno)));
+	// }
 
-	if (listen(this->_socket.getFd(), this->_config.getBacklog()) == -1)
-	{
-		throw SocketError("Failed to listen on socket: "
-			+ std::string(strerror(errno)));
-	}
-}
+	// if (listen(this->_socket.getFd(), this->_config.getBacklog()) == -1)
+	// {
+	// 	throw SocketError("Failed to listen on socket: "
+	// 		+ std::string(strerror(errno)));
+	// }
+
+/* Copy constructor */
+VirtualServer::VirtualServer(const VirtualServer &original)
+	: _config(original.getConfiguration()), _clients(original.getClients()) {}
 
 
 /* Destructor */
 VirtualServer::~VirtualServer(void) {}
+
+
+/* ************************************************************************** */
+/* Operator overloads */
+
+VirtualServer	&VirtualServer::operator=(const VirtualServer &original)
+{
+	if (this == &original)
+		return (*this);
+
+	this->_config = original.getConfiguration();
+	this->_clients = original.getClients();
+	return (*this);
+}
 
 
 /* ************************************************************************** */
@@ -56,11 +72,6 @@ VirtualServer::~VirtualServer(void) {}
 const Configuration	&VirtualServer::getConfiguration(void) const
 {
 	return (this->_config);
-}
-
-webserv::Socket	VirtualServer::getSocket(void) const
-{
-	return (this->_socket);
 }
 
 const std::vector<Client>	&VirtualServer::getClients(void) const
@@ -72,248 +83,249 @@ const std::vector<Client>	&VirtualServer::getClients(void) const
 /* ************************************************************************** */
 /* Public methods */
 
-void	VirtualServer::update(void)
-{
-	int				res;
-	size_t			clients_count = this->_clients.size();
-	struct pollfd	poll_fds[clients_count + 1];
 
-	poll_fds[0].fd = this->_socket.getFd();
-	poll_fds[0].events = POLLIN;
+// void	VirtualServer::update(void)
+// {
+// 	int				res;
+// 	size_t			clients_count = this->_clients.size();
+// 	struct pollfd	poll_fds[clients_count + 1];
 
-	for (size_t i = 1; i < clients_count + 1; i++)
-	{
-		poll_fds[i].fd = this->_clients[i - 1].getSocketFd();
-		poll_fds[i].events = POLLIN;
-	}
+// 	poll_fds[0].fd = this->_socket.getFd();
+// 	poll_fds[0].events = POLLIN;
 
-	res = poll(poll_fds, clients_count + 1, 100);
+// 	for (size_t i = 1; i < clients_count + 1; i++)
+// 	{
+// 		poll_fds[i].fd = this->_clients[i - 1].getSocketFd();
+// 		poll_fds[i].events = POLLIN;
+// 	}
 
-	if (res == -1)
-		throw SocketError("Failed poll: " + std::string(strerror(errno)));
+// 	res = poll(poll_fds, clients_count + 1, 100);
 
-	if (res)
-	{
-		if (poll_fds[0].revents & POLLIN)
-			this->acceptConnection();
-		for (size_t i = 1; i < clients_count + 1; i++)
-		{
-			if (poll_fds[i].revents & POLLIN)
-				this->handleRequest(this->_clients[i - 1]);
-		}
-	}
-}
+// 	if (res == -1)
+// 		throw SocketError("Failed poll: " + std::string(strerror(errno)));
 
-
-/* ************************************************************************** */
-/* Private methods */
-
-void	VirtualServer::acceptConnection(void)
-{
-	int					client_fd;
-	struct sockaddr_in	client_address;
-	socklen_t			client_address_len = sizeof(client_address);
-
-	client_fd = accept(this->_socket.getFd(),
-			(struct sockaddr *)&client_address, &client_address_len);
-	if (client_fd == -1)
-	{
-		this->_log(Harl::ERROR, NULL, "Failed client connection: "
-			+ std::string(strerror(errno)));
-		return ;
-	}
-
-	try
-	{
-		this->_clients.push_back(Client(Socket(client_fd, client_address)));
-	}
-	catch (const std::exception &e)
-	{
-		close(client_fd);
-		this->_log(Harl::ERROR, NULL, "Failed client connection: "
-			+ std::string(e.what()));
-		return ;
-	}
-
-	this->_log(Harl::INFO, &(this->_clients.back()), "CONN ACCEPTED");
-}
-
-void	VirtualServer::handleRequest(const Client &client)
-{
-	http::HttpRequest	request;
-
-	try
-	{
-		request = client.fetchRequest(this->_config.getClientMaxBodySize());
-	}
-	catch (const http::HttpRequest::RequestException &e)
-	{
-		this->_log(Harl::INFO, &client, "REQ '" + std::string(e.what()) + "' "
-			+ tool::strings::toStr(e.code()));
-
-		client.sendResponse(http::HttpResponse(e.code()));
-		this->_clients.erase(std::remove(this->_clients.begin(),
-			this->_clients.end(), client), this->_clients.end());
-		return ;
-	}
-	catch (const SocketConnectionClosed &e)
-	{
-		this->_log(Harl::INFO, &client, "CONN CLOSED");
-
-		this->_clients.erase(std::remove(this->_clients.begin(),
-			this->_clients.end(), client), this->_clients.end());
-		return ;
-	}
-	catch(const std::exception& e)
-	{
-		this->_log(Harl::ERROR, &client, "500 - Failed to fetch request: "
-			+ std::string(e.what()));
-
-		client.sendResponse(http::HttpResponse(500));
-		this->_clients.erase(std::remove(this->_clients.begin(),
-			this->_clients.end(), client), this->_clients.end());
-		return ;
-	}
-
-	this->_sendResponse(client, request);
-}
+// 	if (res)
+// 	{
+// 		if (poll_fds[0].revents & POLLIN)
+// 			this->acceptConnection();
+// 		for (size_t i = 1; i < clients_count + 1; i++)
+// 		{
+// 			if (poll_fds[i].revents & POLLIN)
+// 				this->handleRequest(this->_clients[i - 1]);
+// 		}
+// 	}
+// }
 
 
-/* ************************************************************************** */
-/* Private methods */
+// /* ************************************************************************** */
+// /* Private methods */
 
-void	VirtualServer::_log(Harl::e_level level, const Client *client,
-	const std::string &message)
-{
-	std::string	dispMessage;
+// void	VirtualServer::acceptConnection(void)
+// {
+// 	int					client_fd;
+// 	struct sockaddr_in	client_address;
+// 	socklen_t			client_address_len = sizeof(client_address);
 
-	if (client)
-		dispMessage = client->getAddrStr(Client::PEER) + "  " + message;
-	else
-		dispMessage = message;
+// 	client_fd = accept(this->_socket.getFd(),
+// 			(struct sockaddr *)&client_address, &client_address_len);
+// 	if (client_fd == -1)
+// 	{
+// 		this->_log(Harl::ERROR, NULL, "Failed client connection: "
+// 			+ std::string(strerror(errno)));
+// 		return ;
+// 	}
 
-	Harl::complain(level, dispMessage);
-}
+// 	try
+// 	{
+// 		this->_clients.push_back(Client(Socket(client_fd, client_address)));
+// 	}
+// 	catch (const std::exception &e)
+// 	{
+// 		close(client_fd);
+// 		this->_log(Harl::ERROR, NULL, "Failed client connection: "
+// 			+ std::string(e.what()));
+// 		return ;
+// 	}
 
-void	VirtualServer::_sendResponse(const Client &client,
-	const http::HttpRequest &request)
-{
-	std::string	message;
-	std::string	uri = request.getTarget();
+// 	this->_log(Harl::INFO, &(this->_clients.back()), "CONN ACCEPTED");
+// }
 
-	message = client.getAddrStr(Client::PEER) + " REQ '"
-		+ request.getStatusLine() + "'";
+// void	VirtualServer::handleRequest(const Client &client)
+// {
+// 	http::HttpRequest	request;
 
-	if (!request.isValid())
-	{
-		client.sendResponse(http::HttpResponse(400));
-		return ;
-	}
+// 	try
+// 	{
+// 		request = client.fetchRequest(this->_config.getClientMaxBodySize());
+// 	}
+// 	catch (const http::HttpRequest::RequestException &e)
+// 	{
+// 		this->_log(Harl::INFO, &client, "REQ '" + std::string(e.what()) + "' "
+// 			+ tool::strings::toStr(e.code()));
 
-	if (request.getVersion() != WS_HTTP_VERSION)
-	{
-		client.sendResponse(http::HttpResponse(505));
-		return ;
-	}
+// 		client.sendResponse(http::HttpResponse(e.code()));
+// 		this->_clients.erase(std::remove(this->_clients.begin(),
+// 			this->_clients.end(), client), this->_clients.end());
+// 		return ;
+// 	}
+// 	catch (const SocketConnectionClosed &e)
+// 	{
+// 		this->_log(Harl::INFO, &client, "CONN CLOSED");
 
-	if (*(uri.end() - 1) == '/')
-	{
-		this->_sendDirectoryResponse(client, request);
-		return ;
-	}
+// 		this->_clients.erase(std::remove(this->_clients.begin(),
+// 			this->_clients.end(), client), this->_clients.end());
+// 		return ;
+// 	}
+// 	catch( const std::exception &e)
+// 	{
+// 		this->_log(Harl::ERROR, &client, "500 - Failed to fetch request: "
+// 			+ std::string(e.what()));
 
-	http::HttpResponse	response(200);
+// 		client.sendResponse(http::HttpResponse(500));
+// 		this->_clients.erase(std::remove(this->_clients.begin(),
+// 			this->_clients.end(), client), this->_clients.end());
+// 		return ;
+// 	}
 
-	client.sendResponse(response);
-}
+// 	this->_sendResponse(client, request);
+// }
 
-void	VirtualServer::_sendDirectoryResponse(const Client &client,
-	const http::HttpRequest &request)
-{
-	std::string	uri = request.getTarget();
-	std::string	path;
-	std::set<LocationConfiguration>::const_iterator	location;
 
-	for (location = this->_config.getLocations().begin();
-		location != this->_config.getLocations().end(); location++)
-	{
-		if (location->getPath() != uri)
-			continue ;
+// /* ************************************************************************** */
+// /* Private methods */
 
-		if (!location->getIndex().empty())
-		{
-			path = tool::files::joinPaths(location->getRoot(), uri);
-			path = tool::files::joinPaths(path, location->getIndex());
+// void	VirtualServer::_log(Harl::e_level level, const Client *client,
+// 	const std::string &message)
+// {
+// 	std::string	dispMessage;
 
-			try
-			{
-				http::HttpResponse	response(200);
+// 	if (client)
+// 		dispMessage = client->getAddrStr(Client::PEER) + "  " + message;
+// 	else
+// 		dispMessage = message;
 
-				response.setBody(tool::files::readFile(path));
-				client.sendResponse(response);
-				return ;
-			}
-			catch(const std::exception& /* e */) {}
-		}
+// 	Harl::complain(level, dispMessage);
+// }
 
-		if (location->isAutoindex())
-		{
-			path = tool::files::joinPaths(location->getRoot(), uri);
-			this->_sendDirectoryListing(client, uri, path);
-			return ;
-		}
-	}
+// void	VirtualServer::_sendResponse(const Client &client,
+// 	const http::HttpRequest &request)
+// {
+// 	std::string	message;
+// 	std::string	uri = request.getTarget();
 
-	client.sendResponse(http::HttpResponse(404));
-}
+// 	message = client.getAddrStr(Client::PEER) + " REQ '"
+// 		+ request.getStatusLine() + "'";
 
-void	VirtualServer::_sendDirectoryListing(const Client &client,
-	const std::string &uri, const std::string &path)
-{
-	std::string		icon;
-	std::string		body;
-	DIR				*dir;
-	struct dirent	*entry;
+// 	if (!request.isValid())
+// 	{
+// 		client.sendResponse(http::HttpResponse(400));
+// 		return ;
+// 	}
 
-	dir = opendir(path.c_str());
-	if (!dir)
-	{
-		client.sendResponse(http::HttpResponse(404));
-		return ;
-	}
+// 	if (request.getVersion() != WS_HTTP_VERSION)
+// 	{
+// 		client.sendResponse(http::HttpResponse(505));
+// 		return ;
+// 	}
 
-	body = "<html>\n"
-		"<head><title>Index of " + uri + "</title></head>\n"
-		"<body>\n"
-		"  <h1>Index of " + uri + "</h1>\n"
-		"  <hr><pre>\n";
+// 	if (*(uri.end() - 1) == '/')
+// 	{
+// 		this->_sendDirectoryResponse(client, request);
+// 		return ;
+// 	}
 
-	while ((entry = readdir(dir)))
-	{
-		switch (entry->d_type)
-		{
-			case DT_REG:
-				icon = "&#128196;";
-				break;
-			default:
-				icon = "&#128193;";
-				break;
-		}
-		body += "  <span>" + icon + " " + "</span>"
-			+ "<a href=\"" + uri + entry->d_name + "\">"
-			+ entry->d_name + "</a><br>\n";
-	}
+// 	http::HttpResponse	response(200);
 
-	body += "  </pre><hr>\n"
-		"</body>\n"
-		"</html>\n";
+// 	client.sendResponse(response);
+// }
 
-	closedir(dir);
+// void	VirtualServer::_sendDirectoryResponse(const Client &client,
+// 	const http::HttpRequest &request)
+// {
+// 	std::string	uri = request.getTarget();
+// 	std::string	path;
+// 	std::set<LocationConfiguration>::const_iterator	location;
 
-	http::HttpResponse	response(200);
+// 	for (location = this->_config.getLocations().begin();
+// 		location != this->_config.getLocations().end(); location++)
+// 	{
+// 		if (location->getPath() != uri)
+// 			continue ;
 
-	response.setBody(body);
-	client.sendResponse(response);
-}
+// 		if (!location->getIndex().empty())
+// 		{
+// 			path = tool::files::joinPaths(location->getRoot(), uri);
+// 			path = tool::files::joinPaths(path, location->getIndex());
+
+// 			try
+// 			{
+// 				http::HttpResponse	response(200);
+
+// 				response.setBody(tool::files::readFile(path));
+// 				client.sendResponse(response);
+// 				return ;
+// 			}
+// 			catch(const std::exception& /* e */) {}
+// 		}
+
+// 		if (location->isAutoindex())
+// 		{
+// 			path = tool::files::joinPaths(location->getRoot(), uri);
+// 			this->_sendDirectoryListing(client, uri, path);
+// 			return ;
+// 		}
+// 	}
+
+// 	client.sendResponse(http::HttpResponse(404));
+// }
+
+// void	VirtualServer::_sendDirectoryListing(const Client &client,
+// 	const std::string &uri, const std::string &path)
+// {
+// 	std::string		icon;
+// 	std::string		body;
+// 	DIR				*dir;
+// 	struct dirent	*entry;
+
+// 	dir = opendir(path.c_str());
+// 	if (!dir)
+// 	{
+// 		client.sendResponse(http::HttpResponse(404));
+// 		return ;
+// 	}
+
+// 	body = "<html>\n"
+// 		"<head><title>Index of " + uri + "</title></head>\n"
+// 		"<body>\n"
+// 		"  <h1>Index of " + uri + "</h1>\n"
+// 		"  <hr><pre>\n";
+
+// 	while ((entry = readdir(dir)))
+// 	{
+// 		switch (entry->d_type)
+// 		{
+// 			case DT_REG:
+// 				icon = "&#128196;";
+// 				break;
+// 			default:
+// 				icon = "&#128193;";
+// 				break;
+// 		}
+// 		body += "  <span>" + icon + " " + "</span>"
+// 			+ "<a href=\"" + uri + entry->d_name + "\">"
+// 			+ entry->d_name + "</a><br>\n";
+// 	}
+
+// 	body += "  </pre><hr>\n"
+// 		"</body>\n"
+// 		"</html>\n";
+
+// 	closedir(dir);
+
+// 	http::HttpResponse	response(200);
+
+// 	response.setBody(body);
+// 	client.sendResponse(response);
+// }
 
 } // namespace webserv

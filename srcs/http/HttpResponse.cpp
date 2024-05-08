@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 23:28:04 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/08 17:23:22 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/08 18:33:28 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,8 +164,8 @@ std::string	HttpResponse::_makeBody(int statusCode,
 	body = "<html>\n"
 		"<head><title>" + message + "</title></head>\n"
 		"<body>\n"
-		"<center><h1>" + message + "</h1></center>\n"
-		"<hr><center>" WS_SERVER_NAME "/" WS_SERVER_VERSION "</center>\n"
+		"  <center><h1>" + message + "</h1></center>\n"
+		"  <hr><center>" WS_SERVER_NAME "/" WS_SERVER_VERSION "</center>\n"
 		"</body>\n"
 		"</html>\n";
 
