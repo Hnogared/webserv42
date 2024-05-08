@@ -43,26 +43,12 @@ VirtualServer::VirtualServer(const Configuration &config) : _config(config) {}
 	// 		+ std::string(strerror(errno)));
 	// }
 
-/* Copy constructor */
-VirtualServer::VirtualServer(const VirtualServer &original)
-	: _config(original.getConfiguration()), _clients(original.getClients()) {}
-
-
 /* Destructor */
-VirtualServer::~VirtualServer(void) {}
-
-
-/* ************************************************************************** */
-/* Operator overloads */
-
-VirtualServer	&VirtualServer::operator=(const VirtualServer &original)
+VirtualServer::~VirtualServer(void)
 {
-	if (this == &original)
-		return (*this);
-
-	this->_config = original.getConfiguration();
-	this->_clients = original.getClients();
-	return (*this);
+	for (std::vector<Client*>::iterator it = this->_clients.begin();
+			it != this->_clients.end(); it++)
+		delete *it;
 }
 
 
@@ -74,9 +60,21 @@ const Configuration	&VirtualServer::getConfiguration(void) const
 	return (this->_config);
 }
 
-const std::vector<Client>	&VirtualServer::getClients(void) const
+const std::vector<Client*>	&VirtualServer::getClients(void) const
 {
 	return (this->_clients);
+}
+
+
+/* ************************************************************************** */
+/* Setters */
+
+void	VirtualServer::addClient(Client *client)
+{
+	if (!client)
+		return ;
+
+	this->_clients.push_back(client);
 }
 
 

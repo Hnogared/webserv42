@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 17:06:34 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/08 22:05:47 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/08 23:06:14 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,17 +51,43 @@ Server::Server(const std::string &configPath)
 /* Destructor */
 Server::~Server(void)
 {
-	std::map<std::pair<std::string, int>, VirtualServerManager*>::iterator	it;
-
-	for (it = this->_managers.begin(); it != this->_managers.end(); it++)
-		delete it->second;
-
-	remove(WS_LOCK_FILE);
-	Server::_initialized = false;
+	this->_cleanup();
 }
 
 /* ************************************************************************** */
 /* Public methods */
+
+void	Server::run(void)
+{
+	std::vector<pollfd>	fds;
+	std::map<std::pair<std::string, int>, VirtualServerManager*>::iterator	it;
+
+	Server::_running = true;
+	while (Server::_running)
+	{
+		this->_updateFds(fds);
+	}
+}
+
+void	Server::_updateFds(std::vector<pollfd> &fds)
+{
+	size_t	i;
+	size_t	size;
+	std::map<std::pair<std::string, int>, VirtualServerManager*>::iterator	it;
+
+	size = this->_managers.size();
+	if (fds.capacity() != size)
+		fds.resize(size);
+
+	i = 0;
+	for (it = this->_managers.begin(); it != this->_managers.end(); it++)
+	{
+		fds[i].fd = it->second->getSocket().getFd();
+		fds[i].events = POLLIN;
+		i++;
+	}
+
+}
 
 /*
 void	Server::run(void)
@@ -124,6 +150,17 @@ void	Server::run(void)
 /* ************************************************************************** */
 /* Private methods */
 
+void	Server::_cleanup(void)
+{
+	std::map<std::pair<std::string, int>, VirtualServerManager*>::iterator	it;
+
+	for (it = this->_managers.begin(); it != this->_managers.end(); it++)
+		delete it->second;
+
+	remove(WS_LOCK_FILE);
+	Server::_initialized = false;
+}
+
 void	Server::_init(const std::string &configPath)
 {
 	std::vector<Configuration>					*configs = NULL;
@@ -153,28 +190,22 @@ void	Server::_init(const std::string &configPath)
 
 void	Server::_initVirtualServer(const Configuration &config)
 {
-	VirtualServer				*server = new VirtualServer(config);
 	std::pair<std::string, int>	key;
-
-	if (!server)
-		throw std::bad_alloc();
 
 	key = std::make_pair(config.getAddressString(), config.getPort());
 
-	if (this->_managers.find(key) == this->_managers.end())
+	try
 	{
-		VirtualServerManager* manager = new VirtualServerManager();
+		if (this->_managers.find(key) == this->_managers.end())
+			this->_managers[key] = new VirtualServerManager();
 
-		if (!manager)
-		{
-			delete server;
-			throw std::bad_alloc();
-		}
-
-		this->_managers[key] = manager;
+		this->_managers[key]->addServer(new VirtualServer(config));
 	}
-
-	this->_managers[key]->addServer(server);
+	catch (const std::exception &e)
+	{
+		this->_cleanup();
+		throw;
+	}
 }
 
 /*

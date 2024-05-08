@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/08 20:50:46 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/08 21:58:21 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/08 23:02:06 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,10 @@ VirtualServerManager::~VirtualServerManager(void)
 	for (std::vector<VirtualServer*>::iterator it = this->_servers.begin();
 			it != this->_servers.end(); ++it)
 		delete *it;
+	
+	for (std::vector<Client*>::iterator it = this->_incomingClients.begin();
+			it != this->_incomingClients.end(); ++it)
+		delete *it;
 }
 
 
@@ -43,6 +47,12 @@ const std::vector<VirtualServer*>	&VirtualServerManager::getServers(void)
 	const
 {
 	return (this->_servers);
+}
+
+const std::vector<Client*>	&VirtualServerManager::getIncomingClients(void)
+	const
+{
+	return (this->_incomingClients);
 }
 
 
@@ -83,6 +93,14 @@ void	VirtualServerManager::addServer(VirtualServer *server)
 	}
 
 	this->_defaultServer = server;
+}
+
+void	VirtualServerManager::addIncomingClient(Client *client)
+{
+	if (!client)
+		return ;
+
+	this->_incomingClients.push_back(client);
 }
 
 // if (this->_socket.getFd() < 0 || setsockopt(this->_socket.getFd(),

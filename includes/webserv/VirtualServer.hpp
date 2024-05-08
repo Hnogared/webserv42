@@ -44,17 +44,16 @@ class	VirtualServer
 	public:
 		/* Constructors */
 		explicit VirtualServer(const Configuration &config);
-		VirtualServer(const VirtualServer &original);
 
 		/* Destructor */
 		~VirtualServer(void);
 
-		/* Operator overloads */
-		VirtualServer	&operator=(const VirtualServer &original);
-
 		/* Getters */
 		const Configuration			&getConfiguration(void) const;
-		const std::vector<Client>	&getClients(void) const;
+		const std::vector<Client*>	&getClients(void) const;
+
+		/* Setters */
+		void	addClient(Client *client);
 
 		/* Public methods */
 		void	update(void);
@@ -64,8 +63,8 @@ class	VirtualServer
 
 	private:
 		/* Private attributes */
-		Configuration		_config;
-		std::vector<Client>	_clients;
+		Configuration			_config;
+		std::vector<Client*>	_clients;
 
 		/* Private methods */
 		void	_log(Harl::e_level level, const Client *client,
@@ -76,6 +75,11 @@ class	VirtualServer
 			const http::HttpRequest &request);
 		void	_sendDirectoryListing(const Client &client,
 			const std::string &uri, const std::string &path);
+
+		/* [delete] */
+		VirtualServer(void);
+		VirtualServer(const VirtualServer&);
+		VirtualServer	&operator=(const VirtualServer&);
 }; // class VirtualServer
 
 } // namespace webserv

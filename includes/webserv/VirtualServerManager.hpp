@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/08 20:51:17 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/08 21:56:03 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/08 23:01:50 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,11 @@ class VirtualServerManager
 		/* Getters */
 		Socket								getSocket(void) const;
 		const std::vector<VirtualServer*>	&getServers(void) const;
+		const std::vector<Client*>			&getIncomingClients(void) const;
 
 		/* Setters */
 		void	addServer(VirtualServer *server);
+		void	addIncomingClient(Client *client);
 
 
 	private:
@@ -40,6 +42,7 @@ class VirtualServerManager
 		Socket						_socket;
 		VirtualServer				*_defaultServer;
 		std::vector<VirtualServer*>	_servers;
+		std::vector<Client*>		_incomingClients;
 
 		/* [delete] */
 		VirtualServerManager(const VirtualServerManager&);
