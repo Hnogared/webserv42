@@ -267,6 +267,7 @@ void	VirtualServer::_sendDirectoryResponse(const Client &client,
 void	VirtualServer::_sendDirectoryListing(const Client &client,
 	const std::string &uri, const std::string &path)
 {
+	std::string		icon;
 	std::string		body;
 	DIR				*dir;
 	struct dirent	*entry;
@@ -284,7 +285,17 @@ void	VirtualServer::_sendDirectoryListing(const Client &client,
 
 	while ((entry = readdir(dir)))
 	{
-		body += "<a href=\"" + uri + entry->d_name + "\">"
+		switch (entry->d_type)
+		{
+			case DT_REG:
+				icon = "&#128196;";
+				break;
+			default:
+				icon = "&#128193;";
+				break;
+		}
+		body += "<span>" + icon + " " + "</span>"
+			+ "<a href=\"" + uri + entry->d_name + "\">"
 			+ entry->d_name + "</a><br>";
 	}
 
