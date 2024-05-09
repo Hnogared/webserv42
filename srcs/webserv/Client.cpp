@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 14:43:33 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/08 12:30:58 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/09 15:29:47 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,11 @@ int	Client::getSocketFd(void) const
 webserv::Socket	Client::getSocket(void) const
 {
 	return (this->_socket);
+}
+
+const Socket	*Client::getSocketPtr(void) const
+{
+	return (&this->_socket);
 }
 
 std::string	Client::getAddrStr(e_addr_choice choice) const

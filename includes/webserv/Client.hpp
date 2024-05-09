@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 14:42:17 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/08 12:08:16 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/09 15:31:56 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,9 +54,10 @@ class	Client
 		bool	operator==(const Client &other) const;
 
 		/* Getters */
-		int			getSocketFd(void) const;
-		Socket		getSocket(void) const;
-		std::string	getAddrStr(e_addr_choice choice) const;
+		int				getSocketFd(void) const;
+		Socket			getSocket(void) const;
+		const Socket	*getSocketPtr(void) const;
+		std::string		getAddrStr(e_addr_choice choice) const;
 
 		/* Public methods */
 		void				sendResponse(const http::HttpResponse

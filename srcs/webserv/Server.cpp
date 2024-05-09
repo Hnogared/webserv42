@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 17:06:34 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/08 23:06:14 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/09 14:48:48 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,32 +59,68 @@ Server::~Server(void)
 
 void	Server::run(void)
 {
-	std::vector<pollfd>	fds;
-	std::map<std::pair<std::string, int>, VirtualServerManager*>::iterator	it;
+	int									res;
+	std::vector<pollfd>					fds;
+	std::vector<pollfd>::const_iterator	pollfdIt;
+	std::map<std::pair<
+		std::string, int>, VirtualServerManager*>::const_iterator	it;
 
 	Server::_running = true;
 	while (Server::_running)
 	{
 		this->_updateFds(fds);
+
+		res = poll(fds.data(), fds.size(), -1);
+		
+		if (Server::_running && res == -1)
+			throw SocketError("Failed poll: " + std::string(strerror(errno)));
+	
+		if (!res)
+			continue ;
+
+		for (pollfdIt = fds.begin(); pollfdIt != fds.end(); pollfdIt++)
+		{
+			if (!pollfdIt->revents & POLLIN)
+				continue ;
+
+			for (it = this->_managers.begin(); it != this->_managers.end();
+				it++)
+			{
+				if ((it->second)->handlesFd(pollfdIt->fd))
+				{
+					it->second->serveFd(pollfdIt->fd);
+					break ;
+				}
+			}
+		}
 	}
 }
 
 void	Server::_updateFds(std::vector<pollfd> &fds)
 {
-	size_t	i;
+	size_t	i = 0;
 	size_t	size;
-	std::map<std::pair<std::string, int>, VirtualServerManager*>::iterator	it;
+	std::vector<const Socket*>::const_iterator	socketIt;
+	std::map<std::pair<
+		std::string, int>, VirtualServerManager*>::const_iterator	it;
 
 	size = this->_managers.size();
+	for (it = this->_managers.begin(); it != this->_managers.end(); it++)
+		size += it->second->getSocketsCount();
+
 	if (fds.capacity() != size)
 		fds.resize(size);
 
-	i = 0;
 	for (it = this->_managers.begin(); it != this->_managers.end(); it++)
 	{
-		fds[i].fd = it->second->getSocket().getFd();
-		fds[i].events = POLLIN;
-		i++;
+		const std::vector<const Socket*>	&sockets = it->second->getSockets();
+
+		for (socketIt = sockets.begin(); socketIt != sockets.end(); socketIt++)
+		{
+			fds[i].fd = (*socketIt)->getFd();
+			fds[i].events = POLLIN;
+			i++;
+		}
 	}
 
 }
