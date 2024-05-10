@@ -49,26 +49,17 @@ class	VirtualServer
 		~VirtualServer(void);
 
 		/* Getters */
-		const Configuration			&getConfiguration(void) const;
-		const std::vector<Client*>	&getClients(void) const;
-
-		/* Setters */
-		void	addClient(Client *client);
+		const Configuration	&getConfiguration(void) const;
 
 		/* Public methods */
-		void	update(void);
-		void	acceptConnection(void);
 		void	handleRequest(const Client &client);
 
 
 	private:
 		/* Private attributes */
 		Configuration			_config;
-		std::vector<Client*>	_clients;
 
 		/* Private methods */
-		void	_log(Harl::e_level level, const Client *client,
-			const std::string &message);
 		void	_sendResponse(const Client &client,
 			const http::HttpRequest &request);
 		void	_sendDirectoryResponse(const Client &client,

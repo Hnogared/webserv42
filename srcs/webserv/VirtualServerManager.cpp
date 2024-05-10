@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/08 20:50:46 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/09 15:31:19 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/10 22:18:55 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,8 @@ VirtualServerManager::~VirtualServerManager(void)
 			it != this->_servers.end(); ++it)
 		delete *it;
 	
-	for (std::vector<Client*>::iterator it = this->_incomingClients.begin();
-			it != this->_incomingClients.end(); ++it)
+	for (std::vector<Client*>::iterator it = this->_clients.begin();
+			it != this->_clients.end(); ++it)
 		delete *it;
 }
 
@@ -51,18 +51,10 @@ const std::vector<const Socket*>	VirtualServerManager::getSockets(void) const
 
 	sockets.push_back(&this->_socket);
 
-	for (clientIt = this->_incomingClients.begin();
-			clientIt != this->_incomingClients.end(); clientIt++)
+	for (clientIt = this->_clients.begin(); clientIt != this->_clients.end();
+			clientIt++)
 		sockets.push_back((*clientIt)->getSocketPtr());
 
-	for (serverIt = this->_servers.begin(); serverIt != this->_servers.end();
-		serverIt++)
-	{
-		const std::vector<Client*>	&clients = (*serverIt)->getClients();
-
-		for (clientIt = clients.begin(); clientIt != clients.end(); clientIt++)
-			sockets.push_back((*clientIt)->getSocketPtr());
-	}
 	return (sockets);
 }
 
@@ -72,20 +64,14 @@ const std::vector<VirtualServer*>	&VirtualServerManager::getServers(void)
 	return (this->_servers);
 }
 
-const std::vector<Client*>	&VirtualServerManager::getIncomingClients(void)
-	const
+const std::vector<Client*>	&VirtualServerManager::getClients(void) const
 {
-	return (this->_incomingClients);
+	return (this->_clients);
 }
 
 size_t	VirtualServerManager::getSocketsCount(void) const
 {
-	size_t										count = 1;
-	std::vector<VirtualServer*>::const_iterator it;
-
-	for (it = this->_servers.begin(); it != this->_servers.end(); ++it)
-		count += (*it)->getClients().size();
-	return (count + this->_incomingClients.size());
+	return (this->_clients.size() + 1);
 }
 
 
@@ -128,12 +114,12 @@ void	VirtualServerManager::addServer(VirtualServer *server)
 	this->_defaultServer = server;
 }
 
-void	VirtualServerManager::addIncomingClient(Client *client)
+void	VirtualServerManager::addClient(Client *client)
 {
 	if (!client)
 		return ;
 
-	this->_incomingClients.push_back(client);
+	this->_clients.push_back(client);
 }
 
 // if (this->_socket.getFd() < 0 || setsockopt(this->_socket.getFd(),
@@ -162,10 +148,21 @@ bool	VirtualServerManager::handlesFd(int fd) const
 
 void	VirtualServerManager::serveFd(int fd)
 {
+	std::vector<Client*>::iterator	clientIt;
+
 	if (fd == this->_socket.getFd())
 	{
 		this->_acceptConnection();
 		return ;
+	}
+
+	for (clientIt = this->_clients.begin(); clientIt != this->_clients.end();
+		clientIt++)
+	{
+		if (fd != (*clientIt)->getSocket().getFd())
+			continue ;
+
+		this->_serveClient(*clientIt);
 	}
 }
 
@@ -193,7 +190,7 @@ void	VirtualServerManager::_acceptConnection(void)
 	{
 		Socket	socket(client_fd, client_address);
 
-		this->_incomingClients.push_back(new Client(socket));
+		this->_clients.push_back(new Client(socket));
 	}
 	catch (const std::exception &e)
 	{
@@ -203,7 +200,25 @@ void	VirtualServerManager::_acceptConnection(void)
 		return ;
 	}
 
-	this->_log(Harl::INFO, this->_incomingClients.back(), "CONN ACCEPTED");
+	this->_log(Harl::INFO, this->_clients.back(), "CONN ACCEPTED");
+}
+
+void	VirtualServerManager::_serveClient(const Client *client)
+{
+	(void)client;
+	// std::vector<VirtualServer*>::const_iterator	serverIt;
+	// const std::vector<VirtualServer*>			&servers = this->getServers();
+
+	// for (serverIt = servers.begin(); serverIt != servers.end(); serverIt++)
+	// {
+	// 	if ((*serverIt)->handlesClient(client))
+	// 	{
+	// 		(*serverIt)->serveClient(client);
+	// 		return ;
+	// 	}
+	// }
+
+	// this->_log(Harl::ERROR, client, "No server to handle client");
 }
 
 void	VirtualServerManager::_log(Harl::e_level level, const Client *client,

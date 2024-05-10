@@ -44,12 +44,7 @@ VirtualServer::VirtualServer(const Configuration &config) : _config(config) {}
 	// }
 
 /* Destructor */
-VirtualServer::~VirtualServer(void)
-{
-	for (std::vector<Client*>::iterator it = this->_clients.begin();
-			it != this->_clients.end(); it++)
-		delete *it;
-}
+VirtualServer::~VirtualServer(void) {}
 
 
 /* ************************************************************************** */
@@ -58,23 +53,6 @@ VirtualServer::~VirtualServer(void)
 const Configuration	&VirtualServer::getConfiguration(void) const
 {
 	return (this->_config);
-}
-
-const std::vector<Client*>	&VirtualServer::getClients(void) const
-{
-	return (this->_clients);
-}
-
-
-/* ************************************************************************** */
-/* Setters */
-
-void	VirtualServer::addClient(Client *client)
-{
-	if (!client)
-		return ;
-
-	this->_clients.push_back(client);
 }
 
 
