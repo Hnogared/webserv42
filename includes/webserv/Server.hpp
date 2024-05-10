@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 12:40:13 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/08 23:03:30 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/10 21:11:25 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,8 @@ class	Server
 		/* Private methods */
 		void	_cleanup(void);
 		void	_init(const std::string &configPath);
+		void	_initVirtualServerManagers(const std::vector<Configuration>
+			*configs);
 		void	_initVirtualServer(const Configuration &config);
 		void	_updateFds(std::vector<pollfd> &fds);
 		void	_updateClientsCounts(std::vector<size_t> &clientsCounts) const;

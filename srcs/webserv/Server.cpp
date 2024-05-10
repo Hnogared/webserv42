@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 17:06:34 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/09 14:48:48 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/10 21:17:52 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -199,8 +199,7 @@ void	Server::_cleanup(void)
 
 void	Server::_init(const std::string &configPath)
 {
-	std::vector<Configuration>					*configs = NULL;
-	std::vector<Configuration>::const_iterator	it;
+	std::vector<Configuration>	*configs = NULL;
 
 	signal(SIGINT, Server::_sigHandler);
 	signal(SIGQUIT, Server::_sigHandler);
@@ -210,8 +209,7 @@ void	Server::_init(const std::string &configPath)
 	{
 		configs = Server::_makeConfigs(configPath);
 
-		for (it = configs->begin(); it != configs->end(); it++)
-			this->_initVirtualServer(*it);
+		this->_initVirtualServerManagers(configs);
 		delete configs;
 	}
 	catch(const std::exception &e)
@@ -224,24 +222,48 @@ void	Server::_init(const std::string &configPath)
 	Server::_initialized = true;
 }
 
-void	Server::_initVirtualServer(const Configuration &config)
+void	Server::_initVirtualServerManagers(const std::vector<Configuration>
+	*configs)
 {
-	std::pair<std::string, int>	key;
-
-	key = std::make_pair(config.getAddressString(), config.getPort());
+	std::vector<Configuration>::const_iterator			it;
+	std::vector<const Configuration*>					specificConfigs;
+	std::vector<const Configuration*>::const_iterator	specificIt;
 
 	try
 	{
-		if (this->_managers.find(key) == this->_managers.end())
-			this->_managers[key] = new VirtualServerManager();
+		for (it = configs->begin(); it != configs->end(); it++)
+		{
+			if (it->getConstAddress().sin_addr.s_addr == INADDR_ANY)
+			{
+				this->_initVirtualServer(*it);
+				continue ;
+			}
 
-		this->_managers[key]->addServer(new VirtualServer(config));
+			specificConfigs.push_back(&(*it));
+		}
+
+		for (specificIt = specificConfigs.begin();
+				specificIt != specificConfigs.end();
+				specificIt++)
+			this->_initVirtualServer(**specificIt);
 	}
 	catch (const std::exception &e)
 	{
 		this->_cleanup();
 		throw;
 	}
+}
+
+void	Server::_initVirtualServer(const Configuration &config)
+{
+	std::pair<std::string, int>	key;
+
+	key = std::make_pair(config.getAddressString(), config.getPort());
+
+	if (this->_managers.find(key) == this->_managers.end())
+		this->_managers[key] = new VirtualServerManager();
+	
+	this->_managers[key]->addServer(new VirtualServer(config));
 }
 
 /*
