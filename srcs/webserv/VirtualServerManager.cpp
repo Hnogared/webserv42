@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/08 20:50:46 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/10 22:18:55 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/11 15:39:02 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,8 @@ size_t	VirtualServerManager::getSocketsCount(void) const
 
 void	VirtualServerManager::addServer(VirtualServer *server)
 {
+	int optval = 1;
+
 	if (!server)
 		return ;
 
@@ -91,7 +93,8 @@ void	VirtualServerManager::addServer(VirtualServer *server)
 	const Configuration	&config = server->getConfiguration();
 
 	this->_socket = Socket(socket(AF_INET, SOCK_STREAM, 0));
-	if (this->_socket.getFd() < 0)
+	if (this->_socket.getFd() < 0 || setsockopt(this->_socket.getFd(),
+	 	SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) < 0)
 	{
 		throw SocketCreationError("Failed to create socket: "
 			+ std::string(strerror(errno)));
@@ -122,12 +125,6 @@ void	VirtualServerManager::addClient(Client *client)
 	this->_clients.push_back(client);
 }
 
-// if (this->_socket.getFd() < 0 || setsockopt(this->_socket.getFd(),
-// 	SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) < 0)
-// {
-// 	throw SocketCreationError("Failed to create socket: "
-// 		+ std::string(strerror(errno)));
-// }
 
 /* ************************************************************************** */
 /* Public methods */
@@ -156,13 +153,16 @@ void	VirtualServerManager::serveFd(int fd)
 		return ;
 	}
 
-	for (clientIt = this->_clients.begin(); clientIt != this->_clients.end();
-		clientIt++)
+	for (clientIt = this->_clients.begin(); clientIt != this->_clients.end();)
 	{
-		if (fd != (*clientIt)->getSocket().getFd())
-			continue ;
-
-		this->_serveClient(*clientIt);
+		if (fd == (*clientIt)->getSocket().getFd()
+				&& this->_serveClient(*clientIt))
+		{
+			delete *clientIt;
+			clientIt = this->_clients.erase(clientIt);
+		}
+		else
+			clientIt++;
 	}
 }
 
@@ -203,9 +203,39 @@ void	VirtualServerManager::_acceptConnection(void)
 	this->_log(Harl::INFO, this->_clients.back(), "CONN ACCEPTED");
 }
 
-void	VirtualServerManager::_serveClient(const Client *client)
+bool	VirtualServerManager::_serveClient(Client *client)
 {
-	(void)client;
+	http::HttpRequest	request;
+
+	try
+	{
+		client->fetchRequestLineAndHeaders(request);
+	}
+	catch (const http::HttpRequest::RequestException &e)
+	{
+		this->_log(Harl::INFO, client, "REQ '" + std::string(e.what()) + "' "
+			+ tool::strings::toStr(e.code()));
+		client->sendResponse(http::HttpResponse(e.code()));
+		return (true);
+	}
+	catch (const SocketConnectionClosed &e)
+	{
+		this->_log(Harl::INFO, client, "CONN CLOSED");
+		return (true);
+	}
+	catch( const std::exception &e)
+	{
+		this->_log(Harl::ERROR, client, "500 - Failed to fetch request: "
+			+ std::string(e.what()));
+		client->sendResponse(http::HttpResponse(500));
+		return (true);
+	}
+
+	return (false);
+
+	// this->_sendResponse(client, request);
+	
+	
 	// std::vector<VirtualServer*>::const_iterator	serverIt;
 	// const std::vector<VirtualServer*>			&servers = this->getServers();
 

@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/08 20:51:17 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/10 22:14:03 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/11 15:26:05 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ class VirtualServerManager
 		static void	_log(Harl::e_level level, const Client *client,
 			const std::string &message);
 		void	_acceptConnection(void);
-		void	_serveClient(const Client *client);
+		bool	_serveClient(Client *client);
 
 		/* [delete] */
 		VirtualServerManager(const VirtualServerManager&);

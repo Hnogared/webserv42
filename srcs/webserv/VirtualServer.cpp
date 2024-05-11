@@ -19,29 +19,7 @@ namespace	webserv
 
 /* Configuration constructor */
 VirtualServer::VirtualServer(const Configuration &config) : _config(config) {}
-	// int	optval = 1;
 
-	// this->_socket = Socket(socket(AF_INET, SOCK_STREAM, 0));
-	// if (this->_socket.getFd() < 0 || setsockopt(this->_socket.getFd(),
-	// 	SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) < 0)
-	// {
-	// 	throw SocketCreationError("Failed to create socket: "
-	// 		+ std::string(strerror(errno)));
-	// }
-
-	// if (bind(this->_socket.getFd(),
-	// 	(struct sockaddr *)&(this->_config.getConstAddress()),
-	// 	sizeof(this->_config.getAddress())) == -1)
-	// {
-	// 	throw SocketError("Failed to bind socket: "
-	// 		+ std::string(strerror(errno)));
-	// }
-
-	// if (listen(this->_socket.getFd(), this->_config.getBacklog()) == -1)
-	// {
-	// 	throw SocketError("Failed to listen on socket: "
-	// 		+ std::string(strerror(errno)));
-	// }
 
 /* Destructor */
 VirtualServer::~VirtualServer(void) {}

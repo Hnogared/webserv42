@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 14:43:33 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/09 15:29:47 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/11 14:59:39 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,13 +18,12 @@ namespace	webserv
 /* ************************************************************************** */
 
 /* Socket fd constructor */
-Client::Client(const Socket &socket) : _socket(socket) {}
+Client::Client(const Socket &socket) : _socket(socket), _buffer("") {}
 
 /* Copy constructor */
 Client::Client(const Client &original)
 {
-	if (this != &original)
-		this->_socket = original.getSocket();
+	*this = original;
 }
 
 
@@ -40,7 +39,9 @@ Client	&Client::operator=(const Client &original)
 {
 	if (this == &original)
 		return (*this);
+
 	this->_socket = original.getSocket();
+	this->_buffer = original.getBuffer();
 	return (*this);
 }
 
@@ -85,6 +86,11 @@ std::string	Client::getAddrStr(e_addr_choice choice) const
 	return (oss.str());
 }
 
+const std::string	&Client::getBuffer(void) const
+{
+	return (this->_buffer);
+}
+
 
 /* ************************************************************************** */
 /* Public methods */
@@ -103,18 +109,24 @@ void	Client::sendResponse(const http::HttpResponse &response) const
 	}
 }
 
-http::HttpRequest	Client::fetchRequest(size_t maxBodySize) const
+void	Client::fetchRequestLineAndHeaders(http::HttpRequest &request)
 {
-	size_t				bodySize;
-	size_t				pos;
-	std::string			content;
-	std::string			temp;
-	http::HttpRequest	request;
+	size_t		pos;
+	std::string	content("");
+	std::string	temp;
 
-	content = this->_readRequestBlock();
+	while (content.find("\r\n") == std::string::npos)
+	{
+		temp = this->_readRequestBlock();
+		content += temp;
 
-	if (content.empty())
-		throw SocketConnectionClosed();
+		if (!temp.empty())
+			continue ;
+
+		if (content.empty())
+			throw SocketConnectionClosed();
+		throw http::HttpRequest::BadRequest(content);
+	}
 
 	try
 	{
@@ -156,13 +168,23 @@ http::HttpRequest	Client::fetchRequest(size_t maxBodySize) const
 		throw http::HttpRequest::BadRequest(request.getStatusLine());
 	}
 
-	content = content.substr(pos + 4 - 2 * (pos == 0));
+	this->_buffer = content.substr(pos + 4 - 2 * (pos == 0));
+}
+
+void	Client::fetchRequestBody(http::HttpRequest &request, size_t maxBodyLen)
+{
+	size_t		bodySize;
+	std::string	content;
+	std::string	temp;
+
+	content = this->_buffer;
+	this->_buffer.clear();
 
 	if (request.getMethod() != "POST")
-		return (request);
+		return ;
 
 	bodySize = tool::strings::stoi(request.getHeader("Content-Length"));
-	if (bodySize > maxBodySize)
+	if (bodySize > maxBodyLen)
 		throw http::HttpRequest::BodyTooLarge(request.getStatusLine());
 
 	while (content.size() < bodySize)
@@ -175,7 +197,6 @@ http::HttpRequest	Client::fetchRequest(size_t maxBodySize) const
 	}
 
 	request.setBody(content);
-	return (request);
 }
 
 

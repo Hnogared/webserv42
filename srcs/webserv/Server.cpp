@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 17:06:34 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/10 21:17:52 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/11 15:16:16 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,11 +86,11 @@ void	Server::run(void)
 			for (it = this->_managers.begin(); it != this->_managers.end();
 				it++)
 			{
-				if ((it->second)->handlesFd(pollfdIt->fd))
-				{
-					it->second->serveFd(pollfdIt->fd);
-					break ;
-				}
+				if (!(it->second)->handlesFd(pollfdIt->fd))
+					continue ;
+
+				it->second->serveFd(pollfdIt->fd);
+				break ;
 			}
 		}
 	}
