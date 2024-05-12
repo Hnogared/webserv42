@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 03:05:45 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/12 04:21:54 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/12 16:29:28 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,4 +127,17 @@ void	Harl::log(e_level level, const std::string &msg)
 	
 	Harl::complain(level, msg, false, this->_logFile);
 	this->_logFile.flush();
+}
+
+void	Harl::reopen(void)
+{
+	this->_logFile.close();
+	this->_logFile.open(this->_logFilePath.c_str(),
+		std::ios::in | std::ios::out | std::ios::app);
+
+	if (!this->_logFile.is_open())
+	{
+		throw std::runtime_error("Harl: " + this->_logFilePath
+			+ ": Failed to open log file: " + std::string(strerror(errno)));
+	}
 }

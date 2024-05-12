@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 12:40:13 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/12 14:43:47 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/12 16:35:49 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,15 +32,20 @@ class	Server
 		/* Getters */
 		Harl	&getLogger(void);
 
+		/* Setters */
+		void	setForceContinue(bool forceContinue);
+
 		/* Public methods */
-		void	run(void);
+		void	start(void);
 		void	stop(void);
 		void	reload(void);
+		void	reopen(void);
 
 
 	private:
 		/* Private attributes */
 		bool		_running;
+		bool		_forceContinue;
 		Harl		_logger;
 		std::string	_configPath;
 		std::map<std::pair<std::string, int>, VirtualServerManager*> _managers;

@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 21:49:03 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/12 14:20:29 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/12 15:41:09 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int	main(int argc, char **argv)
 	{
 		if (argc == 2)
 			webserv::Server::getInstance(argv[1]);
-		webserv::Server::getInstance().run();
+		webserv::Server::getInstance().start();
 	}
 	catch(const webserv::RuntimeError &e)
 	{

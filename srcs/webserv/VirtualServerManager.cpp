@@ -218,7 +218,22 @@ bool	VirtualServerManager::_serveClient(Client *client)
 {
 	try
 	{
+		std::vector<VirtualServer*>::iterator	serverIt;
+
 		client->fetchRequestLineAndHeaders();
+
+		for (serverIt = this->_servers.begin();
+			serverIt != this->_servers.end(); serverIt++)
+		{
+			if ((*serverIt)->tryHandleClientRequest(*client))
+				return (false);
+		}
+
+		if (this->_defaultServer->tryHandleClientRequest(*client))
+			return (false);
+
+		throw http::HttpRequest::RequestException(
+			client->getRequest().getStatusLine(), 404);
 	}
 	catch (const http::HttpRequest::RequestException &e)
 	{
@@ -237,48 +252,6 @@ bool	VirtualServerManager::_serveClient(Client *client)
 		client->sendResponse(http::HttpResponse(500));
 		return (true);
 	}
-
-	return (this->_dispatchClient(client));
-}
-
-bool VirtualServerManager::_dispatchClient(Client *client)
-{
-	try
-	{
-		std::vector<VirtualServer*>::iterator	serverIt;
-
-		for (serverIt = this->_servers.begin();
-			serverIt != this->_servers.end(); serverIt++)
-		{
-			if ((*serverIt)->tryHandleClientRequest(*client))
-				return (false);
-		}
-
-		if (this->_defaultServer->tryHandleClientRequest(*client))
-			return (false);
-	}
-	catch (const http::HttpRequest::RequestException &e)
-	{
-		this->_log(Harl::INFO, client, tool::strings::toStr(e.code()));
-		client->sendResponse(http::HttpResponse(e.code()));
-		return (true);
-	}
-	catch (const SocketConnectionClosed &e)
-	{
-		this->_log(Harl::INFO, client, "CONN CLOSED BY REMOTE HOST");
-		return (true);
-	}
-	catch (const std::exception &e)
-	{
-		this->_log(Harl::ERROR, client, "500 - " + std::string(e.what()));
-		client->sendResponse(http::HttpResponse(500));
-		return (true);
-	}
-
-	this->_log(Harl::INFO, client, "404");
-	client->sendResponse(http::HttpResponse(404));
-
-	return (true);
 }
 
 void	VirtualServerManager::_log(Harl::e_level level, const Client *client,

@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 17:06:34 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/12 15:39:15 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/12 16:36:22 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,9 +67,18 @@ Harl	&Server::getLogger(void)
 
 
 /* ************************************************************************** */
+/* Setters */
+
+void	Server::setForceContinue(bool forceContinue)
+{
+	this->_forceContinue = forceContinue;
+}
+
+
+/* ************************************************************************** */
 /* Public methods */
 
-void	Server::run(void)
+void	Server::start(void)
 {
 	int									res;
 	std::vector<pollfd>					fds;
@@ -78,12 +87,19 @@ void	Server::run(void)
 		std::string, int>, VirtualServerManager*>::const_iterator	it;
 
 	this->_running = true;
+	this->_forceContinue = false;
 	while (this->_running)
 	{
 		this->_updateFds(fds);
 
 		res = poll(fds.data(), fds.size(), -1);
-		
+
+		if (this->_forceContinue)
+		{
+			this->_forceContinue = false;
+			continue ;
+		}
+
 		if (this->_running && res == -1)
 			throw SocketError("Failed poll: " + std::string(strerror(errno)));
 	
@@ -127,7 +143,13 @@ void	Server::reload(void)
 	this->stop();
 	this->_cleanup(false);
 	this->_init(this->_configPath);
-	this->run();
+	this->start();
+}
+
+void	Server::reopen(void)
+{
+	this->_logger.reopen();
+	this->_logger.log(Harl::INFO, "STATUS Reopened log files");
 }
 
 
@@ -136,6 +158,7 @@ void	Server::reload(void)
 
 void	Server::_init(const std::string &configPath)
 {
+	signal(SIGUSR1, &Server::_sigHandler);
 	signal(SIGINT, &Server::_sigHandler);
 	signal(SIGTERM, &Server::_sigHandler);
 	signal(SIGQUIT, &Server::_sigHandler);
@@ -156,6 +179,7 @@ void	Server::_init(const std::string &configPath)
 		+ this->_logger.getLogFilePath());
 	this->_logger.complain(Harl::INFO, "Reload with SIGHUP");
 	this->_logger.complain(Harl::INFO, "Stop with SIGINT / SIGTERM / SIGQUIT");
+	this->_logger.complain(Harl::INFO, "Reopen log files with SIGUSR1");
 	this->_logger.log(Harl::INFO, "STATUS Running...");
 }
 
@@ -289,6 +313,13 @@ void	Server::_cleanup(bool removeLockFile)
 /* Method to execute when receiving signals */
 void	Server::_sigHandler(int signal)
 {
+	if (signal == SIGUSR1)
+	{
+		Harl::complain(Harl::INFO, "Received SIGUSR1, reopening log files...");
+		Server::getInstance().reopen();
+		Server::getInstance().setForceContinue(true);
+		return ;
+	}
 	if (signal == SIGHUP)
 	{
 		Harl::complain(Harl::INFO, "Received SIGHUP, reloading...");

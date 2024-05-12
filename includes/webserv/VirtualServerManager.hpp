@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/08 20:51:17 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/12 15:35:02 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/12 15:58:32 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,6 @@ class VirtualServerManager
 			const std::string &message);
 		void	_acceptConnection(void);
 		bool	_serveClient(Client *client);
-		bool	_dispatchClient(Client *client);
 
 		/* [delete] */
 		VirtualServerManager(const VirtualServerManager&);

@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 03:03:18 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/12 04:14:43 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/12 16:26:27 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ class	Harl
 		static void	error(const std::string &msg, bool colored,
 			std::ostream &os);
 		void		log(e_level level, const std::string &msg);
+		void		reopen(void);
 
 
 	private:

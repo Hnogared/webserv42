@@ -1,5 +1,9 @@
 [INFO] Parsing configuration file: conf.d/webserv.conf
 [INFO] conf.d/webserv.conf: Success
 [INFO] STATUS Running...
-[INFO] 127.0.0.1:35532 CONN ACCEPTED
+[INFO] STATUS Reopened log files
+hey
+[INFO] STATUS Reopened log files
+[INFO] 127.0.0.1:58084 CONN ACCEPTED
+[INFO] 127.0.0.1:58084 REQ 'dwqindnqwi' 400
 [INFO] STATUS Stopping...
