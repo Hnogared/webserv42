@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/08 20:51:17 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/12 03:32:33 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/12 15:35:02 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ class VirtualServerManager
 		/* Public methods */
 		bool	handlesFd(int fd) const;
 		void	serveFd(int fd);
+		void	stop(void);
 
 
 	private:

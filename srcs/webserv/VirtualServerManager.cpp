@@ -166,6 +166,17 @@ void	VirtualServerManager::serveFd(int fd)
 	}
 }
 
+void	VirtualServerManager::stop(void)
+{
+	std::vector<Client*>::iterator	clientIt;
+
+	for (clientIt = this->_clients.begin(); clientIt != this->_clients.end();
+			clientIt++)
+		delete *clientIt;
+
+	this->_clients.clear();
+}
+
 
 /* ************************************************************************** */
 /* Private methods */

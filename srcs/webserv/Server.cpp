@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 17:06:34 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/12 14:52:39 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/12 15:39:15 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,14 @@ void	Server::run(void)
 
 void	Server::stop(void)
 {
+	std::map<std::pair<
+		std::string, int>, webserv::VirtualServerManager *>::iterator	it;
+
 	this->_logger.log(Harl::INFO, "STATUS Stopping...");
+
+	for (it = this->_managers.begin(); it != this->_managers.end(); it++)
+		it->second->stop();
+
 	this->_running = false;
 }
 
