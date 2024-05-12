@@ -18,8 +18,8 @@ namespace	webserv
 /* ************************************************************************** */
 
 /* Socket constructor */
-VirtualServerManager::VirtualServerManager(void)
-	: _socket(), _defaultServer(NULL) {}
+VirtualServerManager::VirtualServerManager(Harl *logger)
+	: _logger(logger), _socket(), _defaultServer(NULL) {}
 
 
 /* Destructor */
@@ -278,7 +278,10 @@ void	VirtualServerManager::_log(Harl::e_level level, const Client *client,
 
 	if (!client)
 	{
-		Harl::complain(level, message);
+		if (this->_logger)
+			this->_logger->log(level, message);
+		else
+			Harl::complain(level, message);
 		return ;
 	}
 
@@ -290,7 +293,10 @@ void	VirtualServerManager::_log(Harl::e_level level, const Client *client,
 		
 	logMessage += " " + message;
 
-	Harl::complain(level, logMessage);
+	if (this->_logger)
+		this->_logger->log(level, logMessage);
+	else
+		Harl::complain(level, logMessage);
 }
 
 } // namespace webserv

@@ -43,7 +43,7 @@ class	VirtualServer
 {
 	public:
 		/* Constructors */
-		explicit VirtualServer(const Configuration &config);
+		explicit VirtualServer(const Configuration &config, Harl *logger=NULL);
 
 		/* Destructor */
 		~VirtualServer(void);
@@ -57,6 +57,7 @@ class	VirtualServer
 
 	private:
 		/* Private attributes */
+		Harl					*_logger;
 		Configuration			_config;
 
 		/* Private methods */

@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/06 21:49:03 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/09 15:32:58 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/12 04:23:50 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,13 +42,15 @@ int	main(int argc, char **argv)
 	catch(const webserv::RuntimeError &e)
 	{
 		delete server_p;
-		Harl::complain(Harl::ERROR, "Fatal error: " + std::string(e.what()));
+		Harl::complain(Harl::ERROR, "Fatal error: " + std::string(e.what())
+			+ ".\n For detailed logs: " WS_LOG_FILE);
 		return (e.code());
 	}
 	catch(const std::exception &e)
 	{
 		delete server_p;
-		Harl::complain(Harl::ERROR, "Fatal error: " + std::string(e.what()));
+		Harl::complain(Harl::ERROR, "Fatal error: " + std::string(e.what())
+			+ ".\n For detailed logs: " WS_LOG_FILE);
 		return (2);
 	}
 

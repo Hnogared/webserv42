@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 17:06:34 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/11 15:16:16 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/12 04:16:00 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,25 +23,25 @@ bool	Server::_running = false;
 /* ************************************************************************** */
 
 /* Config path constructor */
-Server::Server(const std::string &configPath)
+Server::Server(const std::string &configPath) : _logger(WS_LOG_FILE)
 {
 	if (Server::_initialized)
 		throw RuntimeError("Another instance is already initialized", 11);
 
 	{
-		std::ifstream	lock_file(WS_LOCK_FILE);
+		std::ifstream	lockFile(WS_LOCK_FILE);
 
-		if (lock_file.is_open())
+		if (lockFile.is_open())
 		{
-			lock_file.close();
+			lockFile.close();
 			throw RuntimeError("Another instance is already initialized", 11);
 		}
 
-		std::ofstream	lock_file_out(WS_LOCK_FILE);
+		std::ofstream	lockFileOut(WS_LOCK_FILE);
 
-		if (!lock_file_out.is_open())
+		if (!lockFileOut.is_open())
 			throw RuntimeError("Failed to create the lock file", 10);
-		lock_file_out.close();
+		lockFileOut.close();
 	}
 
 	this->_init(configPath);
@@ -96,106 +96,9 @@ void	Server::run(void)
 	}
 }
 
-void	Server::_updateFds(std::vector<pollfd> &fds)
-{
-	size_t	i = 0;
-	size_t	size;
-	std::vector<const Socket*>::const_iterator	socketIt;
-	std::map<std::pair<
-		std::string, int>, VirtualServerManager*>::const_iterator	it;
-
-	size = this->_managers.size();
-	for (it = this->_managers.begin(); it != this->_managers.end(); it++)
-		size += it->second->getSocketsCount();
-
-	if (fds.capacity() != size)
-		fds.resize(size);
-
-	for (it = this->_managers.begin(); it != this->_managers.end(); it++)
-	{
-		const std::vector<const Socket*>	&sockets = it->second->getSockets();
-
-		for (socketIt = sockets.begin(); socketIt != sockets.end(); socketIt++)
-		{
-			fds[i].fd = (*socketIt)->getFd();
-			fds[i].events = POLLIN;
-			i++;
-		}
-	}
-
-}
-
-/*
-void	Server::run(void)
-{
-	int					fdId;
-	int					serverId;
-	int					res;
-	int					totalFdsCount;
-	std::vector<pollfd>	fds;
-	std::vector<size_t>	clientsCounts(this->_virtualServers.size(), 0);
-	std::vector<size_t>::const_iterator	it;
-
-	Server::_running = true;
-	while (Server::_running)
-	{
-		this->_updateClientsCounts(clientsCounts);
-		this->_updateVServersFds(fds, clientsCounts);
-
-		totalFdsCount = clientsCounts.size();
-		for (size_t i = 0; i < clientsCounts.size(); i++)
-			totalFdsCount += clientsCounts[i];
-
-		res = poll(fds.data(), totalFdsCount, -1);
-
-		if (Server::_running && res == -1)
-			throw SocketError("Failed poll: " + std::string(strerror(errno)));
-
-		if (res)
-		{
-			for (size_t i = 0; res && i < clientsCounts.size(); i++)
-			{
-				if (!fds[i].revents & POLLIN)
-					continue ;
-				res--;
-				this->_virtualServers[i]->acceptConnection();
-			}
-
-			fdId = clientsCounts.size();
-			serverId = 0;
-			for (it = clientsCounts.begin(); res && it != clientsCounts.end();
-				it++)
-			{
-				for (size_t i = 0; res && i < *it; i++)
-				{
-					if (!fds[fdId + i].revents & POLLIN)
-						continue ;
-					res--;
-					this->_virtualServers[serverId]->handleRequest(
-						this->_virtualServers[serverId]->getClients()[i]);
-				}
-				fdId += *it;
-				serverId++;
-			}
-		}
-	}
-}
-*/
-
 
 /* ************************************************************************** */
 /* Private methods */
-
-void	Server::_cleanup(void)
-{
-	std::map<std::pair<std::string, int>, VirtualServerManager*>::iterator	it;
-
-	for (it = this->_managers.begin(); it != this->_managers.end(); it++)
-		delete it->second;
-
-	remove(WS_LOCK_FILE);
-	Server::_initialized = false;
-}
 
 void	Server::_init(const std::string &configPath)
 {
@@ -207,7 +110,7 @@ void	Server::_init(const std::string &configPath)
 
 	try
 	{
-		configs = Server::_makeConfigs(configPath);
+		configs = this->_makeConfigs(configPath);
 
 		this->_initVirtualServerManagers(configs);
 		delete configs;
@@ -220,6 +123,9 @@ void	Server::_init(const std::string &configPath)
 	}
 
 	Server::_initialized = true;
+	this->_logger.complain(Harl::INFO, "Webserv up and running...");
+	this->_logger.complain(Harl::INFO, "Logging at "
+		+ this->_logger.getLogFilePath());
 }
 
 void	Server::_initVirtualServerManagers(const std::vector<Configuration>
@@ -261,61 +167,16 @@ void	Server::_initVirtualServer(const Configuration &config)
 	key = std::make_pair(config.getAddressString(), config.getPort());
 
 	if (this->_managers.find(key) == this->_managers.end())
-		this->_managers[key] = new VirtualServerManager();
+		this->_managers[key] = new VirtualServerManager(&this->_logger);
 	
-	this->_managers[key]->addServer(new VirtualServer(config));
+	this->_managers[key]->addServer(new VirtualServer(config, &this->_logger));
 }
-
-/*
-void	Server::_updateClientsCounts(std::vector<size_t> &clientsCounts) const
-{
-	size_t	serversCount = this->_virtualServers.size();
-
-	if (clientsCounts.size() != serversCount)
-		clientsCounts.resize(serversCount, 0);
-
-	for (size_t i = 0; i < serversCount; i++)
-		clientsCounts[i] = (this->_virtualServers[i])->getClients().size();
-}
-
-void	Server::_updateVServersFds(std::vector<pollfd> &fds,
-	const std::vector<size_t> &clientsCounts) const
-{
-	size_t	i, j, fdId;
-	size_t	size;
-
-	size = clientsCounts.size();
-	i = size;
-	while (i)
-		size += clientsCounts[i-- - 1];
-
-	if (fds.capacity() != size)
-		fds.resize(size);
-
-	for (i = 0; i < this->_virtualServers.size(); i++)
-	{
-		fds[i].fd = (this->_virtualServers[i])->getSocket().getFd();
-		fds[i].events = POLLIN;
-	}
-
-	fdId = i;
-	for (i = 0; i < clientsCounts.size(); i++)
-	{
-		for (j = 0; j < clientsCounts[i]; j++)
-		{
-			fds[fdId].fd
-				= (this->_virtualServers[i])->getClients()[j].getSocketFd();
-			fds[fdId++].events = POLLIN;
-		}
-	}
-}
-*/
 
 std::vector<Configuration>	*Server::_makeConfigs(const std::string &configPath)
 {
 	std::vector<Configuration>	*configs = NULL;
 
-	Harl::complain(Harl::INFO, "Parsing configuration file: " + configPath);
+	this->_logger.log(Harl::INFO, "Parsing configuration file: " + configPath);
 
 	try
 	{
@@ -323,27 +184,71 @@ std::vector<Configuration>	*Server::_makeConfigs(const std::string &configPath)
 	}
 	catch (const ConfigurationParser::ConfigException &e)
 	{
-		Harl::complain(Harl::ERROR, configPath + ": " + e.what());
+		this->_logger.log(Harl::ERROR, configPath + ": " + e.what());
 
 		if (configPath == WS_DFL_CONFIG_PATH)
 		{
+			this->_logger.log(Harl::ERROR,
+				"Invalid default configuration file: " + configPath + ": "
+				+ e.what());
 			throw ConfigurationParser::ConfigException(
 				"Invalid default configuration file: " + configPath + ": "
 				+ e.what());
 		}
 
-		Harl::complain(Harl::INFO, "Fall back to default configuration file");
+		this->_logger.log(Harl::INFO, "Fallback to default configuration file");
 		return (Server::_makeConfigs(WS_DFL_CONFIG_PATH));
 	}
 	catch (const std::exception &e)
 	{
-		Harl::complain(Harl::ERROR, configPath + ": " + e.what() + ". Abort.");
+		this->_logger.log(Harl::ERROR, configPath + ": " + e.what()
+			+ ". Abort.");
 		throw;
 	}
 	
-	Harl::complain(Harl::INFO, "Parsed configuration file: " + configPath);
+	this->_logger.log(Harl::INFO, "Parsed configuration file: " + configPath);
 
 	return (configs);
+}
+
+void	Server::_updateFds(std::vector<pollfd> &fds)
+{
+	size_t	i = 0;
+	size_t	size;
+	std::vector<const Socket*>::const_iterator	socketIt;
+	std::map<std::pair<
+		std::string, int>, VirtualServerManager*>::const_iterator	it;
+
+	size = this->_managers.size();
+	for (it = this->_managers.begin(); it != this->_managers.end(); it++)
+		size += it->second->getSocketsCount();
+
+	if (fds.capacity() != size)
+		fds.resize(size);
+
+	for (it = this->_managers.begin(); it != this->_managers.end(); it++)
+	{
+		const std::vector<const Socket*>	&sockets = it->second->getSockets();
+
+		for (socketIt = sockets.begin(); socketIt != sockets.end(); socketIt++)
+		{
+			fds[i].fd = (*socketIt)->getFd();
+			fds[i].events = POLLIN;
+			i++;
+		}
+	}
+
+}
+
+void	Server::_cleanup(void)
+{
+	std::map<std::pair<std::string, int>, VirtualServerManager*>::iterator	it;
+
+	for (it = this->_managers.begin(); it != this->_managers.end(); it++)
+		delete it->second;
+
+	remove(WS_LOCK_FILE);
+	Server::_initialized = false;
 }
 
 /* Method to execute when receiving signals */

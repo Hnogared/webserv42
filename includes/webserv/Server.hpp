@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 12:40:13 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/10 21:11:25 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/12 04:04:38 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,23 +37,21 @@ class	Server
 
 	private:
 		/* Private attributes */
+		Harl								_logger;
 		static bool							_initialized;
 		static bool							_running;
 		std::map<std::pair<std::string, int>, VirtualServerManager*> _managers;
 
 		/* Private methods */
-		void	_cleanup(void);
 		void	_init(const std::string &configPath);
 		void	_initVirtualServerManagers(const std::vector<Configuration>
 			*configs);
 		void	_initVirtualServer(const Configuration &config);
-		void	_updateFds(std::vector<pollfd> &fds);
-		void	_updateClientsCounts(std::vector<size_t> &clientsCounts) const;
-		void	_updateVServersFds(std::vector<pollfd> &fds,
-			const std::vector<size_t> &clientsCounts) const;
-
-		static std::vector<Configuration>	*_makeConfigs(const std::string
+		std::vector<Configuration>	*_makeConfigs(const std::string
 			&configPath);
+		void	_updateFds(std::vector<pollfd> &fds);
+		void	_cleanup(void);
+
 		static void	_sigHandler(int signal);
 
 		/* [delete] */

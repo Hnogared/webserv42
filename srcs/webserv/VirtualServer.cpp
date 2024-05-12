@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/12 02:08:16 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/12 02:17:00 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/12 03:35:42 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,8 @@ namespace	webserv
 /* ************************************************************************** */
 
 /* Configuration constructor */
-VirtualServer::VirtualServer(const Configuration &config) : _config(config) {}
+VirtualServer::VirtualServer(const Configuration &config, Harl *logger)
+	: _logger(logger), _config(config) {}
 
 
 /* Destructor */
@@ -71,7 +72,10 @@ void	VirtualServer::_log(Harl::e_level level, const Client *client,
 
 	if (!client)
 	{
-		Harl::complain(level, message);
+		if (this->_logger)
+			this->_logger->log(level, message);
+		else
+			Harl::complain(level, message);
 		return ;
 	}
 
@@ -83,7 +87,10 @@ void	VirtualServer::_log(Harl::e_level level, const Client *client,
 		
 	logMessage += " " + message;
 
-	Harl::complain(level, logMessage);
+	if (this->_logger)
+		this->_logger->log(level, logMessage);
+	else
+		Harl::complain(level, logMessage);
 }
 
 bool	VirtualServer::_tryDirectoryResponse(Client &client,

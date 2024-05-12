@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/08 20:51:17 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/11 17:56:33 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/12 03:32:33 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ class VirtualServerManager
 {
 	public:
 		/* Constructors */
-		explicit VirtualServerManager(void);
+		explicit VirtualServerManager(Harl *logger = NULL);
 
 		/* Destructor */
 		~VirtualServerManager(void);
@@ -45,13 +45,14 @@ class VirtualServerManager
 
 	private:
 		/* Private attributes */
+		Harl						*_logger;
 		Socket						_socket;
 		VirtualServer				*_defaultServer;
 		std::vector<VirtualServer*>	_servers;
 		std::vector<Client*>		_clients;
 
 		/* Private methods */
-		static void	_log(Harl::e_level level, const Client *client,
+		void	_log(Harl::e_level level, const Client *client,
 			const std::string &message);
 		void	_acceptConnection(void);
 		bool	_serveClient(Client *client);

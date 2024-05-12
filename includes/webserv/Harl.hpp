@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 03:03:18 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/06 23:14:22 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/12 04:14:43 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,13 @@
 # define HARL_HPP
 
 # include <iostream>
+# include <fstream>
+# include <stdexcept>
+
+# include <cerrno>
+# include <cstring>
+# include <unistd.h>
+
 # include "colors.hpp"
 
 class	Harl
@@ -28,29 +35,39 @@ class	Harl
 			ERROR,
 		};
 
-		/* Static methods */
-		static void	complain(e_level level, const std::string &msg);
-		static void	debug(const std::string &msg);
-		static void	info(const std::string &msg);
-		static void	warning(const std::string &msg);
-		static void	error(const std::string &msg);
+		/* Constructors */
+		explicit Harl(const std::string &logFilePath);
+
+		/* Destructor */
+		~Harl(void);
+
+		/* Getters */
+		const std::string	&getLogFilePath(void) const;
+
+		/* Public methods */
+		static void	complain(e_level level, const std::string &msg,
+			bool colored = true, std::ostream &os = std::cout);
+		static void	debug(const std::string &msg, bool colored,
+			std::ostream &os);
+		static void	info(const std::string &msg, bool colored,
+			std::ostream &os);
+		static void	warning(const std::string &msg, bool colored,
+			std::ostream &os);
+		static void	error(const std::string &msg, bool colored,
+			std::ostream &os);
+		void		log(e_level level, const std::string &msg);
 
 
 	private:
-		/* [delete] Default constructor */
-		Harl(void);
+		/* Private attributes */
+		static void		(* const _methods_array[4])(const std::string &msg,
+			bool colored, std::ostream &os);
+		std::string		_logFilePath;
+		std::ofstream	_logFile;
 
-		/* [delete] Copy constructor */
-		Harl(const Harl &original);
-
-		/* [delete] Destructor */
-		~Harl(void);
-
-		/* [delete] Copy assignment operator overload */
-		Harl	&operator=(const Harl &original);
-
-		/* Private class constants */
-		static void	(* const _methods_array[4])(const std::string &msg);
+		/* [delete] */
+		Harl(const Harl&);
+		Harl	&operator=(const Harl&);
 };
 
 #endif
