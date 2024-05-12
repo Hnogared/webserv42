@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/08 18:25:00 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/08 17:17:00 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/11 17:40:02 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,6 @@ HttpMessage	&HttpMessage::operator=(const HttpMessage &original)
 	this->_statusLine = original.getStatusLine();
 	this->_headers = original.getHeaders();
 	this->_body = original.getBody();
-	this->_isValid = original.isValid();
 	return (*this);
 }
 
@@ -87,11 +86,6 @@ std::string	HttpMessage::getBody(void) const
 	return (this->_body);
 }
 
-bool	HttpMessage::isValid(void) const
-{
-	return (this->_isValid);
-}
-
 
 /* ************************************************************************** */
 /* Setters */
@@ -119,16 +113,24 @@ void	HttpMessage::setHeader(const std::string &key, const std::string &val)
 	this->_headers[key] = val;
 }
 
-void	HttpMessage::setValidity(bool is_valid)
-{
-	this->_isValid = is_valid;
-}
 
 /* Virtual setters */
 
 void	HttpMessage::setBody(const std::string &body)
 {
 	this->_body = body;
+}
+
+
+/* ************************************************************************** */
+/* Public methods */
+
+void	HttpMessage::clear(void)
+{
+	this->_version.clear();
+	this->_statusLine.clear();
+	this->_headers.clear();
+	this->_body.clear();
 }
 
 

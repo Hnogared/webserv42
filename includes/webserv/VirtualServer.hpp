@@ -52,7 +52,7 @@ class	VirtualServer
 		const Configuration	&getConfiguration(void) const;
 
 		/* Public methods */
-		void	handleRequest(const Client &client);
+		bool	tryHandleClientRequest(Client &client);
 
 
 	private:
@@ -60,12 +60,12 @@ class	VirtualServer
 		Configuration			_config;
 
 		/* Private methods */
-		void	_sendResponse(const Client &client,
-			const http::HttpRequest &request);
-		void	_sendDirectoryResponse(const Client &client,
-			const http::HttpRequest &request);
-		void	_sendDirectoryListing(const Client &client,
-			const std::string &uri, const std::string &path);
+		void	_log(Harl::e_level level, const Client *client,
+			const std::string &message) const;
+		bool	_tryDirectoryResponse(Client &client,
+			const LocationConfiguration &location);
+		bool	_tryDirectoryListing(Client &client, const std::string &uri,
+			const std::string &path);
 
 		/* [delete] */
 		VirtualServer(void);

@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 14:43:33 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/11 14:59:39 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/11 23:20:12 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,8 @@ namespace	webserv
 /* ************************************************************************** */
 
 /* Socket fd constructor */
-Client::Client(const Socket &socket) : _socket(socket), _buffer("") {}
+Client::Client(const Socket &socket)
+	: _socket(socket), _requestPending(), _request(), _buffer("") {}
 
 /* Copy constructor */
 Client::Client(const Client &original)
@@ -41,6 +42,8 @@ Client	&Client::operator=(const Client &original)
 		return (*this);
 
 	this->_socket = original.getSocket();
+	this->_requestPending = original.isRequestPending();
+	this->_request = original.getRequest();
 	this->_buffer = original.getBuffer();
 	return (*this);
 }
@@ -86,6 +89,16 @@ std::string	Client::getAddrStr(e_addr_choice choice) const
 	return (oss.str());
 }
 
+bool	Client::isRequestPending(void) const
+{
+	return (this->_requestPending);
+}
+
+const http::HttpRequest	&Client::getRequest(void) const
+{
+	return (this->_request);
+}
+
 const std::string	&Client::getBuffer(void) const
 {
 	return (this->_buffer);
@@ -95,10 +108,15 @@ const std::string	&Client::getBuffer(void) const
 /* ************************************************************************** */
 /* Public methods */
 
-void	Client::sendResponse(const http::HttpResponse &response) const
+void	Client::sendResponse(const http::HttpResponse &response)
 {
+	int			code = response.getStatusCode();
 	ssize_t		bytes_sent;
 	std::string	response_str(response.toString());
+
+	if (code >= 100 && code < 400 && this->_requestPending)
+		this->fetchRequestBody(0);
+	this->_request.clear();
 
 	bytes_sent = send(this->_socket.getFd(), response_str.c_str(),
 			response_str.size(), 0);
@@ -109,7 +127,7 @@ void	Client::sendResponse(const http::HttpResponse &response) const
 	}
 }
 
-void	Client::fetchRequestLineAndHeaders(http::HttpRequest &request)
+void	Client::fetchRequestLineAndHeaders()
 {
 	size_t		pos;
 	std::string	content("");
@@ -132,7 +150,7 @@ void	Client::fetchRequestLineAndHeaders(http::HttpRequest &request)
 	{
 		pos = content.find("\r\n");
 		temp = content.substr(0, pos);
-		request.parseRequestLine(temp);
+		this->_request.parseRequestLine(temp);
 	}
 	catch (const http::HttpRequest::RequestException &e)
 	{
@@ -161,17 +179,18 @@ void	Client::fetchRequestLineAndHeaders(http::HttpRequest &request)
 	try
 	{
 		temp = content.substr(0, pos);
-		request.parseHeaders(temp);
+		this->_request.parseHeaders(temp);
 	}
 	catch (const http::HttpRequest::BadRequest &e)
 	{
-		throw http::HttpRequest::BadRequest(request.getStatusLine());
+		throw http::HttpRequest::BadRequest(this->_request.getStatusLine());
 	}
 
 	this->_buffer = content.substr(pos + 4 - 2 * (pos == 0));
+	this->_requestPending = true;
 }
 
-void	Client::fetchRequestBody(http::HttpRequest &request, size_t maxBodyLen)
+void	Client::fetchRequestBody(size_t maxBodyLen)
 {
 	size_t		bodySize;
 	std::string	content;
@@ -180,12 +199,12 @@ void	Client::fetchRequestBody(http::HttpRequest &request, size_t maxBodyLen)
 	content = this->_buffer;
 	this->_buffer.clear();
 
-	if (request.getMethod() != "POST")
+	if (this->_request.getMethod() != "POST")
 		return ;
 
-	bodySize = tool::strings::stoi(request.getHeader("Content-Length"));
+	bodySize = tool::strings::stoi(this->_request.getHeader("Content-Length"));
 	if (bodySize > maxBodyLen)
-		throw http::HttpRequest::BodyTooLarge(request.getStatusLine());
+		throw http::HttpRequest::BodyTooLarge(this->_request.getStatusLine());
 
 	while (content.size() < bodySize)
 	{
@@ -196,7 +215,8 @@ void	Client::fetchRequestBody(http::HttpRequest &request, size_t maxBodyLen)
 		content += temp;
 	}
 
-	request.setBody(content);
+	this->_request.setBody(content);
+	this->_requestPending = false;
 }
 
 

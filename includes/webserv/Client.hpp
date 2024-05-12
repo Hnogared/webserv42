@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 14:42:17 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/11 15:00:10 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/11 18:05:07 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,22 +54,26 @@ class	Client
 		bool	operator==(const Client &other) const;
 
 		/* Getters */
-		int					getSocketFd(void) const;
-		Socket				getSocket(void) const;
-		const Socket		*getSocketPtr(void) const;
-		std::string			getAddrStr(e_addr_choice choice) const;
-		const std::string	&getBuffer(void) const;
+		int						getSocketFd(void) const;
+		Socket					getSocket(void) const;
+		const Socket			*getSocketPtr(void) const;
+		std::string				getAddrStr(e_addr_choice choice) const;
+		bool					isRequestPending(void) const;
+		const http::HttpRequest	&getRequest(void) const;
+		const std::string		&getBuffer(void) const;
 
 		/* Public methods */
-		void	sendResponse(const http::HttpResponse &response) const;
-		void	fetchRequestLineAndHeaders(http::HttpRequest &request);
-		void	fetchRequestBody(http::HttpRequest &request, size_t maxBodyLen);
+		void	sendResponse(const http::HttpResponse &response);
+		void	fetchRequestLineAndHeaders(void);
+		void	fetchRequestBody(size_t maxBodyLen);
 
 
 	private:
 		/* Private attributes */
-		Socket		_socket;
-		std::string	_buffer;
+		Socket				_socket;
+		bool				_requestPending;
+		http::HttpRequest	_request;
+		std::string			_buffer;
 
 		/* Private methods */
 		std::string	_readRequestBlock(size_t maxBuffSize = 0) const;

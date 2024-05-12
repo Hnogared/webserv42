@@ -6,13 +6,14 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 09:34:06 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/03 12:57:58 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/11 23:13:00 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CONFIGURATION_HPP
 # define CONFIGURATION_HPP
 
+# include <algorithm>
 # include <string>
 # include <vector>
 # include <set>
@@ -66,6 +67,8 @@ class	Configuration
 		void	addLocation(const LocationConfiguration &location);
 
 		/* Public methods */
+		const LocationConfiguration*	findBestLocation(const std::string &uri)
+			const;
 		std::ostream	&print(std::ostream &os = std::cout) const;
 
 

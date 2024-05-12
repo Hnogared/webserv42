@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 23:01:55 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/08 12:09:38 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/11 17:42:08 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,7 @@ namespace	http
 
 /* Default constructor */
 HttpRequest::HttpRequest(void)
-	: HttpMessage(), _method(), _target()
-{
-	this->setValidity(true);
-}
+	: HttpMessage(), _method(), _target() {}
 
 /* Copy constructor */
 HttpRequest::HttpRequest(const HttpRequest &original) : HttpMessage()
@@ -83,6 +80,9 @@ void	HttpRequest::parseRequestLine(std::string &line)
 	if (this->_method.empty() || this->_target.empty() || version.empty())
 		throw BadRequest();
 
+	if (version != WS_HTTP_VERSION)
+		throw RequestException("Invalid HTTP version", 505);
+
 	this->setVersion(version);
 }
 
@@ -112,6 +112,17 @@ void	HttpRequest::parseHeaders(std::string &headers)
 	if ((this->_method == "POST" && this->getHeader("Content-Length").empty())
 			|| this->getHeader("Host").empty())
 		throw BadRequest();
+}
+
+
+/* ************************************************************************** */
+/* HttpMessage virtual methods overrides */
+
+void	HttpRequest::clear(void)
+{
+	this->HttpMessage::clear();
+	this->_method.clear();
+	this->_target.clear();
 }
 
 

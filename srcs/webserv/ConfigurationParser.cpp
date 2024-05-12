@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 10:21:20 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/06 11:19:14 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/11 19:21:23 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -258,6 +258,14 @@ void	ConfigurationParser::_parseServerConfig(std::queue<t_token> &tokens,
 		}
 
 		throw UnexpectedToken(token, "SERVER_CONTEXT");
+	}
+
+	if (config.getLocations().empty())
+	{
+		LocationConfiguration	defaultLocation("/");
+
+		ConfigurationParser::_completeLocation(defaultLocation, config);
+		config.addLocation(defaultLocation);
 	}
 
 	configurations.push_back(config);

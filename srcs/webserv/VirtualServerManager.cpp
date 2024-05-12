@@ -1,13 +1,13 @@
 /* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   VirtualServerManager.cpp                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/08 20:50:46 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/11 15:39:02 by hnogared         ###   ########.fr       */
-/*                                                                            */
+/*																			*/
+/*														:::	  ::::::::   */
+/*   VirtualServerManager.cpp						   :+:	  :+:	:+:   */
+/*													+:+ +:+		 +:+	 */
+/*   By: hnogared <hnogared@student.42.fr>		  +#+  +:+	   +#+		*/
+/*												+#+#+#+#+#+   +#+		   */
+/*   Created: 2024/05/08 20:50:46 by hnogared		  #+#	#+#			 */
+/*   Updated: 2024/05/11 15:47:55 by hnogared		 ###   ########.fr	   */
+/*																			*/
 /* ************************************************************************** */
 
 #include "VirtualServerManager.hpp"
@@ -156,7 +156,7 @@ void	VirtualServerManager::serveFd(int fd)
 	for (clientIt = this->_clients.begin(); clientIt != this->_clients.end();)
 	{
 		if (fd == (*clientIt)->getSocket().getFd()
-				&& this->_serveClient(*clientIt))
+			&& this->_serveClient(*clientIt))
 		{
 			delete *clientIt;
 			clientIt = this->_clients.erase(clientIt);
@@ -205,63 +205,92 @@ void	VirtualServerManager::_acceptConnection(void)
 
 bool	VirtualServerManager::_serveClient(Client *client)
 {
-	http::HttpRequest	request;
-
 	try
 	{
-		client->fetchRequestLineAndHeaders(request);
+		client->fetchRequestLineAndHeaders();
 	}
 	catch (const http::HttpRequest::RequestException &e)
 	{
-		this->_log(Harl::INFO, client, "REQ '" + std::string(e.what()) + "' "
-			+ tool::strings::toStr(e.code()));
+		this->_log(Harl::INFO, client, tool::strings::toStr(e.code()));
 		client->sendResponse(http::HttpResponse(e.code()));
 		return (true);
 	}
 	catch (const SocketConnectionClosed &e)
 	{
-		this->_log(Harl::INFO, client, "CONN CLOSED");
+		this->_log(Harl::INFO, client, "CONN CLOSED BY REMOTE HOST");
 		return (true);
 	}
 	catch( const std::exception &e)
 	{
-		this->_log(Harl::ERROR, client, "500 - Failed to fetch request: "
-			+ std::string(e.what()));
+		this->_log(Harl::ERROR, client, "500 - " + std::string(e.what()));
 		client->sendResponse(http::HttpResponse(500));
 		return (true);
 	}
 
-	return (false);
+	return (this->_dispatchClient(client));
+}
 
-	// this->_sendResponse(client, request);
-	
-	
-	// std::vector<VirtualServer*>::const_iterator	serverIt;
-	// const std::vector<VirtualServer*>			&servers = this->getServers();
+bool VirtualServerManager::_dispatchClient(Client *client)
+{
+	try
+	{
+		std::vector<VirtualServer*>::iterator	serverIt;
 
-	// for (serverIt = servers.begin(); serverIt != servers.end(); serverIt++)
-	// {
-	// 	if ((*serverIt)->handlesClient(client))
-	// 	{
-	// 		(*serverIt)->serveClient(client);
-	// 		return ;
-	// 	}
-	// }
+		for (serverIt = this->_servers.begin();
+			serverIt != this->_servers.end(); serverIt++)
+		{
+			if ((*serverIt)->tryHandleClientRequest(*client))
+				return (false);
+		}
 
-	// this->_log(Harl::ERROR, client, "No server to handle client");
+		if (this->_defaultServer->tryHandleClientRequest(*client))
+			return (false);
+	}
+	catch (const http::HttpRequest::RequestException &e)
+	{
+		this->_log(Harl::INFO, client, tool::strings::toStr(e.code()));
+		client->sendResponse(http::HttpResponse(e.code()));
+		return (true);
+	}
+	catch (const SocketConnectionClosed &e)
+	{
+		this->_log(Harl::INFO, client, "CONN CLOSED BY REMOTE HOST");
+		return (true);
+	}
+	catch (const std::exception &e)
+	{
+		this->_log(Harl::ERROR, client, "500 - " + std::string(e.what()));
+		client->sendResponse(http::HttpResponse(500));
+		return (true);
+	}
+
+	this->_log(Harl::INFO, client, "404");
+	client->sendResponse(http::HttpResponse(404));
+
+	return (true);
 }
 
 void	VirtualServerManager::_log(Harl::e_level level, const Client *client,
 	const std::string &message)
 {
-	std::string	dispMessage;
+	std::string	statusLine;
+	std::string	logMessage;
 
-	if (client)
-		dispMessage = client->getAddrStr(Client::PEER) + "  " + message;
-	else
-		dispMessage = message;
+	if (!client)
+	{
+		Harl::complain(level, message);
+		return ;
+	}
 
-	Harl::complain(level, dispMessage);
+	logMessage = client->getAddrStr(Client::PEER);
+	statusLine = client->getRequest().getStatusLine();
+
+	if (!statusLine.empty())
+		logMessage += " REQ '" + client->getRequest().getStatusLine() + "'";
+		
+	logMessage += " " + message;
+
+	Harl::complain(level, logMessage);
 }
 
 } // namespace webserv

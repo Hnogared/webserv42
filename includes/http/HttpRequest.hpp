@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 22:57:07 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/08 12:05:42 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/11 17:41:17 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,9 @@ class	HttpRequest : public HttpMessage
 		/* Public methods */
 		void	parseRequestLine(std::string &line);
 		void	parseHeaders(std::string &headers);
+
+		/* HttpMessage virtual methods overloads */
+		void	clear(void);
 
 
 	private:

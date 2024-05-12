@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/08 18:20:17 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/08 17:16:40 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/11 17:40:46 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,17 +44,18 @@ class	HttpMessage
 		std::string	getHeader(const std::string &key) const;
 		std::map<std::string, std::string>	getHeaders(void) const;
 		std::string	getBody(void) const;
-		bool		isValid(void) const;
 
 		/* Setters */
 		void	setVersion(const std::string &version);
 		void	setStatusLine(const std::string &statusLine);
 		void	addHeader(const std::string &key, const std::string &val);
 		void	setHeader(const std::string &key, const std::string &val);
-		void	setValidity(bool isValid);
 
 		/* Virtual setters */
 		virtual void	setBody(const std::string &body);
+
+		/* Public methods */
+		virtual void	clear(void);
 
 
 	private:
@@ -63,7 +64,6 @@ class	HttpMessage
 		std::string							_statusLine;
 		std::map<std::string, std::string>	_headers;
 		std::string							_body;
-		bool								_isValid;
 };
 
 std::ostream	&operator<<(std::ostream &out, const HttpMessage &http_msg);

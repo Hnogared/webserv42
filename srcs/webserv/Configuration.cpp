@@ -1,13 +1,13 @@
 /* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Configuration.cpp                                  :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/24 09:35:37 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/04 16:12:25 by hnogared         ###   ########.fr       */
-/*                                                                            */
+/*																			*/
+/*														:::	  ::::::::   */
+/*   Configuration.cpp								  :+:	  :+:	:+:   */
+/*													+:+ +:+		 +:+	 */
+/*   By: hnogared <hnogared@student.42.fr>		  +#+  +:+	   +#+		*/
+/*												+#+#+#+#+#+   +#+		   */
+/*   Created: 2024/04/24 09:35:37 by hnogared		  #+#	#+#			 */
+/*   Updated: 2024/05/11 18:40:49 by hnogared		 ###   ########.fr	   */
+/*																			*/
 /* ************************************************************************** */
 
 #include "Configuration.hpp"
@@ -182,17 +182,37 @@ void	Configuration::addLocation(const LocationConfiguration &location)
 /* ************************************************************************** */
 /* Public methods */
 
+const LocationConfiguration* Configuration::findBestLocation(
+	const std::string &uri) const
+{
+	const LocationConfiguration*					bestLocation = NULL;
+	std::set<LocationConfiguration>::const_iterator it;
+
+	for (it = this->_locations.begin(); it != this->_locations.end(); it++)
+	{
+		std::string path = it->getPath();
+
+		if (uri.substr(0, path.size()) != path)
+			continue ;
+
+		if (!bestLocation || path.size() > bestLocation->getPath().size())
+			bestLocation = &(*it);
+	}
+
+	return (bestLocation);
+}
+
 std::ostream	&Configuration::print(std::ostream &os) const
 {
-	os << "=================================\nAddr    : "
-		<< this->getAddressString() << "\nPort    : " << this->getPort()
+	os << "=================================\nAddr	: "
+		<< this->getAddressString() << "\nPort	: " << this->getPort()
 		<< "\nBacklog : " << this->getBacklog();
 	
 	if (!this->_serverNames.empty())
 		os << "\nNames   : " << tool::strings::join(this->_serverNames, ", ");
 
 	if (!this->_root.empty())
-		os << "\nRoot    : '" << this->_root << "'";
+		os << "\nRoot	: '" << this->_root << "'";
 	
 	os << "\nIndex   : '" << this->_index << "'"
 		<< "\nClient max body size : " << this->_clientMaxBodySize;
@@ -223,7 +243,7 @@ std::ostream	&Configuration::print(std::ostream &os) const
 
 
 /* ************************************************************************** */
-/* External operator overloads                                                */
+/* External operator overloads												*/
 /* ************************************************************************** */
 
 std::ostream	&operator<<(std::ostream &os, const Configuration &config)
