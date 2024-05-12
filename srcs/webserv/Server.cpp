@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 17:06:34 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/12 04:16:00 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/12 14:52:39 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,35 +14,37 @@
 
 namespace	webserv
 {
-/* ************************************************************************** */
-/* Static attributes initialization */
-
-bool	Server::_initialized = false;
-bool	Server::_running = false;
 
 /* ************************************************************************** */
+/* Singleton methods */
+
+/* Unique instance getter */
+Server	&Server::getInstance(const std::string &configPath)
+{
+	static Server	instance(configPath);
+
+	return (instance);
+}
+
+/* ************************************************************************** */
+/* Private handlers */
 
 /* Config path constructor */
 Server::Server(const std::string &configPath) : _logger(WS_LOG_FILE)
 {
-	if (Server::_initialized)
-		throw RuntimeError("Another instance is already initialized", 11);
+	std::ifstream	lockFile(WS_LOCK_FILE);
 
+	if (lockFile.is_open())
 	{
-		std::ifstream	lockFile(WS_LOCK_FILE);
-
-		if (lockFile.is_open())
-		{
-			lockFile.close();
-			throw RuntimeError("Another instance is already initialized", 11);
-		}
-
-		std::ofstream	lockFileOut(WS_LOCK_FILE);
-
-		if (!lockFileOut.is_open())
-			throw RuntimeError("Failed to create the lock file", 10);
-		lockFileOut.close();
+		lockFile.close();
+		throw RuntimeError("Another instance is already initialized", 11);
 	}
+
+	std::ofstream	lockFileOut(WS_LOCK_FILE);
+
+	if (!lockFileOut.is_open())
+		throw RuntimeError("Failed to create the lock file", 10);
+	lockFileOut.close();
 
 	this->_init(configPath);
 }
@@ -53,6 +55,16 @@ Server::~Server(void)
 {
 	this->_cleanup();
 }
+
+
+/* ************************************************************************** */
+/* Getters */
+
+Harl	&Server::getLogger(void)
+{
+	return (this->_logger);
+}
+
 
 /* ************************************************************************** */
 /* Public methods */
@@ -65,14 +77,14 @@ void	Server::run(void)
 	std::map<std::pair<
 		std::string, int>, VirtualServerManager*>::const_iterator	it;
 
-	Server::_running = true;
-	while (Server::_running)
+	this->_running = true;
+	while (this->_running)
 	{
 		this->_updateFds(fds);
 
 		res = poll(fds.data(), fds.size(), -1);
 		
-		if (Server::_running && res == -1)
+		if (this->_running && res == -1)
 			throw SocketError("Failed poll: " + std::string(strerror(errno)));
 	
 		if (!res)
@@ -96,36 +108,87 @@ void	Server::run(void)
 	}
 }
 
+void	Server::stop(void)
+{
+	this->_logger.log(Harl::INFO, "STATUS Stopping...");
+	this->_running = false;
+}
+
+void	Server::reload(void)
+{
+	this->_logger.log(Harl::INFO, "STATUS Reloading...");
+	this->stop();
+	this->_cleanup(false);
+	this->_init(this->_configPath);
+	this->run();
+}
+
 
 /* ************************************************************************** */
 /* Private methods */
 
 void	Server::_init(const std::string &configPath)
 {
-	std::vector<Configuration>	*configs = NULL;
-
-	signal(SIGINT, Server::_sigHandler);
-	signal(SIGQUIT, Server::_sigHandler);
-	signal(SIGTERM, Server::_sigHandler);
+	signal(SIGINT, &Server::_sigHandler);
+	signal(SIGTERM, &Server::_sigHandler);
+	signal(SIGQUIT, &Server::_sigHandler);
+	signal(SIGHUP, &Server::_sigHandler);
 
 	try
 	{
-		configs = this->_makeConfigs(configPath);
-
-		this->_initVirtualServerManagers(configs);
-		delete configs;
+		this->_buildFromConfigFile(configPath);
 	}
 	catch(const std::exception &e)
 	{
-		delete configs;
 		remove(WS_LOCK_FILE);
 		throw;
 	}
 
-	Server::_initialized = true;
-	this->_logger.complain(Harl::INFO, "Webserv up and running...");
+	this->_logger.complain(Harl::INFO, "Webserv up and running");
 	this->_logger.complain(Harl::INFO, "Logging at "
 		+ this->_logger.getLogFilePath());
+	this->_logger.complain(Harl::INFO, "Reload with SIGHUP");
+	this->_logger.complain(Harl::INFO, "Stop with SIGINT / SIGTERM / SIGQUIT");
+	this->_logger.log(Harl::INFO, "STATUS Running...");
+}
+
+void	Server::_buildFromConfigFile(const std::string &configPath)
+{
+	std::vector<Configuration>	*configs = NULL;
+
+	this->_logger.log(Harl::INFO, "Parsing configuration file: " + configPath);
+
+	try
+	{
+		configs = ConfigurationParser::parse(configPath);
+		this->_initVirtualServerManagers(configs);
+
+		this->_logger.log(Harl::INFO, configPath + ": Success");
+		this->_configPath = configPath;
+		delete configs;
+	}
+	catch (const ConfigurationParser::ConfigException &e)
+	{
+		this->_logger.log(Harl::ERROR, configPath + ": " + e.what());
+
+		if (configPath == WS_DFL_CONFIG_PATH)
+		{
+			this->_logger.log(Harl::ERROR,
+				"Invalid default configuration file: " + configPath + ": "
+				+ e.what());
+			throw ConfigurationParser::ConfigException(
+				"Invalid default configuration file: " + configPath + ": "
+				+ e.what());
+		}
+
+		this->_logger.log(Harl::INFO, "Fallback to default configuration file");
+		return (this->_buildFromConfigFile(WS_DFL_CONFIG_PATH));
+	}
+	catch (const std::exception &e)
+	{
+		this->_logger.log(Harl::ERROR, configPath + ": " + e.what());
+		throw;
+	}
 }
 
 void	Server::_initVirtualServerManagers(const std::vector<Configuration>
@@ -172,45 +235,6 @@ void	Server::_initVirtualServer(const Configuration &config)
 	this->_managers[key]->addServer(new VirtualServer(config, &this->_logger));
 }
 
-std::vector<Configuration>	*Server::_makeConfigs(const std::string &configPath)
-{
-	std::vector<Configuration>	*configs = NULL;
-
-	this->_logger.log(Harl::INFO, "Parsing configuration file: " + configPath);
-
-	try
-	{
-		configs = ConfigurationParser::parse(configPath);
-	}
-	catch (const ConfigurationParser::ConfigException &e)
-	{
-		this->_logger.log(Harl::ERROR, configPath + ": " + e.what());
-
-		if (configPath == WS_DFL_CONFIG_PATH)
-		{
-			this->_logger.log(Harl::ERROR,
-				"Invalid default configuration file: " + configPath + ": "
-				+ e.what());
-			throw ConfigurationParser::ConfigException(
-				"Invalid default configuration file: " + configPath + ": "
-				+ e.what());
-		}
-
-		this->_logger.log(Harl::INFO, "Fallback to default configuration file");
-		return (Server::_makeConfigs(WS_DFL_CONFIG_PATH));
-	}
-	catch (const std::exception &e)
-	{
-		this->_logger.log(Harl::ERROR, configPath + ": " + e.what()
-			+ ". Abort.");
-		throw;
-	}
-	
-	this->_logger.log(Harl::INFO, "Parsed configuration file: " + configPath);
-
-	return (configs);
-}
-
 void	Server::_updateFds(std::vector<pollfd> &fds)
 {
 	size_t	i = 0;
@@ -240,25 +264,33 @@ void	Server::_updateFds(std::vector<pollfd> &fds)
 
 }
 
-void	Server::_cleanup(void)
+void	Server::_cleanup(bool removeLockFile)
 {
 	std::map<std::pair<std::string, int>, VirtualServerManager*>::iterator	it;
 
 	for (it = this->_managers.begin(); it != this->_managers.end(); it++)
 		delete it->second;
+	this->_managers.clear();
 
-	remove(WS_LOCK_FILE);
-	Server::_initialized = false;
+	if (removeLockFile)
+		remove(WS_LOCK_FILE);
 }
+
+
+/* Static public methods */
 
 /* Method to execute when receiving signals */
 void	Server::_sigHandler(int signal)
 {
-	if (signal == SIGINT || signal == SIGQUIT || signal == SIGTERM)
+	if (signal == SIGHUP)
 	{
-		Server::_running = false;
-		Harl::complain(Harl::INFO, "Received SIG, stopping...");
+		Harl::complain(Harl::INFO, "Received SIGHUP, reloading...");
+		Server::getInstance().reload();
+		return ;
 	}
+
+	Harl::complain(Harl::INFO, "Received stop signal, stopping...");
+	Server::getInstance().stop();
 }
 
 } // namespace webserv

@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 23:01:55 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/11 17:42:08 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/12 13:35:56 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,15 +68,19 @@ std::string	HttpRequest::getTarget(void) const
 /* Method to parse amd store the request line */
 void	HttpRequest::parseRequestLine(std::string &line)
 {
+	std::string	version;
+	
+	this->setStatusLine(line);
+
 	if (std::count(line.begin(), line.end(), ' ') != 2)
 		throw BadRequest();
 
-	this->setStatusLine(line);
+	{
+		std::istringstream	lineStream(line);
 
-	std::istringstream	lineStream(line);
-	std::string			version;
+		lineStream >> this->_method >> this->_target >> version;
+	}
 
-	lineStream >> this->_method >> this->_target >> version;
 	if (this->_method.empty() || this->_target.empty() || version.empty())
 		throw BadRequest();
 

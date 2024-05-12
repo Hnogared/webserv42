@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 14:43:33 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/11 23:20:12 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/12 13:32:58 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,19 +143,14 @@ void	Client::fetchRequestLineAndHeaders()
 
 		if (content.empty())
 			throw SocketConnectionClosed();
-		throw http::HttpRequest::BadRequest(content);
+		
+		this->_request.setStatusLine(content);
+		throw http::HttpRequest::BadRequest();
 	}
 
-	try
-	{
-		pos = content.find("\r\n");
-		temp = content.substr(0, pos);
-		this->_request.parseRequestLine(temp);
-	}
-	catch (const http::HttpRequest::RequestException &e)
-	{
-		throw http::HttpRequest::BadRequest(temp);
-	}
+	pos = content.find("\r\n");
+	temp = content.substr(0, pos);
+	this->_request.parseRequestLine(temp);
 
 	content = content.substr(pos + 2);
 
@@ -176,15 +171,8 @@ void	Client::fetchRequestLineAndHeaders()
 		content += temp;
 	}
 
-	try
-	{
-		temp = content.substr(0, pos);
-		this->_request.parseHeaders(temp);
-	}
-	catch (const http::HttpRequest::BadRequest &e)
-	{
-		throw http::HttpRequest::BadRequest(this->_request.getStatusLine());
-	}
+	temp = content.substr(0, pos);
+	this->_request.parseHeaders(temp);
 
 	this->_buffer = content.substr(pos + 4 - 2 * (pos == 0));
 	this->_requestPending = true;
