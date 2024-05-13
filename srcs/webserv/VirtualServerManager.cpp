@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 12:06:54 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/13 13:36:24 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/13 13:54:22 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -257,7 +257,7 @@ bool	VirtualServerManager::_serveClient(Client *client)
 		this->_log(Harl::INFO, client, "CONN CLOSED - Remote host");
 		return (true);
 	}
-	catch( const std::exception &e)
+	catch(const std::exception &e)
 	{
 		this->_log(Harl::ERROR, client, "500 - " + std::string(e.what()));
 		client->sendResponse(http::HttpResponse(500));

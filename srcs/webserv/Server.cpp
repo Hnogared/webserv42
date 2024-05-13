@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 17:06:34 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/13 13:45:02 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/13 13:56:38 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,10 +109,18 @@ void	Server::start(void)
 			if (!(pollfdIt->revents & (POLLIN | POLLHUP | POLLERR)))
 				continue ;
 
-			for (it = this->_managers.begin(); it != this->_managers.end();it++)
+			try
 			{
-				if (it->second->tryServeFd(pollfdIt->fd, pollfdIt->revents))
-					break ;
+				for (it = this->_managers.begin(); it != this->_managers.end();
+					it++)
+				{
+					if (it->second->tryServeFd(pollfdIt->fd, pollfdIt->revents))
+						break ;
+				}
+			}
+			catch (const Client::ClientException &e)
+			{
+				this->_logger.log(Harl::ERROR, e.what());
 			}
 
 			res--;
