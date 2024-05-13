@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 23:01:55 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/12 13:35:56 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/12 22:41:49 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,10 +84,15 @@ void	HttpRequest::parseRequestLine(std::string &line)
 	if (this->_method.empty() || this->_target.empty() || version.empty())
 		throw BadRequest();
 
-	if (version != WS_HTTP_VERSION)
-		throw RequestException("Invalid HTTP version", 505);
-
-	this->setVersion(version);
+	try
+	{
+		this->setProtocol(version);
+	}
+	catch(const std::invalid_argument &e)
+	{
+		throw BadRequest();
+	}
+	
 }
 
 /* Method to parse and store the headers */

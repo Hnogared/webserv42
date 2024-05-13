@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 14:43:33 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/12 13:32:58 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/13 11:54:35 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,7 +127,7 @@ void	Client::sendResponse(const http::HttpResponse &response)
 	}
 }
 
-void	Client::fetchRequestLineAndHeaders()
+void	Client::fetchRequestLineAndHeaders(const http::Protocol &protocol)
 {
 	size_t		pos;
 	std::string	content("");
@@ -151,6 +151,9 @@ void	Client::fetchRequestLineAndHeaders()
 	pos = content.find("\r\n");
 	temp = content.substr(0, pos);
 	this->_request.parseRequestLine(temp);
+
+	if (this->_request.getProtocol() > protocol)
+		throw http::HttpRequest::RequestException("Bad protocol", 505);
 
 	content = content.substr(pos + 2);
 

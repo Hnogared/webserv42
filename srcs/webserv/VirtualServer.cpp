@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/12 02:08:16 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/12 03:35:42 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/13 12:12:39 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ namespace	webserv
 
 /* Configuration constructor */
 VirtualServer::VirtualServer(const Configuration &config, Harl *logger)
-	: _logger(logger), _config(config) {}
+	: _config(config), _logger(logger) {}
 
 
 /* Destructor */

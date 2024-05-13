@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 12:40:13 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/12 16:35:49 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/13 12:02:19 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,15 +44,16 @@ class	Server
 
 	private:
 		/* Private attributes */
-		bool		_running;
-		bool		_forceContinue;
-		Harl		_logger;
-		std::string	_configPath;
+		http::Protocol	_protocol;
+		bool			_running;
+		bool			_forceContinue;
+		Harl			_logger;
+		std::string		_configPath;
 		std::map<std::pair<std::string, int>, VirtualServerManager*> _managers;
 
 
 		/* Private handlers */
-		explicit Server(const std::string&);
+		explicit Server(const std::string &configPath);
 		~Server(void);
 
 

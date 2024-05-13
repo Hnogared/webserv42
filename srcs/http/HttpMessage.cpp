@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/08 18:25:00 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/11 17:40:02 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/12 22:37:14 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,14 @@ namespace	http
 HttpMessage::HttpMessage(void) {}
 
 /* Version + message constructor */
-HttpMessage::HttpMessage(const std::string &statusLine,
-		const std::string &version)
-	: _version(version), _statusLine(statusLine) {}
+HttpMessage::HttpMessage(const std::string &statusLine)
+	: _statusLine(statusLine)
+{
+	size_t	pos = statusLine.find_last_of("HTTP/");
+
+	if (pos != std::string::npos)
+		this->_protocol = Protocol(statusLine.substr(pos));
+}
 
 /* Copy constructor */
 HttpMessage::HttpMessage(const HttpMessage &original)
@@ -45,7 +50,7 @@ HttpMessage	&HttpMessage::operator=(const HttpMessage &original)
 	if (this == &original)
 		return (*this);
 
-	this->_version = original.getVersion();
+	this->_protocol = original.getProtocol();
 	this->_statusLine = original.getStatusLine();
 	this->_headers = original.getHeaders();
 	this->_body = original.getBody();
@@ -56,9 +61,9 @@ HttpMessage	&HttpMessage::operator=(const HttpMessage &original)
 /* ************************************************************************** */
 /* Getters */
 
-std::string	HttpMessage::getVersion(void) const
+const Protocol	&HttpMessage::getProtocol(void) const
 {
-	return (this->_version);
+	return (this->_protocol);
 }
 
 std::string	HttpMessage::getStatusLine(void) const
@@ -76,7 +81,7 @@ std::string	HttpMessage::getHeader(const std::string &key) const
 	return (it->second);
 }
 
-std::map<std::string, std::string>	HttpMessage::getHeaders(void) const
+const std::map<std::string, std::string>	&HttpMessage::getHeaders(void) const
 {
 	return (this->_headers);
 }
@@ -90,9 +95,9 @@ std::string	HttpMessage::getBody(void) const
 /* ************************************************************************** */
 /* Setters */
 
-void	HttpMessage::setVersion(const std::string &version)
+void	HttpMessage::setProtocol(const std::string &protocol)
 {
-	this->_version = version;
+	this->_protocol = Protocol(protocol);
 }
 
 void	HttpMessage::setStatusLine(const std::string &statusLine)
@@ -127,7 +132,6 @@ void	HttpMessage::setBody(const std::string &body)
 
 void	HttpMessage::clear(void)
 {
-	this->_version.clear();
 	this->_statusLine.clear();
 	this->_headers.clear();
 	this->_body.clear();

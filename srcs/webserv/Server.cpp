@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 17:06:34 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/12 16:36:22 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/13 12:11:19 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,8 @@ Server	&Server::getInstance(const std::string &configPath)
 /* Private handlers */
 
 /* Config path constructor */
-Server::Server(const std::string &configPath) : _logger(WS_LOG_FILE)
+Server::Server(const std::string &configPath)
+	: _protocol(WS_HTTP_VERSION), _logger(WS_LOG_FILE)
 {
 	std::ifstream	lockFile(WS_LOCK_FILE);
 
@@ -102,24 +103,19 @@ void	Server::start(void)
 
 		if (this->_running && res == -1)
 			throw SocketError("Failed poll: " + std::string(strerror(errno)));
-	
-		if (!res)
-			continue ;
 
-		for (pollfdIt = fds.begin(); pollfdIt != fds.end(); pollfdIt++)
+		for (pollfdIt = fds.begin(); res && pollfdIt != fds.end(); pollfdIt++)
 		{
 			if (!pollfdIt->revents & POLLIN)
 				continue ;
 
-			for (it = this->_managers.begin(); it != this->_managers.end();
-				it++)
+			for (it = this->_managers.begin(); it != this->_managers.end();it++)
 			{
-				if (!(it->second)->handlesFd(pollfdIt->fd))
-					continue ;
-
-				it->second->serveFd(pollfdIt->fd);
-				break ;
+				if (it->second->tryServeFd(pollfdIt->fd))
+					break ;
 			}
+
+			res--;
 		}
 	}
 }
@@ -261,8 +257,11 @@ void	Server::_initVirtualServer(const Configuration &config)
 	key = std::make_pair(config.getAddressString(), config.getPort());
 
 	if (this->_managers.find(key) == this->_managers.end())
-		this->_managers[key] = new VirtualServerManager(&this->_logger);
-	
+	{
+		this->_managers[key] = new VirtualServerManager(this->_protocol,
+			&this->_logger);
+	}
+
 	this->_managers[key]->addServer(new VirtualServer(config, &this->_logger));
 }
 

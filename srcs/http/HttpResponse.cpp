@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 23:28:04 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/08 18:33:28 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/13 11:55:19 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ std::string	HttpResponse::toString(void) const
 	const std::map<std::string, std::string>	&headers = this->getHeaders();
 	std::map<std::string, std::string>::const_iterator	it;
 
-	result << this->getVersion() << " "
+	result << this->getProtocol() << " "
 		<< this->_statusCode << " "
 		<< this->getStatusLine() << "\r\n";
 

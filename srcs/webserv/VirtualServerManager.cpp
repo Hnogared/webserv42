@@ -1,13 +1,13 @@
 /* ************************************************************************** */
-/*																			*/
-/*														:::	  ::::::::   */
-/*   VirtualServerManager.cpp						   :+:	  :+:	:+:   */
-/*													+:+ +:+		 +:+	 */
-/*   By: hnogared <hnogared@student.42.fr>		  +#+  +:+	   +#+		*/
-/*												+#+#+#+#+#+   +#+		   */
-/*   Created: 2024/05/08 20:50:46 by hnogared		  #+#	#+#			 */
-/*   Updated: 2024/05/11 15:47:55 by hnogared		 ###   ########.fr	   */
-/*																			*/
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   VirtualServerManager.cpp                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/05/13 12:06:54 by hnogared          #+#    #+#             */
+/*   Updated: 2024/05/13 12:10:02 by hnogared         ###   ########.fr       */
+/*                                                                            */
 /* ************************************************************************** */
 
 #include "VirtualServerManager.hpp"
@@ -18,8 +18,9 @@ namespace	webserv
 /* ************************************************************************** */
 
 /* Socket constructor */
-VirtualServerManager::VirtualServerManager(Harl *logger)
-	: _logger(logger), _socket(), _defaultServer(NULL) {}
+VirtualServerManager::VirtualServerManager(const http::Protocol &protocol,
+		Harl *logger)
+	: _protocol(protocol), _logger(logger), _socket(), _defaultServer(NULL) {}
 
 
 /* Destructor */
@@ -37,6 +38,16 @@ VirtualServerManager::~VirtualServerManager(void)
 
 /* ************************************************************************** */
 /* Getters */
+
+const http::Protocol	&VirtualServerManager::getProtocol(void) const
+{
+	return (this->_protocol);
+}
+
+const Harl	*VirtualServerManager::getLogger(void) const
+{
+	return (this->_logger);
+}
 
 Socket	VirtualServerManager::getSocket(void) const
 {
@@ -129,41 +140,32 @@ void	VirtualServerManager::addClient(Client *client)
 /* ************************************************************************** */
 /* Public methods */
 
-bool	VirtualServerManager::handlesFd(int fd) const
-{
-	std::vector<const Socket*>::const_iterator	it;
-	const std::vector<const Socket*>			&sockets = this->getSockets();
-
-	for (it = sockets.begin(); it != sockets.end(); it++)
-	{
-		if (fd == (*it)->getFd())
-			return (true);
-	}
-
-	return (false);
-}
-
-void	VirtualServerManager::serveFd(int fd)
+bool	VirtualServerManager::tryServeFd(int fd)
 {
 	std::vector<Client*>::iterator	clientIt;
 
 	if (fd == this->_socket.getFd())
 	{
 		this->_acceptConnection();
-		return ;
+		return (true);
 	}
 
-	for (clientIt = this->_clients.begin(); clientIt != this->_clients.end();)
+	for (clientIt = this->_clients.begin(); clientIt != this->_clients.end();
+		clientIt++)
 	{
-		if (fd == (*clientIt)->getSocket().getFd()
-			&& this->_serveClient(*clientIt))
+		if (fd != (*clientIt)->getSocket().getFd())
+			continue ;
+		
+		if (this->_serveClient(*clientIt))
 		{
+			this->_log(Harl::INFO, *clientIt, "CONN CLOSED BY SERVER");
 			delete *clientIt;
-			clientIt = this->_clients.erase(clientIt);
+			this->_clients.erase(clientIt);
 		}
-		else
-			clientIt++;
+		return (true);
 	}
+
+	return (false);
 }
 
 void	VirtualServerManager::stop(void)
@@ -220,7 +222,7 @@ bool	VirtualServerManager::_serveClient(Client *client)
 	{
 		std::vector<VirtualServer*>::iterator	serverIt;
 
-		client->fetchRequestLineAndHeaders();
+		client->fetchRequestLineAndHeaders(this->_protocol);
 
 		for (serverIt = this->_servers.begin();
 			serverIt != this->_servers.end(); serverIt++)

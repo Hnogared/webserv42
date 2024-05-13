@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 09:34:06 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/11 23:13:00 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/13 11:41:50 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 # include <iostream>
 # include <netinet/in.h>
 
+# include "Protocol.hpp"
 # include "webserv.hpp"
 # include "net.hpp"
 # include "LocationConfiguration.hpp"
@@ -42,6 +43,7 @@ class	Configuration
 		Configuration &operator=(const Configuration &original);
 
 		/* Getters */
+		const http::Protocol				&getProtocol(void) const;
 		sockaddr_in							&getAddress(void);
 		const sockaddr_in					&getConstAddress(void) const;
 		std::string							getAddressString(void) const;
@@ -55,6 +57,7 @@ class	Configuration
 		const std::set<LocationConfiguration>	&getLocations(void) const;
 
 		/* Setters */
+		void	setProtocol(const http::Protocol &protocol);
 		void	setAddress(const std::string &address);
 		void	setAddress(const sockaddr_in &address);
 		void	setBacklog(unsigned int backlog);
@@ -74,6 +77,7 @@ class	Configuration
 
 	private:
 		/* Private attributes */
+		http::Protocol					_protocol;
 		sockaddr_in						_address;
 		unsigned int					_backlog;
 		std::set<std::string>			_serverNames;

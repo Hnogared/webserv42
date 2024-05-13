@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 14:42:17 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/11 18:05:07 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/13 11:51:30 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ class	Client
 
 		/* Public methods */
 		void	sendResponse(const http::HttpResponse &response);
-		void	fetchRequestLineAndHeaders(void);
+		void	fetchRequestLineAndHeaders(const http::Protocol &protocol);
 		void	fetchRequestBody(size_t maxBodyLen);
 
 

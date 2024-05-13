@@ -20,8 +20,8 @@ namespace	webserv
 
 /* Default constructor */
 Configuration::Configuration(void)
-	: _backlog(WS_DFL_BACKLOG), _root(""), _index(WS_DFL_INDEX),
-	_clientMaxBodySize(WS_DFL_C_MAX_BODY)
+	: _protocol(WS_HTTP_VERSION), _backlog(WS_DFL_BACKLOG), _root(""),
+	_index(WS_DFL_INDEX), _clientMaxBodySize(WS_DFL_C_MAX_BODY)
 {
 	this->_address.sin_family = AF_INET;
 	this->_address.sin_port = htons(WS_DFL_PORT);
@@ -30,6 +30,7 @@ Configuration::Configuration(void)
 
 /* Copy constructor */
 Configuration::Configuration(const Configuration &original)
+	: _protocol(original.getProtocol())
 {
 	*this = original;
 }
@@ -46,6 +47,9 @@ Configuration	&Configuration::operator=(const Configuration &original)
 {
 	if (this == &original)
 		return (*this);
+	
+	if (this->_protocol != original.getProtocol())
+		this->_protocol = original.getProtocol();
 	this->_address = original.getConstAddress();
 	this->_backlog = original.getBacklog();
 	this->_serverNames = original.getServerNames();
@@ -60,6 +64,11 @@ Configuration	&Configuration::operator=(const Configuration &original)
 
 /* ************************************************************************** */
 /* Getters */
+
+const http::Protocol	&Configuration::getProtocol(void) const
+{
+	return (this->_protocol);
+}
 
 sockaddr_in	&Configuration::getAddress(void)
 {
@@ -119,6 +128,11 @@ const std::set<LocationConfiguration>	&Configuration::getLocations(void) const
 
 /* ************************************************************************** */
 /* Setters */
+
+void	Configuration::setProtocol(const http::Protocol &protocol)
+{
+	this->_protocol = protocol;
+}
 
 void	Configuration::setAddress(const std::string &address)
 {
@@ -204,17 +218,19 @@ const LocationConfiguration* Configuration::findBestLocation(
 
 std::ostream	&Configuration::print(std::ostream &os) const
 {
-	os << "=================================\nAddr	: "
-		<< this->getAddressString() << "\nPort	: " << this->getPort()
-		<< "\nBacklog : " << this->getBacklog();
+	os << "=================================\n"
+		<< "\nProtocol : " << this->_protocol
+		<< "\nAddr     : " << this->getAddressString()
+		<< "\nPort     : " << this->getPort()
+		<< "\nBacklog  : " << this->getBacklog();
 	
 	if (!this->_serverNames.empty())
-		os << "\nNames   : " << tool::strings::join(this->_serverNames, ", ");
+		os << "\nNames    : " << tool::strings::join(this->_serverNames, ", ");
 
 	if (!this->_root.empty())
-		os << "\nRoot	: '" << this->_root << "'";
+		os << "\nRoot     : '" << this->_root << "'";
 	
-	os << "\nIndex   : '" << this->_index << "'"
+	os << "\nIndex    : '" << this->_index << "'"
 		<< "\nClient max body size : " << this->_clientMaxBodySize;
 
 	if (!this->_errorRedirects.empty())

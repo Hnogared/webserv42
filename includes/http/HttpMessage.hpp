@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/08 18:20:17 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/11 17:40:46 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/12 22:32:22 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,9 @@
 # include <string>
 # include <map>
 
+# include "Protocol.hpp"
 # include "webserv.hpp"
+# include "exceptions.hpp"
 
 namespace	http
 {
@@ -27,8 +29,7 @@ class	HttpMessage
 	public:
 		/* Constructors */
 		explicit HttpMessage(void);
-		explicit HttpMessage(const std::string &statusLine,
-			const std::string &version = WS_HTTP_VERSION);
+		explicit HttpMessage(const std::string &statusLine);
 		HttpMessage(const HttpMessage &original);
 
 		/* Destructor */
@@ -39,14 +40,14 @@ class	HttpMessage
 
 
 		/* Getters */
-		std::string	getVersion(void) const;
-		std::string	getStatusLine(void) const;
-		std::string	getHeader(const std::string &key) const;
-		std::map<std::string, std::string>	getHeaders(void) const;
-		std::string	getBody(void) const;
+		const Protocol	&getProtocol(void) const;
+		std::string		getStatusLine(void) const;
+		std::string		getHeader(const std::string &key) const;
+		const std::map<std::string, std::string>	&getHeaders(void) const;
+		std::string		getBody(void) const;
 
 		/* Setters */
-		void	setVersion(const std::string &version);
+		void	setProtocol(const std::string &protocol);
 		void	setStatusLine(const std::string &statusLine);
 		void	addHeader(const std::string &key, const std::string &val);
 		void	setHeader(const std::string &key, const std::string &val);
@@ -60,7 +61,7 @@ class	HttpMessage
 
 	private:
 		/* Private attributes */
-		std::string							_version;
+		Protocol							_protocol;
 		std::string							_statusLine;
 		std::map<std::string, std::string>	_headers;
 		std::string							_body;
