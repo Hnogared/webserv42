@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 12:40:13 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/13 12:02:19 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/13 14:13:27 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ class	Server
 		/* Public methods */
 		void	start(void);
 		void	stop(void);
-		void	reload(void);
+		void	reload(bool sigReload = false);
 		void	reopen(void);
 
 

@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 17:06:34 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/13 13:56:38 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/13 14:14:55 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,13 +141,20 @@ void	Server::stop(void)
 	this->_running = false;
 }
 
-void	Server::reload(void)
+void	Server::reload(bool sigReload)
 {
 	this->_logger.log(Harl::INFO, "STATUS Reloading...");
 	this->stop();
 	this->_cleanup(false);
 	this->_init(this->_configPath);
-	this->start();
+
+	if (sigReload)
+	{
+		this->_running = true;
+		this->_forceContinue = true;
+	}
+	else
+		this->start();
 }
 
 void	Server::reopen(void)
@@ -315,7 +322,6 @@ void	Server::_cleanup(bool removeLockFile)
 		remove(WS_LOCK_FILE);
 }
 
-
 /* Static public methods */
 
 /* Method to execute when receiving signals */
@@ -331,7 +337,7 @@ void	Server::_sigHandler(int signal)
 	if (signal == SIGHUP)
 	{
 		Harl::complain(Harl::INFO, "Received SIGHUP, reloading...");
-		Server::getInstance().reload();
+		Server::getInstance().reload(true);
 		return ;
 	}
 
