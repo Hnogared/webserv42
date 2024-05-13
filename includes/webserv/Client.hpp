@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 14:42:17 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/13 11:51:30 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/13 12:56:13 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,57 @@ class	Client
 
 		/* Private methods */
 		std::string	_readRequestBlock(size_t maxBuffSize = 0) const;
+
+
+	/* Exceptions */
+	public:
+		class	ClientException : public RuntimeError
+		{
+			public:
+				/* Constructors */
+				explicit ClientException(void);
+				explicit ClientException(const std::string &message,
+					int code = 31);
+				ClientException(const ClientException &original);
+
+				/* Destructor */
+				~ClientException(void) throw();
+
+				/* Operator overloads */
+				ClientException	&operator=(const ClientException &original);
+		}; // class ClientException
+
+		class	ClientReadException : public ClientException
+		{
+			public:
+				/* Constructors */
+				explicit ClientReadException(void);
+				explicit ClientReadException(const std::string &message);
+				ClientReadException(const ClientReadException &original);
+
+				/* Destructor */
+				~ClientReadException(void) throw();
+
+				/* Operator overloads */
+				ClientReadException	&operator=(const ClientReadException
+					&original);
+		}; // class ClientReadException
+
+		class	ClientWriteException : public ClientException
+		{
+			public:
+				/* Constructors */
+				explicit ClientWriteException(void);
+				explicit ClientWriteException(const std::string &message);
+				ClientWriteException(const ClientWriteException &original);
+
+				/* Destructor */
+				~ClientWriteException(void) throw();
+
+				/* Operator overloads */
+				ClientWriteException	&operator=(const ClientWriteException
+					&original);
+		}; // class ClientWriteException
 }; // class Client
 
 } // namespace webserv

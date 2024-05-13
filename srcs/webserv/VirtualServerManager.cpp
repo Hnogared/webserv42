@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 12:06:54 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/13 12:10:02 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/13 13:36:24 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,7 +140,7 @@ void	VirtualServerManager::addClient(Client *client)
 /* ************************************************************************** */
 /* Public methods */
 
-bool	VirtualServerManager::tryServeFd(int fd)
+bool	VirtualServerManager::tryServeFd(int fd, short revents)
 {
 	std::vector<Client*>::iterator	clientIt;
 
@@ -155,13 +155,22 @@ bool	VirtualServerManager::tryServeFd(int fd)
 	{
 		if (fd != (*clientIt)->getSocket().getFd())
 			continue ;
-		
+
+		if (revents & (POLLHUP | POLLERR))
+		{
+			this->_log(Harl::INFO, *clientIt, "CONN CLOSED - Remote host");
+			delete *clientIt;
+			this->_clients.erase(clientIt);
+			return (true);
+		}
+
 		if (this->_serveClient(*clientIt))
 		{
-			this->_log(Harl::INFO, *clientIt, "CONN CLOSED BY SERVER");
+			this->_log(Harl::INFO, *clientIt, "CONN CLOSED - Local host");
 			delete *clientIt;
 			this->_clients.erase(clientIt);
 		}
+
 		return (true);
 	}
 
@@ -245,7 +254,7 @@ bool	VirtualServerManager::_serveClient(Client *client)
 	}
 	catch (const SocketConnectionClosed &e)
 	{
-		this->_log(Harl::INFO, client, "CONN CLOSED BY REMOTE HOST");
+		this->_log(Harl::INFO, client, "CONN CLOSED - Remote host");
 		return (true);
 	}
 	catch( const std::exception &e)

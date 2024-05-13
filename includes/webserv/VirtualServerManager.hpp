@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/08 20:51:17 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/13 12:06:01 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/13 13:06:28 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ class VirtualServerManager
 		void	addClient(Client *client);
 
 		/* Public methods */
-		bool	tryServeFd(int fd);
+		bool	tryServeFd(int fd, short revents);
 		void	stop(void);
 
 

@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 14:43:33 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/13 11:54:35 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/13 13:00:25 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,10 +121,7 @@ void	Client::sendResponse(const http::HttpResponse &response)
 	bytes_sent = send(this->_socket.getFd(), response_str.c_str(),
 			response_str.size(), 0);
 	if (bytes_sent < 0)
-	{
-		throw std::runtime_error("Failed to send data to client: "
-			+ std::string(strerror(errno)));
-	}
+		throw ClientWriteException(strerror(errno));
 }
 
 void	Client::fetchRequestLineAndHeaders(const http::Protocol &protocol)
@@ -225,13 +222,109 @@ std::string	Client::_readRequestBlock(size_t maxBuffSize) const
 	bytesRead = recv(this->_socket.getFd(), buffer, maxBuffSize, 0);
 
 	if (bytesRead < 0)
-	{
-		throw RuntimeError("Failed to receive data from client: "
-			+ std::string(strerror(errno)), errno);
-	}
+		throw ClientReadException(strerror(errno));
 	
 	buffer[bytesRead] = '\0';
 	return (std::string(buffer));
 }
 
+
+/* ************************************************************************** */
+/* Exceptions                                                                 */
+/* ************************************************************************** */
+
+/* *********************************** */
+/* ClientException                     */
+/* *********************************** */
+
+/* Default constructor */
+Client::ClientException::ClientException(void)
+	: RuntimeError("Client exception", 31) {}
+
+/* String and code constructor */
+Client::ClientException::ClientException(const std::string &msg, int code)
+	: RuntimeError(msg, code) {}
+
+/* Copy constructor */
+Client::ClientException::ClientException(const ClientException &original)
+	: RuntimeError(original) {}
+
+
+/* Destructor */
+Client::ClientException::~ClientException(void) throw() {}
+
+
+/* *********************************** */
+/* Operator overloads */
+
+Client::ClientException	&Client::ClientException::operator=(
+	const ClientException &original)
+{
+	RuntimeError::operator=(original);
+	return (*this);
+}
+
+
+/* *********************************** */
+/* ClientReadException                 */
+/* *********************************** */
+
+/* Default constructor */
+Client::ClientReadException::ClientReadException(void)
+	: ClientException("Failed read from client", 32) {}
+
+/* String and code constructor */
+Client::ClientReadException::ClientReadException(const std::string &msg)
+	: ClientException("Failed read from client: " + msg, 32) {}
+
+/* Copy constructor */
+Client::ClientReadException::ClientReadException(const ClientReadException
+	&original) : ClientException(original) {}
+
+
+/* Destructor */
+Client::ClientReadException::~ClientReadException(void) throw() {}
+
+
+/* *********************************** */
+/* Operator overloads */
+
+Client::ClientReadException	&Client::ClientReadException::operator=(
+	const ClientReadException &original)
+{
+	ClientException::operator=(original);
+	return (*this);
+}
+
+
+/* *********************************** */
+/* ClientWriteException                */
+/* *********************************** */
+
+/* Default constructor */
+Client::ClientWriteException::ClientWriteException(void)
+	: ClientException("Failed write to client", 33) {}
+
+/* String and code constructor */
+Client::ClientWriteException::ClientWriteException(const std::string &msg)
+	: ClientException("Failed write to client: " + msg, 33) {}
+
+/* Copy constructor */
+Client::ClientWriteException::ClientWriteException(const ClientWriteException
+	&original) : ClientException(original) {}
+
+
+/* Destructor */
+Client::ClientWriteException::~ClientWriteException(void) throw() {}
+
+
+/* *********************************** */
+/* Operator overloads */
+
+Client::ClientWriteException	&Client::ClientWriteException::operator=(
+	const ClientWriteException &original)
+{
+	ClientException::operator=(original);
+	return (*this);
+}
 } // namespace webserv

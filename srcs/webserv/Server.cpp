@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 17:06:34 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/13 12:11:19 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/13 13:45:02 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,12 +106,12 @@ void	Server::start(void)
 
 		for (pollfdIt = fds.begin(); res && pollfdIt != fds.end(); pollfdIt++)
 		{
-			if (!pollfdIt->revents & POLLIN)
+			if (!(pollfdIt->revents & (POLLIN | POLLHUP | POLLERR)))
 				continue ;
 
 			for (it = this->_managers.begin(); it != this->_managers.end();it++)
 			{
-				if (it->second->tryServeFd(pollfdIt->fd))
+				if (it->second->tryServeFd(pollfdIt->fd, pollfdIt->revents))
 					break ;
 			}
 
@@ -154,6 +154,7 @@ void	Server::reopen(void)
 
 void	Server::_init(const std::string &configPath)
 {
+	signal(SIGPIPE, SIG_IGN);
 	signal(SIGUSR1, &Server::_sigHandler);
 	signal(SIGINT, &Server::_sigHandler);
 	signal(SIGTERM, &Server::_sigHandler);
