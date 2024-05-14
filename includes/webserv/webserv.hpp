@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 16:58:31 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/12 03:46:37 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/14 11:33:51 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,8 @@
 # define WS_DFL_BACKLOG		10
 
 # define WS_LOCK_FILE		"/tmp/webserv42.lock"
-# define WS_LOG_FILE		"log/webserv.log"
-# define WS_DFL_CONFIG_PATH	"conf.d/webserv.conf"
+# define WS_LOG_FILE		"test/log/webserv.log"
+# define WS_DFL_CONFIG_PATH	"test/conf.d/webserv.conf"
 
 # define WS_HTTP_VERSION	"HTTP/1.1"
 

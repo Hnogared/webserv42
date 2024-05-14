@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/07 23:04:43 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/13 17:44:46 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/14 12:28:06 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include <string>
 # include <stdexcept>
 # include <fstream>
+# include <map>
 
 # include <cerrno>
 # include <cstring>

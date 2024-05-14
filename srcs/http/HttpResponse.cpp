@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 23:28:04 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/13 11:55:19 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/14 13:06:50 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,50 @@ int	HttpResponse::getStatusCode(void) const
 
 
 /* ************************************************************************** */
+/* Setters */
+
+void	HttpResponse::setBody(const std::string &body,
+	HttpMessage::e_mimeType mime)
+{
+	this->HttpMessage::setBody(body);
+	this->setHeader("Content-Length", tool::strings::toStr(body.size()));
+
+	switch (mime)
+	{
+		case HttpMessage::TEXT_PLAIN:
+			this->setHeader("Content-Type", "text/plain");
+			break;
+		case HttpMessage::TEXT_HTML:
+			this->setHeader("Content-Type", "text/html");
+			break;
+		case HttpMessage::TEXT_CSS:
+			this->setHeader("Content-Type", "text/css");
+			break;
+		case HttpMessage::IMAGE_PNG:
+			this->setHeader("Content-Type", "image/png");
+			break;
+		case HttpMessage::IMAGE_JPEG:
+			this->setHeader("Content-Type", "image/jpeg");
+			break;
+		case HttpMessage::IMAGE_GIF:
+			this->setHeader("Content-Type", "image/gif");
+			break;
+		case HttpMessage::APPLICATION_JAVASCRIPT:
+			this->setHeader("Content-Type", "application/javascript");
+			break;
+		case HttpMessage::APPLICATION_PDF:
+			this->setHeader("Content-Type", "application/pdf");
+			break;
+		case HttpMessage::APPLICATION_OCTET_STREAM:
+			this->setHeader("Content-Type", "application/octet-stream");
+			break;
+		default:
+			break;
+	}
+}
+
+
+/* ************************************************************************** */
 /* Public methods */
 
 std::string	HttpResponse::toString(void) const
@@ -88,16 +132,6 @@ std::string	HttpResponse::toString(void) const
 	
 	result << "\r\n" << this->getBody();
 	return (result.str());
-}
-
-
-/* ************************************************************************** */
-/* HttpMessage virtual methods overrides */
-
-void	HttpResponse::setBody(const std::string &body)
-{
-	this->HttpMessage::setBody(body);
-	this->setHeader("Content-Length", tool::strings::toStr(body.size()));
 }
 
 
@@ -186,17 +220,14 @@ void	HttpResponse::_buildHeadersAndBody(void)
 	{
 		case 1:
 			this->setHeader("Connection", "Upgrade");
-			this->setHeader("Content-Type", "text/plain");
 			break;
 
 		case 2: case 3:
 			this->setHeader("Connection", "Keep-Alive");
-			this->setHeader("Content-Type", "text/html");
 			break;
 		
 		case 4: case 5:
 			this->setHeader("Connection", "Close");
-			this->setHeader("Content-Type", "text/html");
 			break;
 
 		default:
@@ -205,12 +236,12 @@ void	HttpResponse::_buildHeadersAndBody(void)
 
 	if (this->_statusCode < 400)
 	{
-		this->setBody(this->getStatusLine());
+		this->setBody(this->getStatusLine(), HttpMessage::TEXT_PLAIN);
 		return ;
 	}
 
 	this->setBody(HttpResponse::_makeBody(this->_statusCode,
-		this->getStatusLine()));
+		this->getStatusLine()), HttpMessage::TEXT_HTML);
 }
 
 } // namespace http

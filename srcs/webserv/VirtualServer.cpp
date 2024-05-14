@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/12 02:08:16 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/14 11:24:05 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/14 12:58:17 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,8 @@ bool	VirtualServer::_tryFileResponse(Client &client,
 	{
 		http::HttpResponse	response(200);
 
-		response.setBody(tool::files::readFile(path));
+		response.setBody(tool::files::readFile(path),
+			http::HttpMessage::getMimeType(path));
 		this->_log(Harl::INFO, &client, "200");
 		client.sendResponse(response);
 
@@ -135,7 +136,8 @@ bool	VirtualServer::_tryDirectoryResponse(Client &client,
 		{
 			http::HttpResponse	response(200);
 
-			response.setBody(tool::files::readFile(path));
+			response.setBody(tool::files::readFile(path),
+				http::HttpMessage::TEXT_HTML);
 			this->_log(Harl::INFO, &client, "200");
 			client.sendResponse(response);
 			return (true);
@@ -210,7 +212,7 @@ bool	VirtualServer::_tryDirectoryListing(Client &client,
 
 	http::HttpResponse	response(200);
 
-	response.setBody(body);
+	response.setBody(body, http::HttpMessage::TEXT_HTML);
 	this->_log(Harl::INFO, &client, "200");
 	client.sendResponse(response);
 

@@ -1,7 +1,0 @@
-[INFO] Parsing configuration file: conf.d/webserv.conf
-[INFO] conf.d/webserv.conf: Success
-[INFO] STATUS Running...
-[INFO] 127.0.0.1:52024 CONN ACCEPTED
-[INFO] 127.0.0.1:52024 REQ 'GET /hnogared/.zsh HTTP/1.1' 200
-[INFO] 127.0.0.1:52024 REQ 'GET /hnogared/.zsh/.zsh_history HTTP/1.1' 200
-[INFO] STATUS Stopping...

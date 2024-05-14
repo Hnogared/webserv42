@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/08 18:25:00 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/12 22:37:14 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/14 13:02:32 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,13 @@
 
 namespace	http
 {
+
+/* ************************************************************************** */
+/* Static attributes initialization */
+
+const std::map<std::string, HttpMessage::e_mimeType>
+	HttpMessage::_mimeMap = HttpMessage::_initMimeMap();
+
 
 /* ************************************************************************** */
 
@@ -118,9 +125,6 @@ void	HttpMessage::setHeader(const std::string &key, const std::string &val)
 	this->_headers[key] = val;
 }
 
-
-/* Virtual setters */
-
 void	HttpMessage::setBody(const std::string &body)
 {
 	this->_body = body;
@@ -135,6 +139,47 @@ void	HttpMessage::clear(void)
 	this->_statusLine.clear();
 	this->_headers.clear();
 	this->_body.clear();
+}
+
+
+/* ************************************************************************** */
+/* Static public methods */
+
+HttpMessage::e_mimeType	HttpMessage::getMimeType(const std::string &filePath)
+{
+	std::map<std::string, e_mimeType>::const_iterator	it;
+	size_t	pos = filePath.find_last_of('.');
+
+	if (pos == std::string::npos)
+		return APPLICATION_OCTET_STREAM;
+
+	it = HttpMessage::_mimeMap.find(filePath.substr(pos));
+	if (it != HttpMessage::_mimeMap.end())
+		return it->second;
+
+	return APPLICATION_OCTET_STREAM;
+}
+
+
+/* ************************************************************************** */
+/* Static private methods */
+
+const std::map<std::string, HttpMessage::e_mimeType>
+	HttpMessage::_initMimeMap(void)
+{
+	std::map<std::string, HttpMessage::e_mimeType>	mimeTypes;
+
+	mimeTypes[".txt"] = HttpMessage::TEXT_PLAIN;
+	mimeTypes[".html"] = HttpMessage::TEXT_HTML;
+	mimeTypes[".css"] = HttpMessage::TEXT_CSS;
+	mimeTypes[".png"] = HttpMessage::IMAGE_PNG;
+	mimeTypes[".jpg"] = HttpMessage::IMAGE_JPEG;
+	mimeTypes[".jpeg"] = HttpMessage::IMAGE_JPEG;
+	mimeTypes[".gif"] = HttpMessage::IMAGE_GIF;
+	mimeTypes[".js"] = HttpMessage::APPLICATION_JAVASCRIPT;
+	mimeTypes[".pdf"] = HttpMessage::APPLICATION_PDF;
+
+	return (mimeTypes);
 }
 
 
