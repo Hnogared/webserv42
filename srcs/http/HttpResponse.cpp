@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 23:28:04 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/14 13:06:50 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/14 13:15:08 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,39 +78,7 @@ void	HttpResponse::setBody(const std::string &body,
 {
 	this->HttpMessage::setBody(body);
 	this->setHeader("Content-Length", tool::strings::toStr(body.size()));
-
-	switch (mime)
-	{
-		case HttpMessage::TEXT_PLAIN:
-			this->setHeader("Content-Type", "text/plain");
-			break;
-		case HttpMessage::TEXT_HTML:
-			this->setHeader("Content-Type", "text/html");
-			break;
-		case HttpMessage::TEXT_CSS:
-			this->setHeader("Content-Type", "text/css");
-			break;
-		case HttpMessage::IMAGE_PNG:
-			this->setHeader("Content-Type", "image/png");
-			break;
-		case HttpMessage::IMAGE_JPEG:
-			this->setHeader("Content-Type", "image/jpeg");
-			break;
-		case HttpMessage::IMAGE_GIF:
-			this->setHeader("Content-Type", "image/gif");
-			break;
-		case HttpMessage::APPLICATION_JAVASCRIPT:
-			this->setHeader("Content-Type", "application/javascript");
-			break;
-		case HttpMessage::APPLICATION_PDF:
-			this->setHeader("Content-Type", "application/pdf");
-			break;
-		case HttpMessage::APPLICATION_OCTET_STREAM:
-			this->setHeader("Content-Type", "application/octet-stream");
-			break;
-		default:
-			break;
-	}
+	this->setContentType(mime);
 }
 
 

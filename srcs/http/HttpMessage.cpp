@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/08 18:25:00 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/14 13:02:32 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/14 13:16:05 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,10 @@ namespace	http
 /* Static attributes initialization */
 
 const std::map<std::string, HttpMessage::e_mimeType>
-	HttpMessage::_mimeMap = HttpMessage::_initMimeMap();
+	HttpMessage::_extToMimeMap = HttpMessage::_initExtToMimeMap();
 
+const std::map<HttpMessage::e_mimeType, std::string>
+	HttpMessage::_mimeToTypeMap = HttpMessage::_initMimeToTypeMap();
 
 /* ************************************************************************** */
 
@@ -130,6 +132,11 @@ void	HttpMessage::setBody(const std::string &body)
 	this->_body = body;
 }
 
+void	HttpMessage::setContentType(e_mimeType mime)
+{
+	this->setHeader("Content-Type", HttpMessage::_mimeToTypeMap.at(mime));
+}
+
 
 /* ************************************************************************** */
 /* Public methods */
@@ -153,8 +160,8 @@ HttpMessage::e_mimeType	HttpMessage::getMimeType(const std::string &filePath)
 	if (pos == std::string::npos)
 		return APPLICATION_OCTET_STREAM;
 
-	it = HttpMessage::_mimeMap.find(filePath.substr(pos));
-	if (it != HttpMessage::_mimeMap.end())
+	it = HttpMessage::_extToMimeMap.find(filePath.substr(pos));
+	if (it != HttpMessage::_extToMimeMap.end())
 		return it->second;
 
 	return APPLICATION_OCTET_STREAM;
@@ -165,7 +172,7 @@ HttpMessage::e_mimeType	HttpMessage::getMimeType(const std::string &filePath)
 /* Static private methods */
 
 const std::map<std::string, HttpMessage::e_mimeType>
-	HttpMessage::_initMimeMap(void)
+	HttpMessage::_initExtToMimeMap(void)
 {
 	std::map<std::string, HttpMessage::e_mimeType>	mimeTypes;
 
@@ -178,6 +185,25 @@ const std::map<std::string, HttpMessage::e_mimeType>
 	mimeTypes[".gif"] = HttpMessage::IMAGE_GIF;
 	mimeTypes[".js"] = HttpMessage::APPLICATION_JAVASCRIPT;
 	mimeTypes[".pdf"] = HttpMessage::APPLICATION_PDF;
+
+	return (mimeTypes);
+}
+
+const std::map<HttpMessage::e_mimeType, std::string>
+	HttpMessage::_initMimeToTypeMap(void)
+{
+	std::map<HttpMessage::e_mimeType, std::string>	mimeTypes;
+
+	mimeTypes[HttpMessage::TEXT_PLAIN] = "text/plain";
+	mimeTypes[HttpMessage::TEXT_HTML] = "text/html";
+	mimeTypes[HttpMessage::TEXT_CSS] = "text/css";
+	mimeTypes[HttpMessage::IMAGE_PNG] = "image/png";
+	mimeTypes[HttpMessage::IMAGE_JPEG] = "image/jpeg";
+	mimeTypes[HttpMessage::IMAGE_GIF] = "image/gif";
+	mimeTypes[HttpMessage::APPLICATION_JAVASCRIPT] = "application/javascript";
+	mimeTypes[HttpMessage::APPLICATION_PDF] = "application/pdf";
+	mimeTypes[HttpMessage::APPLICATION_OCTET_STREAM]
+		= "application/octet-stream";
 
 	return (mimeTypes);
 }

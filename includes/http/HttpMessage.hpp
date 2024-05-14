@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/08 18:20:17 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/14 13:02:00 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/14 13:14:19 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,7 @@ class	HttpMessage
 		void	addHeader(const std::string &key, const std::string &val);
 		void	setHeader(const std::string &key, const std::string &val);
 		void	setBody(const std::string &body);
+		void	setContentType(e_mimeType mime);
 
 		/* Public methods */
 		virtual void	clear(void);
@@ -81,11 +82,14 @@ class	HttpMessage
 		std::string							_body;
 
 		/* Static private attributes */
-		static const std::map<std::string, e_mimeType>	_mimeMap;
+		static const std::map<std::string, e_mimeType>	_extToMimeMap;
+		static const std::map<e_mimeType, std::string>	_mimeToTypeMap;
 
 		/* Static private methods */
 		static const std::map<std::string, HttpMessage::e_mimeType>
-			_initMimeMap(void);
+			_initExtToMimeMap(void);
+		static const std::map<HttpMessage::e_mimeType, std::string>
+			_initMimeToTypeMap(void);
 };
 
 std::ostream	&operator<<(std::ostream &out, const HttpMessage &http_msg);

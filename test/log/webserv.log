@@ -1,14 +1,19 @@
 [INFO] Parsing configuration file: test/conf.d/webserv.conf
 [INFO] test/conf.d/webserv.conf: Success
 [INFO] STATUS Running...
-[INFO] 127.0.0.1:58346 CONN ACCEPTED
-[INFO] 127.0.0.1:58346 REQ 'GET /hnogared/Documents HTTP/1.1' 200
-[INFO] 127.0.0.1:58346 REQ 'GET /hnogared/Documents/CV_HippolyteNogarede.pdf HTTP/1.1' 200
-[INFO] 127.0.0.1:58346 REQ 'GET /hnogared/Documents/Llamasoft%20-%20The%20Jeff%20Minter%20Story HTTP/1.1' 404
-[INFO] 127.0.0.1:58346 CONN CLOSED - Local host
-[INFO] 127.0.0.1:45852 CONN ACCEPTED
-[INFO] 127.0.0.1:45852 REQ 'GET /hnogared/Documents/candidature_stage_HippolyteNogarede.odt HTTP/1.1' 200
-[INFO] 127.0.0.1:45852 REQ 'GET /hnogared/Documents/bingSolus HTTP/1.1' 200
-[INFO] 127.0.0.1:45852 REQ 'GET /hnogared/.xscreensaver HTTP/1.1' 200
-[INFO] 127.0.0.1:45852 REQ 'GET /hnogared/.zsh HTTP/1.1' 200
+[INFO] 127.0.0.1:44766 CONN ACCEPTED
+[INFO] 127.0.0.1:44766 REQ 'GET /hnogared/Pictures/ HTTP/1.1' 200
+[INFO] 127.0.0.1:44766 REQ 'GET /hnogared/Pictures/nfs_bmw-m3.png HTTP/1.1' 200
+[INFO] 127.0.0.1:44766 REQ 'GET /hnogared/Pictures/rounded-star7066.jpg HTTP/1.1' 200
+[INFO] 127.0.0.1:44766 REQ 'GET /hnogared/Pictures/transcendence HTTP/1.1' 200
+[INFO] 127.0.0.1:44766 REQ 'GET /hnogared/Pictures/transcendence/transcendence_bg HTTP/1.1' 200
+[INFO] 127.0.0.1:44766 REQ 'GET /hnogared/Pictures/transcendence/transcendence_bg/background_no_ballz.png HTTP/1.1' 200
+[INFO] 127.0.0.1:44766 REQ 'GET /hnogared/Pictures/transcendence/ HTTP/1.1' 200
+[INFO] 127.0.0.1:44766 REQ 'GET /hnogared/Pictures/transcendence/icon HTTP/1.1' 200
+[INFO] 127.0.0.1:44766 REQ 'GET /hnogared/Pictures/transcendence/icon/favicon_purple.png HTTP/1.1' 200
+[INFO] 127.0.0.1:44766 REQ 'GET /hnogared/Pictures/own HTTP/1.1' 200
+[INFO] 127.0.0.1:44766 REQ 'GET /hnogared/Pictures/own/theo HTTP/1.1' 200
+[INFO] 127.0.0.1:44766 REQ 'GET /hnogared/Pictures/own/theo/theo_white_bg_huge.png HTTP/1.1' 200
+[INFO] 127.0.0.1:44766 REQ 'GET /hnogared/Pictures/own/ HTTP/1.1' 200
+[INFO] 127.0.0.1:44766 REQ 'GET /hnogared/Pictures/ HTTP/1.1' 200
 [INFO] STATUS Stopping...
