@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/12 02:08:16 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/14 19:54:11 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/14 19:59:34 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -212,7 +212,7 @@ bool	VirtualServer::_tryDirectoryListing(Client &client,
 			"      <td>" + icon + "</td>\n"
 			"      <td style=\"padding-right: 100\"><a href=\""
 				+ tool::files::joinPaths(uri, it->d_name)
-				+ "\">\n" + it->d_name + "</a></td>\n"
+				+ "\">" + it->d_name + "</a></td>\n"
 			"      <td>" + size + "<td>\n"
 			"    </tr>\n";
 	}

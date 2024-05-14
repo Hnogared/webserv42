@@ -1,10 +1,8 @@
 [INFO] STATUS Parsing config file: test/conf.d/webserv.conf
 [INFO] STATUS test/conf.d/webserv.conf: Success
 [INFO] STATUS Running...
-[INFO] 127.0.0.1:49680 CONN ACCEPTED
-[INFO] 127.0.0.1:49680 REQ 'GET /hnogared/Dev/42/cursus HTTP/1.1' 200
-[INFO] 127.0.0.1:49680 REQ 'GET /hnogared/Dev/42/cursus/webserv HTTP/1.1' 200
-[INFO] 127.0.0.1:49680 REQ 'GET /hnogared/Dev/42/cursus/latest HTTP/1.1' 200
-[INFO] 127.0.0.1:49680 REQ 'GET /hnogared/Dev/42/cursus/latest/test HTTP/1.1' 200
-[INFO] 127.0.0.1:49680 REQ 'GET /hnogared/Dev/42/cursus/latest/ HTTP/1.1' 200
+[INFO] 127.0.0.1:52672 CONN ACCEPTED
+[INFO] 127.0.0.1:52672 REQ 'GET /hnogared/Dev HTTP/1.1' 200
+[INFO] 127.0.0.1:52672 CONN CLOSED - Remote host
+[INFO] 127.0.0.1:52672 CONN CLOSED - Local host
 [INFO] STATUS Stopping...
