@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/08 18:20:17 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/14 13:14:19 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/14 20:31:52 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,10 @@ class	HttpMessage
 			IMAGE_PNG,
 			IMAGE_JPEG,
 			IMAGE_GIF,
+			AUDIO_MPEG,
+			AUDIO_MP3,
+			VIDEO_MPEG,
+			VIDEO_MP4,
 			APPLICATION_JAVASCRIPT,
 			APPLICATION_PDF,
 			APPLICATION_OCTET_STREAM,
@@ -53,11 +57,11 @@ class	HttpMessage
 
 
 		/* Getters */
-		const Protocol	&getProtocol(void) const;
-		std::string		getStatusLine(void) const;
-		std::string		getHeader(const std::string &key) const;
+		const Protocol		&getProtocol(void) const;
+		const std::string	&getStatusLine(void) const;
+		std::string			getHeader(const std::string &key) const;
 		const std::map<std::string, std::string>	&getHeaders(void) const;
-		std::string		getBody(void) const;
+		const std::string	&getBody(void) const;
 
 		/* Setters */
 		void	setProtocol(const std::string &protocol);

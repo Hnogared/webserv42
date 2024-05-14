@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 23:01:55 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/12 22:41:49 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/14 21:52:36 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ namespace	http
 
 /* Default constructor */
 HttpRequest::HttpRequest(void)
-	: HttpMessage(), _method(), _target() {}
+	: HttpMessage(), _method(), _uri() {}
 
 /* Copy constructor */
 HttpRequest::HttpRequest(const HttpRequest &original) : HttpMessage()
@@ -44,21 +44,21 @@ HttpRequest	&HttpRequest::operator=(const HttpRequest &original)
 
 	this->HttpMessage::operator=(original);
 	this->_method = original.getMethod();
-	this->_target = original.getTarget();
+	this->_uri = original.getUri();
 	return (*this);
 }
 
 /* ************************************************************************** */
 /* Getters */
 
-std::string	HttpRequest::getMethod(void) const
+const std::string	&HttpRequest::getMethod(void) const
 {
 	return (this->_method);
 }
 
-std::string	HttpRequest::getTarget(void) const
+const std::string	&HttpRequest::getUri(void) const
 {
-	return (this->_target);
+	return (this->_uri);
 }
 
 
@@ -78,14 +78,16 @@ void	HttpRequest::parseRequestLine(std::string &line)
 	{
 		std::istringstream	lineStream(line);
 
-		lineStream >> this->_method >> this->_target >> version;
+		lineStream >> this->_method >> this->_uri >> version;
 	}
 
-	if (this->_method.empty() || this->_target.empty() || version.empty())
+
+	if (this->_method.empty() || this->_uri.empty() || version.empty())
 		throw BadRequest();
 
 	try
 	{
+		this->_uri = urlDecode(this->_uri);
 		this->setProtocol(version);
 	}
 	catch(const std::invalid_argument &e)
@@ -131,7 +133,7 @@ void	HttpRequest::clear(void)
 {
 	this->HttpMessage::clear();
 	this->_method.clear();
-	this->_target.clear();
+	this->_uri.clear();
 }
 
 

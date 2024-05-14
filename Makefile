@@ -17,6 +17,7 @@ SRCS	:=	main.cpp					\
 			LocationConfiguration.cpp	\
 			ConfigurationParser.cpp		\
 			Client.cpp					\
+			http_common.cpp				\
 			Protocol.cpp				\
 			HttpMessage.cpp				\
 			HttpRequest.cpp				\

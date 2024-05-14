@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 12:06:54 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/13 13:54:22 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/14 20:26:44 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -249,7 +249,7 @@ bool	VirtualServerManager::_serveClient(Client *client)
 	catch (const http::HttpRequest::RequestException &e)
 	{
 		this->_log(Harl::INFO, client, tool::strings::toStr(e.code()));
-		client->sendResponse(http::HttpResponse(e.code()));
+		client->sendResponse(http::HttpResponse(e.code(),client->getRequest()));
 		return (true);
 	}
 	catch (const SocketConnectionClosed &e)
@@ -260,7 +260,7 @@ bool	VirtualServerManager::_serveClient(Client *client)
 	catch(const std::exception &e)
 	{
 		this->_log(Harl::ERROR, client, "500 - " + std::string(e.what()));
-		client->sendResponse(http::HttpResponse(500));
+		client->sendResponse(http::HttpResponse(500, client->getRequest()));
 		return (true);
 	}
 }

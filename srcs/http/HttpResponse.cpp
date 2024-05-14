@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 23:28:04 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/14 13:15:08 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/14 20:30:40 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,21 @@ HttpResponse::HttpResponse(int statusCode, const std::string &statusLine)
 		this->setStatusLine(HttpResponse::_statusLines.at(statusCode));
 
 	this->_buildHeadersAndBody();
+}
+
+/* Status code + request + status line constructor */
+HttpResponse::HttpResponse(int statusCode, const HttpRequest &request,
+	const std::string &statusLine)
+	: HttpMessage(statusLine), _statusCode(statusCode)
+{
+	if (statusCode < 100 || statusCode > 599)
+		throw std::invalid_argument("Invalid status code");
+
+	if (statusLine.empty())
+		this->setStatusLine(HttpResponse::_statusLines.at(statusCode));
+
+	if (!request.getHeader("User-Agent").empty())
+		this->setHeader("User-Agent", request.getHeader("User-Agent"));
 }
 
 /* Copy constructor */
@@ -78,7 +93,12 @@ void	HttpResponse::setBody(const std::string &body,
 {
 	this->HttpMessage::setBody(body);
 	this->setHeader("Content-Length", tool::strings::toStr(body.size()));
-	this->setContentType(mime);
+	
+	if (mime != HttpMessage::AUDIO_MPEG
+		|| this->getHeader("User-Agent").find("Chrome") == std::string::npos)
+		this->setContentType(mime);
+	else
+		this->setContentType(HttpMessage::AUDIO_MP3);
 }
 
 

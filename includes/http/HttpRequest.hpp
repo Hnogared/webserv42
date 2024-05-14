@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 22:57:07 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/11 17:41:17 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/14 21:52:13 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include <sstream>
 # include <algorithm>
 
+# include "http_common.hpp"
 # include "exceptions.hpp"
 # include "Harl.hpp"
 # include "HttpMessage.hpp"
@@ -40,8 +41,8 @@ class	HttpRequest : public HttpMessage
 		HttpRequest	&operator=(const HttpRequest &original);
 
 		/* Getters */
-		std::string	getMethod(void) const;
-		std::string	getTarget(void) const;
+		const std::string	&getMethod(void) const;
+		const std::string	&getUri(void) const;
 
 		/* Public methods */
 		void	parseRequestLine(std::string &line);
@@ -53,8 +54,8 @@ class	HttpRequest : public HttpMessage
 
 	private:
 		/* Private attributes */
-		std::string		_method;
-		std::string		_target;
+		std::string	_method;
+		std::string	_uri;
 
 
 	/* Exceptions */

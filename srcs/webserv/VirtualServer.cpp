@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/12 02:08:16 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/14 19:59:34 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/14 21:53:29 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ const Configuration	&VirtualServer::getConfiguration(void) const
 
 bool	VirtualServer::tryHandleClientRequest(Client &client)
 {
-	std::string						uri = client.getRequest().getTarget();
+	std::string						uri = client.getRequest().getUri();
 	const LocationConfiguration*	bestLocation = NULL;
 
 	bestLocation = this->_config.findBestLocation(uri);
@@ -93,14 +93,14 @@ void	VirtualServer::_log(Harl::e_level level, const Client *client,
 bool	VirtualServer::_tryFileResponse(Client &client,
 	const LocationConfiguration &location)
 {
-	std::string	uri = client.getRequest().getTarget();
+	std::string	uri = client.getRequest().getUri();
 	std::string	path;
 
 	path = tool::files::joinPaths(location.getRoot(), uri);
 
 	try
 	{
-		http::HttpResponse	response(200);
+		http::HttpResponse	response(200, client.getRequest());
 
 		response.setBody(tool::files::readFile(path),
 			http::HttpMessage::getMimeType(path));
@@ -123,7 +123,7 @@ bool	VirtualServer::_tryFileResponse(Client &client,
 bool	VirtualServer::_tryDirectoryResponse(Client &client,
 	const LocationConfiguration &location)
 {
-	std::string	uri = client.getRequest().getTarget();
+	std::string	uri = client.getRequest().getUri();
 	std::string	path;
 	std::string	fileStr;
 
@@ -134,7 +134,7 @@ bool	VirtualServer::_tryDirectoryResponse(Client &client,
 
 		try
 		{
-			http::HttpResponse	response(200);
+			http::HttpResponse	response(200, client.getRequest());
 
 			response.setBody(tool::files::readFile(path),
 				http::HttpMessage::TEXT_HTML);
@@ -222,7 +222,7 @@ bool	VirtualServer::_tryDirectoryListing(Client &client,
 		"</body>\n"
 		"</html>\n";
 
-	http::HttpResponse	response(200);
+	http::HttpResponse	response(200, client.getRequest());
 
 	response.setBody(body, http::HttpMessage::TEXT_HTML);
 	this->_log(Harl::INFO, &client, "200");

@@ -1,8 +1,32 @@
 [INFO] STATUS Parsing config file: test/conf.d/webserv.conf
 [INFO] STATUS test/conf.d/webserv.conf: Success
 [INFO] STATUS Running...
-[INFO] 127.0.0.1:52672 CONN ACCEPTED
-[INFO] 127.0.0.1:52672 REQ 'GET /hnogared/Dev HTTP/1.1' 200
-[INFO] 127.0.0.1:52672 CONN CLOSED - Remote host
-[INFO] 127.0.0.1:52672 CONN CLOSED - Local host
+[INFO] 127.0.0.1:42830 CONN ACCEPTED
+[INFO] 127.0.0.1:42830 REQ 'GET /hnogared/Music/ HTTP/1.1' 200
+[INFO] 127.0.0.1:42830 CONN CLOSED - Remote host
+[INFO] 127.0.0.1:42830 CONN CLOSED - Local host
+[INFO] 127.0.0.1:42842 CONN ACCEPTED
+[INFO] 127.0.0.1:42842 REQ 'GET /hnogared/Music/Bring%20Me%20The%20Horizon%20-%201x1.mp3 HTTP/1.1' 200
+[INFO] 127.0.0.1:42842 CONN CLOSED - Remote host
+[INFO] 127.0.0.1:42858 CONN ACCEPTED
+[INFO] 127.0.0.1:42858 REQ 'GET /hnogared/Music/Bring%20Me%20The%20Horizon%20-%201x1.mp3 HTTP/1.1' 200
+[INFO] 127.0.0.1:42858 CONN CLOSED - Remote host
+[INFO] 127.0.0.1:42858 CONN CLOSED - Local host
+[INFO] 127.0.0.1:52520 CONN ACCEPTED
+[INFO] 127.0.0.1:52520 REQ 'GET /hnogared/Music/Clips HTTP/1.1' 200
+[INFO] 127.0.0.1:52520 CONN CLOSED - Remote host
+[INFO] 127.0.0.1:52520 CONN CLOSED - Local host
+[INFO] 127.0.0.1:52532 CONN ACCEPTED
+[INFO] 127.0.0.1:52532 REQ 'GET /hnogared/Music/Clips/AMVs HTTP/1.1' 200
+[INFO] 127.0.0.1:52532 CONN CLOSED - Remote host
+[INFO] 127.0.0.1:52532 CONN CLOSED - Local host
+[INFO] 127.0.0.1:52540 CONN ACCEPTED
+[INFO] 127.0.0.1:52540 REQ 'GET /hnogared/Music/Clips/AMVs/Dan%20Terminus%20-%20'Restless%20Destroyer'%20(Redline%20Music%20Video%20AMV).mp4 HTTP/1.1' 200
+[INFO] 127.0.0.1:52540 CONN CLOSED - Remote host
+[INFO] 127.0.0.1:54390 CONN ACCEPTED
+[INFO] 127.0.0.1:54390 REQ 'GET /hnogared/Music/Clips/AMVs/Dan%20Terminus%20-%20'Restless%20Destroyer'%20(Redline%20Music%20Video%20AMV).mp4 HTTP/1.1' 200
+[INFO] 127.0.0.1:54390 CONN CLOSED - Remote host
+[INFO] 127.0.0.1:54390 CONN CLOSED - Local host
+[INFO] 127.0.0.1:42982 CONN ACCEPTED
+[INFO] 127.0.0.1:42982 REQ 'GET /hnogared/Music/Clips/AMVs/Dan%20Terminus%20-%20'Restless%20Destroyer'%20(Redline%20Music%20Video%20AMV).mp4 HTTP/1.1' 200
 [INFO] STATUS Stopping...

@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/08 18:25:00 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/14 13:38:22 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/14 20:31:41 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ const Protocol	&HttpMessage::getProtocol(void) const
 	return (this->_protocol);
 }
 
-std::string	HttpMessage::getStatusLine(void) const
+const std::string	&HttpMessage::getStatusLine(void) const
 {
 	return (this->_statusLine);
 }
@@ -95,7 +95,7 @@ const std::map<std::string, std::string>	&HttpMessage::getHeaders(void) const
 	return (this->_headers);
 }
 
-std::string	HttpMessage::getBody(void) const
+const std::string	&HttpMessage::getBody(void) const
 {
 	return (this->_body);
 }
@@ -183,6 +183,10 @@ const std::map<std::string, HttpMessage::e_mimeType>
 	mimeTypes[".jpg"] = HttpMessage::IMAGE_JPEG;
 	mimeTypes[".jpeg"] = HttpMessage::IMAGE_JPEG;
 	mimeTypes[".gif"] = HttpMessage::IMAGE_GIF;
+	mimeTypes[".mp3"] = HttpMessage::AUDIO_MPEG;
+	mimeTypes[".mpg"] = HttpMessage::VIDEO_MPEG;
+	mimeTypes[".mpeg"] = HttpMessage::VIDEO_MPEG;
+	mimeTypes[".mp4"] = HttpMessage::VIDEO_MP4;
 	mimeTypes[".js"] = HttpMessage::APPLICATION_JAVASCRIPT;
 	mimeTypes[".pdf"] = HttpMessage::APPLICATION_PDF;
 
@@ -200,6 +204,10 @@ const std::map<HttpMessage::e_mimeType, std::string>
 	mimeTypes[HttpMessage::IMAGE_PNG] = "image/png";
 	mimeTypes[HttpMessage::IMAGE_JPEG] = "image/jpeg";
 	mimeTypes[HttpMessage::IMAGE_GIF] = "image/gif";
+	mimeTypes[HttpMessage::AUDIO_MPEG] = "audio/mpeg";
+	mimeTypes[HttpMessage::AUDIO_MP3] = "audio/mp3";
+	mimeTypes[HttpMessage::VIDEO_MPEG] = "video/mpeg";
+	mimeTypes[HttpMessage::VIDEO_MP4] = "video/mp4";
 	mimeTypes[HttpMessage::APPLICATION_JAVASCRIPT] = "application/javascript";
 	mimeTypes[HttpMessage::APPLICATION_PDF] = "application/pdf";
 	mimeTypes[HttpMessage::APPLICATION_OCTET_STREAM]
