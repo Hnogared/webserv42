@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/07 23:03:52 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/14 12:28:27 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/14 19:36:13 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,36 @@ std::string	joinPaths(const std::string &path1, const std::string &path2)
 		joinedPath += path2;
 
 	return (joinedPath);
+}
+
+static bool	compareEntries(const dirent &entry1, const dirent &entry2)
+{
+	if (entry1.d_type != entry2.d_type)
+		return (entry1.d_type < entry2.d_type);
+	return (std::string(entry1.d_name) < std::string(entry2.d_name));
+}
+
+std::vector<dirent>	readDirectory(const std::string &path)
+{
+	DIR					*dir;
+	struct dirent		*entry;
+	std::vector<dirent>	entries;
+
+	dir = opendir(path.c_str());
+
+	if (!dir)
+	{
+		throw webserv::RuntimeError("opendir(): '" + path + "': "
+			+ std::string(strerror(errno)));
+	}
+
+	while ((entry = readdir(dir)))
+		entries.push_back(*entry);
+
+	closedir(dir);
+
+	std::sort(entries.begin(), entries.end(), compareEntries);
+	return (entries);
 }
 
 } // namespace files

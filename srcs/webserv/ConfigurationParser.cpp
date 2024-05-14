@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 10:21:20 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/11 19:21:23 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/14 17:49:40 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ std::map<std::string, ConfigurationParser::t_locationDirectiveParser>
 	std::map<std::string, t_locationDirectiveParser>	directives;
 
 	directives["autoindex"] = &_parseLocAutoindex;
-	directives["limit_except"] = &_parseLocAllowedMethods;
+	directives["allow_methods"] = &_parseLocAllowedMethods;
 	directives["return"] = &_parseLocReturn;
 	directives["root"] = &_parseLocRoot;
 	directives["index"] = &_parseLocIndex;
@@ -523,7 +523,12 @@ void	ConfigurationParser::_completeLocation(LocationConfiguration &locConfig,
 	if (locConfig.getRoot().empty() && !servConfig.getRoot().empty())
 		locConfig.setRoot(servConfig.getRoot());
 	if (locConfig.getIndex().empty())
-		locConfig.setIndex(servConfig.getIndex());
+	{
+		if (servConfig.getIndex().empty())
+			locConfig.setIndex(WS_DFL_INDEX);
+		else
+			locConfig.setIndex(servConfig.getIndex());
+	}
 }
 
 void	ConfigurationParser::_parseLocAutoindex(std::queue<t_token> &tokens,
@@ -552,23 +557,31 @@ void	ConfigurationParser::_parseLocAllowedMethods(
 	t_token	token;
 
 	if (tokens.empty())
-		throw MissingToken("limit_except", "string");
+		throw MissingToken("allow_methods", "string");
 
 	if (tokens.front().type != STRING)
-		throw UnexpectedToken(tokens.front(), "limit_except", "string");
+		throw UnexpectedToken(tokens.front(), "allow_methods", "string");
 
 	while (!tokens.empty() && tokens.front().type == STRING)
 	{
 		token = tokens.front();
 		tokens.pop();
+
+		if (token.content == "all" && (!config.getAllowedMethods().empty()
+			|| tokens.front().type == STRING))
+		{
+			throw InvalidConfigFile(token.lineNbr, "allow_methods",
+				"Cannot mix `all` with other methods");
+		}
+
 		config.addAllowedMethod(token.content);
 	}
 
 	if (tokens.empty())
-		throw MissingToken("limit_except", ";");
+		throw MissingToken("allow_methods", ";");
 
 	if (tokens.front().type != SEMICOLON)
-		throw UnexpectedToken(tokens.front(), "limit_except", ";");
+		throw UnexpectedToken(tokens.front(), "allow_methods", ";");
 
 	tokens.pop();
 }

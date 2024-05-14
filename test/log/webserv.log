@@ -1,33 +1,10 @@
-[INFO] Parsing configuration file: test/conf.d/webserv.conf
-[INFO] test/conf.d/webserv.conf: Success
+[INFO] STATUS Parsing config file: test/conf.d/webserv.conf
+[INFO] STATUS test/conf.d/webserv.conf: Success
 [INFO] STATUS Running...
-[INFO] 127.0.0.1:60854 CONN ACCEPTED
-[INFO] 127.0.0.1:60854 REQ 'GET /html HTTP/1.1' 404
-[INFO] 127.0.0.1:60854 CONN CLOSED - Local host
-[INFO] STATUS Reloading...
+[INFO] 127.0.0.1:49680 CONN ACCEPTED
+[INFO] 127.0.0.1:49680 REQ 'GET /hnogared/Dev/42/cursus HTTP/1.1' 200
+[INFO] 127.0.0.1:49680 REQ 'GET /hnogared/Dev/42/cursus/webserv HTTP/1.1' 200
+[INFO] 127.0.0.1:49680 REQ 'GET /hnogared/Dev/42/cursus/latest HTTP/1.1' 200
+[INFO] 127.0.0.1:49680 REQ 'GET /hnogared/Dev/42/cursus/latest/test HTTP/1.1' 200
+[INFO] 127.0.0.1:49680 REQ 'GET /hnogared/Dev/42/cursus/latest/ HTTP/1.1' 200
 [INFO] STATUS Stopping...
-[INFO] Parsing configuration file: test/conf.d/webserv.conf
-[INFO] test/conf.d/webserv.conf: Success
-[INFO] STATUS Running...
-[INFO] 127.0.0.1:48866 CONN ACCEPTED
-[INFO] 127.0.0.1:48866 REQ 'GET /html HTTP/1.1' 404
-[INFO] 127.0.0.1:48866 CONN CLOSED - Local host
-[INFO] STATUS Reloading...
-[INFO] STATUS Stopping...
-[INFO] Parsing configuration file: test/conf.d/webserv.conf
-[INFO] test/conf.d/webserv.conf: Success
-[INFO] STATUS Running...
-[INFO] 127.0.0.1:47946 CONN ACCEPTED
-[INFO] 127.0.0.1:47946 REQ 'GET /html HTTP/1.1' 200
-[INFO] 127.0.0.1:47946 REQ 'GET /icons/ubuntu-logo.png HTTP/1.1' 200
-[INFO] 127.0.0.1:47946 REQ 'GET /html HTTP/1.1' 200
-[INFO] 127.0.0.1:47946 REQ 'GET /icons/ubuntu-logo.png HTTP/1.1' 404
-[INFO] 127.0.0.1:47946 CONN CLOSED - Local host
-[INFO] 127.0.0.1:49904 CONN ACCEPTED
-[INFO] 127.0.0.1:49904 REQ 'GET /html HTTP/1.1' 200
-[INFO] 127.0.0.1:49904 REQ 'GET /icons/ubuntu-logo.png HTTP/1.1' 200
-[INFO] 127.0.0.1:49904 REQ 'GET /htmldwqdw HTTP/1.1' 404
-[INFO] 127.0.0.1:49904 CONN CLOSED - Local host
-[INFO] 127.0.0.1:44284 CONN ACCEPTED
-[INFO] 127.0.0.1:44284 REQ 'GET /html HTTP/1.1' 200
-[INFO] 127.0.0.1:44284 REQ 'GET /icons/ubuntu-logo.png HTTP/1.1' 200

@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/01 14:41:57 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/03 12:53:14 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/14 17:48:37 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ namespace webserv
 LocationConfiguration::LocationConfiguration(const std::string &path)
 	: _path(path),
 	_root(""),
-	_index(WS_DFL_INDEX),
+	_index(""),
 	_allowedMethods(),
 	_autoindex(false),
 	_returnCode(0),

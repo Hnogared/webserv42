@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/12 02:08:16 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/14 12:58:17 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/14 19:54:11 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,52 +163,64 @@ bool	VirtualServer::_tryDirectoryResponse(Client &client,
 bool	VirtualServer::_tryDirectoryListing(Client &client,
 	const std::string &uri, const std::string &path)
 {
-	std::string		icon;
-	std::string		body;
-	DIR				*dir;
-	struct dirent	*entry;
+	struct stat							statbuf;
+	std::string							icon;
+	std::string							size;
+	std::string							body;
+	std::vector<dirent>					entries;
+	std::vector<dirent>::const_iterator	it;
 
-	dir = opendir(path.c_str());
-
-	if (!dir)
+	try
 	{
-		if (errno == ENOENT)
-			return (false);
-
-		if (errno == EACCES)
+		entries = tool::files::readDirectory(path);
+	}
+	catch (const RuntimeError &e)
+	{
+		if (e.code() == EACCES)
 			throw http::HttpRequest::RequestException("Forbidden", 403);
+		if (e.code() != ENOENT && e.code() != ENOTDIR)
+			throw;
 
-		throw std::runtime_error("opendir(): '" + path + "': "
-			+ std::string(strerror(errno)));
+		return (false);
 	}
 
 	body = "<html>\n"
-		"<head><title>Index of " + uri + "</title></head>\n"
+		"<head><title>Index of " + uri + "</title></head>\n\n"
 		"<body>\n"
 		"  <h1>Index of " + uri + "</h1>\n"
-		"  <hr><pre>\n";
+		"  <hr><pre>\n"
+		"  <table>\n";
 
-	while ((entry = readdir(dir)))
+	for (it = entries.begin(); it != entries.end(); it++)
 	{
-		switch (entry->d_type)
-		{
-			case DT_REG:
-				icon = "&#128196;";
-				break;
-			default:
-				icon = "&#128193;";
-				break;
-		}
-		body += "  <span>" + icon + " " + "</span>"
-			+ "<a href=\"" + tool::files::joinPaths(uri, entry->d_name) + "\">"
-			+ entry->d_name + "</a><br>\n";
+		if ((it->d_name[0] == '.' && it->d_name[1] == 0))
+			continue ;
+
+		if (stat(it->d_name, &statbuf) == 0)
+			size = tool::strings::toStr(statbuf.st_size);
+		else
+			size = "-";
+
+		if (it->d_type == DT_DIR)
+			icon = "&#128193;";
+		else if (it->d_type == DT_LNK)
+			icon = "&#128279;";
+		else
+			icon = "&#128196;";
+
+		body += "    <tr>\n"
+			"      <td>" + icon + "</td>\n"
+			"      <td style=\"padding-right: 100\"><a href=\""
+				+ tool::files::joinPaths(uri, it->d_name)
+				+ "\">\n" + it->d_name + "</a></td>\n"
+			"      <td>" + size + "<td>\n"
+			"    </tr>\n";
 	}
 
-	body += "  </pre><hr>\n"
+	body += "  <table>\n"
+		"  </pre><hr>\n"
 		"</body>\n"
 		"</html>\n";
-
-	closedir(dir);
 
 	http::HttpResponse	response(200);
 

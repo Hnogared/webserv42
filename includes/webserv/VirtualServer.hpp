@@ -21,6 +21,7 @@
 # include <cerrno>
 # include <cstring>
 # include <sys/socket.h>
+# include <sys/stat.h>
 # include <arpa/inet.h>
 # include <exception>
 # include <unistd.h>
@@ -68,6 +69,9 @@ class	VirtualServer
 		bool	_tryDirectoryResponse(Client &client,
 			const LocationConfiguration &location);
 		bool	_tryDirectoryListing(Client &client, const std::string &uri,
+			const std::string &path);
+
+		static const std::vector<const dirent*>	_readDirectory(
 			const std::string &path);
 
 		/* [delete] */
