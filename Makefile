@@ -57,7 +57,7 @@ RM		:=	rm -rf
 NC				:=	"\\e[0m"
 THEME_COLOR		:=	"\\e[32m"
 
-MAKEFILE_NAME	:=	"make@ex00"
+MAKEFILE_NAME	:=	"make@webserv"
 
 STATUS_MSGS	:=	OK!						\
 				working_really_hard...	\

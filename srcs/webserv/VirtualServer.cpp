@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/12 02:08:16 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/13 12:12:39 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/14 11:24:05 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,18 +46,15 @@ bool	VirtualServer::tryHandleClientRequest(Client &client)
 	bestLocation = this->_config.findBestLocation(uri);
 
 	if (!bestLocation)
-	{
-		throw http::HttpRequest::RequestException(
-			client.getRequest().getStatusLine(), 505);
-	}
+		return (false);
 
 	if (*(uri.end() - 1) == '/')
 		return (this->_tryDirectoryResponse(client, *bestLocation));
 
+	if (this->_tryFileResponse(client, *bestLocation))
+		return (true);
 
-	//client.fetchRequestBody(this->_config.getClientMaxBodySize());
-
-	return (false);
+	return (this->_tryDirectoryResponse(client, *bestLocation));
 }
 
 
@@ -93,6 +90,35 @@ void	VirtualServer::_log(Harl::e_level level, const Client *client,
 		Harl::complain(level, logMessage);
 }
 
+bool	VirtualServer::_tryFileResponse(Client &client,
+	const LocationConfiguration &location)
+{
+	std::string	uri = client.getRequest().getTarget();
+	std::string	path;
+
+	path = tool::files::joinPaths(location.getRoot(), uri);
+
+	try
+	{
+		http::HttpResponse	response(200);
+
+		response.setBody(tool::files::readFile(path));
+		this->_log(Harl::INFO, &client, "200");
+		client.sendResponse(response);
+
+		return (true);
+	}
+	catch (const FileException &e)
+	{
+		if (e.code() == EACCES)
+			throw http::HttpRequest::RequestException("Forbidden", 403);
+		if (e.code() != ENOENT && e.code() != EISDIR)
+			throw;
+
+		return (false);
+	}
+}
+
 bool	VirtualServer::_tryDirectoryResponse(Client &client,
 	const LocationConfiguration &location)
 {
@@ -114,7 +140,13 @@ bool	VirtualServer::_tryDirectoryResponse(Client &client,
 			client.sendResponse(response);
 			return (true);
 		}
-		catch(const std::exception& /* e */) {}
+		catch (const FileException &e)
+		{
+			if (e.code() == EACCES)
+				throw http::HttpRequest::RequestException("Forbidden", 403);
+			if (e.code() != ENOENT && e.code() != EISDIR)
+				throw;
+		}
 	}
 
 	if (location.isAutoindex())
@@ -135,8 +167,18 @@ bool	VirtualServer::_tryDirectoryListing(Client &client,
 	struct dirent	*entry;
 
 	dir = opendir(path.c_str());
+
 	if (!dir)
-		return (false);
+	{
+		if (errno == ENOENT)
+			return (false);
+
+		if (errno == EACCES)
+			throw http::HttpRequest::RequestException("Forbidden", 403);
+
+		throw std::runtime_error("opendir(): '" + path + "': "
+			+ std::string(strerror(errno)));
+	}
 
 	body = "<html>\n"
 		"<head><title>Index of " + uri + "</title></head>\n"
@@ -156,7 +198,7 @@ bool	VirtualServer::_tryDirectoryListing(Client &client,
 				break;
 		}
 		body += "  <span>" + icon + " " + "</span>"
-			+ "<a href=\"" + uri + entry->d_name + "\">"
+			+ "<a href=\"" + tool::files::joinPaths(uri, entry->d_name) + "\">"
 			+ entry->d_name + "</a><br>\n";
 	}
 

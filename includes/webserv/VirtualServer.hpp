@@ -63,6 +63,8 @@ class	VirtualServer
 		/* Private methods */
 		void	_log(Harl::e_level level, const Client *client,
 			const std::string &message) const;
+		bool	_tryFileResponse(Client &client,
+			const LocationConfiguration &location);
 		bool	_tryDirectoryResponse(Client &client,
 			const LocationConfiguration &location);
 		bool	_tryDirectoryListing(Client &client, const std::string &uri,

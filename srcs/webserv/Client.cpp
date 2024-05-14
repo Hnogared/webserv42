@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 14:43:33 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/13 13:00:25 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/13 19:06:27 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -191,7 +191,7 @@ void	Client::fetchRequestBody(size_t maxBodyLen)
 		return ;
 
 	bodySize = tool::strings::stoi(this->_request.getHeader("Content-Length"));
-	if (bodySize > maxBodyLen)
+	if (maxBodyLen && bodySize > maxBodyLen)
 		throw http::HttpRequest::BodyTooLarge(this->_request.getStatusLine());
 
 	while (content.size() < bodySize)

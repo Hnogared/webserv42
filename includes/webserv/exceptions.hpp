@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 21:03:07 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/02 12:36:50 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/14 10:58:15 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,6 +123,21 @@ class	InvalidPath : public RuntimeError
 		/* Operator overloads */
 		InvalidPath	&operator=(const InvalidPath &original);
 };
+
+
+class	FileException : public RuntimeError
+{
+	public:
+		/* Constructors */
+		explicit FileException(const std::string &message, int code);
+		FileException(const FileException &original);
+
+		/* Destructor */
+		~FileException(void) throw();
+
+		/* Operator overloads */
+		FileException	&operator=(const FileException &original);
+}; // class FileException
 
 } // namespace webserv
 

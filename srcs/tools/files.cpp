@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/07 23:03:52 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/08 16:42:23 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/14 11:20:56 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,17 +20,25 @@ namespace	files
 
 std::string	readFile(const std::string &filePath)
 {
-	std::ifstream	file(filePath.c_str());
-	std::string		content;
+	try
+	{
+		std::ifstream	fileStream(filePath.c_str());
+		std::string		content;
 
-	if (!file.is_open())
-		throw std::runtime_error(filePath + ": " + std::strerror(errno));
+		if (!fileStream.is_open())
+			throw std::exception();
 
-	content.assign((std::istreambuf_iterator<char>(file)),
-		std::istreambuf_iterator<char>());
-	file.close();
+		content.assign((std::istreambuf_iterator<char>(fileStream)),
+			std::istreambuf_iterator<char>());
+		fileStream.close();
 
-	return (content);
+		return (content);
+	}
+	catch(const std::exception& e)
+	{
+		throw webserv::FileException("readFile(): '" + filePath + "': "
+			+ std::strerror(errno), errno);
+	}
 }
 
 std::string	joinPaths(const std::string &path1, const std::string &path2)

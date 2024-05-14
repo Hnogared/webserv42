@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 17:06:34 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/13 14:14:55 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/13 15:12:59 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -189,9 +189,8 @@ void	Server::_init(const std::string &configPath)
 	this->_logger.complain(Harl::INFO, "Webserv up and running");
 	this->_logger.complain(Harl::INFO, "Logging at "
 		+ this->_logger.getLogFilePath());
-	this->_logger.complain(Harl::INFO, "Reload with SIGHUP");
-	this->_logger.complain(Harl::INFO, "Stop with SIGINT / SIGTERM / SIGQUIT");
-	this->_logger.complain(Harl::INFO, "Reopen log files with SIGUSR1");
+	this->_logger.complain(Harl::INFO, "SIGINT, SIGTERM, SIGQUIT: Stop | "
+		"SIGHUP: Reload | SIGUSR1: Reopen logs");
 	this->_logger.log(Harl::INFO, "STATUS Running...");
 }
 

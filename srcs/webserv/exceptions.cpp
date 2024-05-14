@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 21:06:56 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/02 12:35:28 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/14 10:58:55 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -238,6 +238,33 @@ InvalidPath	&InvalidPath::operator=(const InvalidPath &original)
 {
 	if (this != &original)
 		RuntimeError::operator=(original);
+	return (*this);
+}
+
+
+/* ************************************************************************** */
+/* FileException                                                              */
+/* ************************************************************************** */
+
+/* Message and code constructor */
+FileException::FileException(const std::string &message, int code)
+	: RuntimeError(message, code) {}
+
+/* Copy constructor */
+FileException::FileException(const FileException &original)
+	: RuntimeError(original) {}
+
+
+/* Destructor */
+FileException::~FileException(void) throw() {}
+
+
+/* ************************************************************************** */
+/* Operator overloads */
+
+FileException	&FileException::operator=(const FileException &original)
+{
+	RuntimeError::operator=(original);
 	return (*this);
 }
 
