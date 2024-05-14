@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 17:06:34 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/13 15:12:59 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/14 13:55:51 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -198,14 +198,14 @@ void	Server::_buildFromConfigFile(const std::string &configPath)
 {
 	std::vector<Configuration>	*configs = NULL;
 
-	this->_logger.log(Harl::INFO, "Parsing configuration file: " + configPath);
+	this->_logger.log(Harl::INFO, "STATUS Parsing config file: " + configPath);
 
 	try
 	{
 		configs = ConfigurationParser::parse(configPath);
 		this->_initVirtualServerManagers(configs);
 
-		this->_logger.log(Harl::INFO, configPath + ": Success");
+		this->_logger.log(Harl::INFO, "STATUS " + configPath + ": Success");
 		this->_configPath = configPath;
 		delete configs;
 	}
@@ -223,7 +223,7 @@ void	Server::_buildFromConfigFile(const std::string &configPath)
 				+ e.what());
 		}
 
-		this->_logger.log(Harl::INFO, "Fallback to default configuration file");
+		this->_logger.log(Harl::INFO, "STATUS Fallback to default config file");
 		return (this->_buildFromConfigFile(WS_DFL_CONFIG_PATH));
 	}
 	catch (const std::exception &e)
