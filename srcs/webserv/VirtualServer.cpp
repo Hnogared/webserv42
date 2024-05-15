@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/12 02:08:16 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/14 21:53:29 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/15 17:38:01 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,22 @@ const Configuration	&VirtualServer::getConfiguration(void) const
 
 bool	VirtualServer::tryHandleClientRequest(Client &client)
 {
-	std::string						uri = client.getRequest().getUri();
+	const http::HttpRequest			&request = client.getRequest();
+	std::string						uri = request.getUri();
 	const LocationConfiguration*	bestLocation = NULL;
+	std::string						host = request.getHeader("Host");
+
+	{
+		size_t	colonPos = host.find(':');
+
+		if (colonPos != std::string::npos)
+			host = host.substr(0, colonPos);
+	}
+
+	if (!this->_config.getServerNames().empty()
+			&& this->_config.getServerNames().find(host)
+			== this->_config.getServerNames().end())
+		return (false);
 
 	bestLocation = this->_config.findBestLocation(uri);
 
@@ -64,9 +78,6 @@ bool	VirtualServer::tryHandleClientRequest(Client &client)
 void	VirtualServer::_log(Harl::e_level level, const Client *client,
 	const std::string &message) const
 {
-	std::string	statusLine;
-	std::string	logMessage;
-
 	if (!client)
 	{
 		if (this->_logger)
@@ -76,13 +87,14 @@ void	VirtualServer::_log(Harl::e_level level, const Client *client,
 		return ;
 	}
 
-	logMessage = client->getAddrStr(Client::PEER);
-	statusLine = client->getRequest().getStatusLine();
+	std::string	logMessage = client->getAddrStr(Client::PEER);
+	std::string	statusLine = client->getRequest().getStatusLine();
 
 	if (!statusLine.empty())
 		logMessage += " REQ '" + client->getRequest().getStatusLine() + "'";
-		
-	logMessage += " " + message;
+
+	logMessage += " " + message + " - " + client->getRequest().getHeader("Host")
+		+ " - " + client->getRequest().getHeader("User-Agent");
 
 	if (this->_logger)
 		this->_logger->log(level, logMessage);

@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 09:34:06 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/13 11:41:50 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/15 12:37:00 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,7 @@ class	Configuration
 		void	setAddress(const sockaddr_in &address);
 		void	setBacklog(unsigned int backlog);
 		void	setPort(int port);
+		void	setServerNames(const std::set<std::string> &serverNames);
 		void	addServerName(const std::string &serverName);
 		void	setRoot(const std::string &root);
 		void	setIndex(const std::string &index);

@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 10:21:20 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/14 17:49:40 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/15 12:47:09 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -325,8 +325,18 @@ void	ConfigurationParser::_parseServerNames(std::queue<t_token> &tokens,
 	{
 		token = tokens.front();
 		tokens.pop();
+
 		if (token.content != "_")
+		{
 			config.addServerName(token.content);
+			continue ;
+		}
+
+		if (!config.getServerNames().empty() || tokens.front().type == STRING)
+		{
+			throw InvalidConfigFile(token.lineNbr, "server_names",
+				"Cannot use `_` with other server names");
+		}
 	}
 
 	token = tokens.front();

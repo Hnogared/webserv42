@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/08 20:51:17 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/13 13:06:28 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/15 16:07:31 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,15 +52,17 @@ class VirtualServerManager
 		Harl						*_logger;
 		Socket						_socket;
 		VirtualServer				*_defaultServer;
+		VirtualServer				*_catchAllServer;
 		std::vector<VirtualServer*>	_servers;
 		std::vector<Client*>		_clients;
 
 
 		/* Private methods */
+		void	_initSocket(const Configuration &config);
+		void	_acceptConnection(void);
+		void	_serveClient(std::vector<webserv::Client*>::iterator clientIt);
 		void	_log(Harl::e_level level, const Client *client,
 			const std::string &message);
-		void	_acceptConnection(void);
-		bool	_serveClient(Client *client);
 
 
 		/* [delete] */

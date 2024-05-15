@@ -155,6 +155,11 @@ void	Configuration::setBacklog(unsigned int backlog)
 	this->_backlog = backlog;
 }
 
+void	Configuration::setServerNames(const std::set<std::string> &serverNames)
+{
+	this->_serverNames = serverNames;
+}
+
 void	Configuration::addServerName(const std::string &serverName)
 {
 	this->_serverNames.insert(serverName);

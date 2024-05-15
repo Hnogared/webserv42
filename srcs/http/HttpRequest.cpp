@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 23:01:55 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/14 21:52:36 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/15 10:36:30 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,7 +121,8 @@ void	HttpRequest::parseHeaders(std::string &headers)
 	}
 
 	if ((this->_method == "POST" && this->getHeader("Content-Length").empty())
-			|| this->getHeader("Host").empty())
+			|| this->getHeader("Host").empty()
+			|| this->getHeader("Host").find(' ') != std::string::npos)
 		throw BadRequest();
 }
 

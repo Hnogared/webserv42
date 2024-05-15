@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 12:06:54 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/14 20:26:44 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/15 17:22:04 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,11 @@ namespace	webserv
 /* Socket constructor */
 VirtualServerManager::VirtualServerManager(const http::Protocol &protocol,
 		Harl *logger)
-	: _protocol(protocol), _logger(logger), _socket(), _defaultServer(NULL) {}
+	: _protocol(protocol),
+	_logger(logger),
+	_socket(),
+	_defaultServer(NULL),
+	_catchAllServer(NULL) {}
 
 
 /* Destructor */
@@ -91,49 +95,26 @@ size_t	VirtualServerManager::getSocketsCount(void) const
 
 void	VirtualServerManager::addServer(VirtualServer *server)
 {
-	int optval = 1;
-
 	if (!server)
 		return ;
 
-	this->_servers.push_back(server);
+	if (!this->_catchAllServer
+			&& server->getConfiguration().getServerNames().empty())
+		this->_catchAllServer = server;
 
-	if (this->_defaultServer)
-		return ;
-
-	const Configuration	&config = server->getConfiguration();
-
-	this->_socket = Socket(socket(AF_INET, SOCK_STREAM, 0));
-	if (this->_socket.getFd() < 0 || setsockopt(this->_socket.getFd(),
-	 	SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) < 0)
+	if (!this->_defaultServer)
 	{
-		throw SocketCreationError("Failed to create socket: "
-			+ std::string(strerror(errno)));
+		this->_initSocket(server->getConfiguration());
+		this->_defaultServer = server;
 	}
-
-	if (bind(this->_socket.getFd(),
-		(struct sockaddr *) &(config.getConstAddress()),
-		sizeof(config.getConstAddress())) == -1)
-	{
-		throw SocketError("Failed to bind socket: "
-			+ std::string(strerror(errno)));
-	}
-
-	if (listen(this->_socket.getFd(), config.getBacklog()) == -1)
-	{
-		throw SocketError("Failed to listen on socket: "
-			+ std::string(strerror(errno)));
-	}
-
-	this->_defaultServer = server;
+	else if (server != this->_catchAllServer)
+		this->_servers.push_back(server);
 }
 
 void	VirtualServerManager::addClient(Client *client)
 {
-	if (!client)
-		return ;
-
-	this->_clients.push_back(client);
+	if (client)
+		this->_clients.push_back(client);
 }
 
 
@@ -164,13 +145,7 @@ bool	VirtualServerManager::tryServeFd(int fd, short revents)
 			return (true);
 		}
 
-		if (this->_serveClient(*clientIt))
-		{
-			this->_log(Harl::INFO, *clientIt, "CONN CLOSED - Local host");
-			delete *clientIt;
-			this->_clients.erase(clientIt);
-		}
-
+		this->_serveClient(clientIt);
 		return (true);
 	}
 
@@ -191,6 +166,33 @@ void	VirtualServerManager::stop(void)
 
 /* ************************************************************************** */
 /* Private methods */
+
+void	VirtualServerManager::_initSocket(const Configuration &config)
+{
+	int	optval = 1;
+
+	this->_socket = Socket(socket(AF_INET, SOCK_STREAM, 0));
+	if (this->_socket.getFd() < 0 || setsockopt(this->_socket.getFd(),
+	 	SOL_SOCKET, SO_REUSEPORT, &optval, sizeof(optval)) < 0)
+	{
+		throw SocketCreationError("Failed to create socket: "
+			+ std::string(strerror(errno)));
+	}
+
+	if (bind(this->_socket.getFd(),
+		(struct sockaddr *) (&(config.getConstAddress())),
+		sizeof(config.getConstAddress())) == -1)
+	{
+		throw SocketError("Failed to bind socket: "
+			+ std::string(strerror(errno)));
+	}
+
+	if (listen(this->_socket.getFd(), config.getBacklog()) == -1)
+	{
+		throw SocketError("Failed to listen on socket: "
+			+ std::string(strerror(errno)));
+	}
+}
 
 void	VirtualServerManager::_acceptConnection(void)
 {
@@ -225,8 +227,11 @@ void	VirtualServerManager::_acceptConnection(void)
 	this->_log(Harl::INFO, this->_clients.back(), "CONN ACCEPTED");
 }
 
-bool	VirtualServerManager::_serveClient(Client *client)
+void	VirtualServerManager::_serveClient(
+		std::vector<webserv::Client*>::iterator clientIt)
 {
+	Client	*client = *clientIt;
+
 	try
 	{
 		std::vector<VirtualServer*>::iterator	serverIt;
@@ -237,11 +242,13 @@ bool	VirtualServerManager::_serveClient(Client *client)
 			serverIt != this->_servers.end(); serverIt++)
 		{
 			if ((*serverIt)->tryHandleClientRequest(*client))
-				return (false);
+				return ;
 		}
 
-		if (this->_defaultServer->tryHandleClientRequest(*client))
-			return (false);
+		if (this->_defaultServer->tryHandleClientRequest(*client)
+				|| ((this->_catchAllServer
+			&& this->_catchAllServer->tryHandleClientRequest(*client))))
+			return ;
 
 		throw http::HttpRequest::RequestException(
 			client->getRequest().getStatusLine(), 404);
@@ -250,27 +257,29 @@ bool	VirtualServerManager::_serveClient(Client *client)
 	{
 		this->_log(Harl::INFO, client, tool::strings::toStr(e.code()));
 		client->sendResponse(http::HttpResponse(e.code(),client->getRequest()));
-		return (true);
+		this->_log(Harl::INFO, client, "CONN CLOSED - Local host");
+		delete client;
+		this->_clients.erase(clientIt);
 	}
 	catch (const SocketConnectionClosed &e)
 	{
 		this->_log(Harl::INFO, client, "CONN CLOSED - Remote host");
-		return (true);
+		delete client;
+		this->_clients.erase(clientIt);
 	}
 	catch(const std::exception &e)
 	{
 		this->_log(Harl::ERROR, client, "500 - " + std::string(e.what()));
 		client->sendResponse(http::HttpResponse(500, client->getRequest()));
-		return (true);
+		this->_log(Harl::INFO, client, "CONN CLOSED - Local host");
+		delete client;
+		this->_clients.erase(clientIt);
 	}
 }
 
 void	VirtualServerManager::_log(Harl::e_level level, const Client *client,
 	const std::string &message)
 {
-	std::string	statusLine;
-	std::string	logMessage;
-
 	if (!client)
 	{
 		if (this->_logger)
@@ -280,13 +289,20 @@ void	VirtualServerManager::_log(Harl::e_level level, const Client *client,
 		return ;
 	}
 
-	logMessage = client->getAddrStr(Client::PEER);
-	statusLine = client->getRequest().getStatusLine();
+	std::string				logMessage = client->getAddrStr(Client::PEER);
+	std::string				statusLine = client->getRequest().getStatusLine();
+	const http::HttpRequest	&request = client->getRequest();
 
 	if (!statusLine.empty())
-		logMessage += " REQ '" + client->getRequest().getStatusLine() + "'";
-		
+		logMessage += " REQ '" + request.getStatusLine() + "'";
+
 	logMessage += " " + message;
+	
+	if (!request.getHeader("Host").empty())
+		logMessage += " - " + request.getHeader("Host");
+
+	if (!request.getHeader("User-Agent").empty())
+		logMessage += " - '" + request.getHeader("User-Agent") + "'";
 
 	if (this->_logger)
 		this->_logger->log(level, logMessage);
