@@ -1,13 +1,47 @@
 [INFO] STATUS Parsing config file: test/conf.d/webserv.conf
 [INFO] STATUS test/conf.d/webserv.conf: Success
 [INFO] STATUS Running...
-[INFO] 127.0.0.1:60878 CONN ACCEPTED
-[INFO] 127.0.0.1:60878 REQ 'GET /dwdwq HTTP/1.1' 404 (Not found) - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
-[INFO] 127.0.0.1:60878 CONN CLOSED - Local host
-[INFO] 127.0.0.1:42866 CONN ACCEPTED
-[INFO] 127.0.0.1:54900 CONN ACCEPTED
-[INFO] 127.0.0.1:42866 REQ 'GET /dwqdwqd HTTP/1.1' 404 (Not found) - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
-[INFO] 127.0.0.1:42866 CONN CLOSED - Local host
-[INFO] 127.0.0.1:54900 REQ 'GET /dwqdwq HTTP/1.1' 404 (Not found) - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
-[INFO] 127.0.0.1:54900 CONN CLOSED - Local host
+[INFO] 127.0.0.1:52096 CONN ACCEPTED
+[INFO] 127.0.0.1:52096 REQ 'GET /dwqdwq HTTP/1.1' 404 (Not found) - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:52096 CONN CLOSED - Local host
+[INFO] 127.0.0.1:52110 CONN ACCEPTED
+[INFO] 127.0.0.1:52110 REQ 'GET /dwqdwq HTTP/1.1' 404 (Not found) - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:52110 CONN CLOSED - Local host
+[INFO] 127.0.0.1:49186 CONN ACCEPTED
+[INFO] 127.0.0.1:49186 REQ 'GET /dwqdwq HTTP/1.1' 404 (Not found) - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:49186 CONN CLOSED - Local host
+[INFO] STATUS Reloading...
+[INFO] STATUS Stopping...
+[INFO] STATUS Parsing config file: test/conf.d/webserv.conf
+[INFO] STATUS test/conf.d/webserv.conf: Success
+[INFO] STATUS Running...
+[INFO] 127.0.0.1:34526 CONN ACCEPTED
+[INFO] 127.0.0.1:34526 REQ 'GET /dwqdwq HTTP/1.1' 404 (Not found) - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:34526 CONN CLOSED - Local host
+[INFO] 127.0.0.1:48668 CONN ACCEPTED
+[INFO] 127.0.0.1:48668 REQ 'GET /dwqdwq HTTP/1.1' 404 (Not found) - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:48668 CONN CLOSED - Local host
+[INFO] 127.0.0.1:44238 CONN ACCEPTED
+[INFO] 127.0.0.1:44238 REQ 'GET /dwqdwq HTTP/1.1' 404 (Not found) - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:44238 CONN CLOSED - Local host
+[INFO] 127.0.0.1:53488 CONN ACCEPTED
+[INFO] 127.0.0.1:53488 REQ 'GET /dwqdwq HTTP/1.1' 404 (Not found) - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:53488 CONN CLOSED - Local host
+[INFO] 127.0.0.1:41324 CONN ACCEPTED
+[INFO] 127.0.0.1:41324 REQ 'GET /dwqdwq HTTP/1.1' 404 (Not found) - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:41324 CONN CLOSED - Local host
+[INFO] 127.0.0.1:51072 CONN ACCEPTED
+[INFO] 127.0.0.1:51072 REQ 'GET /dwqdwq HTTP/1.1' 404 (Not found) - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:51072 CONN CLOSED - Local host
+[INFO] STATUS Reloading...
+[INFO] STATUS Stopping...
+[INFO] STATUS Parsing config file: test/conf.d/webserv.conf
+[INFO] STATUS test/conf.d/webserv.conf: Success
+[INFO] STATUS Running...
+[INFO] 127.0.0.1:41546 CONN ACCEPTED
+[INFO] 127.0.0.1:41546 REQ 'GET /dwqdwq HTTP/1.1' 404 (Not found) - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:41546 CONN CLOSED - Local host
+[INFO] 127.0.0.1:49634 CONN ACCEPTED
+[INFO] 127.0.0.1:49634 REQ 'GET /dwqdwq HTTP/1.1' 404 (Not found) - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:49634 CONN CLOSED - Local host
 [INFO] STATUS Stopping...
