@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 21:31:56 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/14 21:48:36 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/17 20:25:36 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,18 +20,43 @@ std::string	urlEncode(const std::string &str)
 	std::string	encoded;
 	const char	*hex = "0123456789ABCDEF";
 
-	for (size_t i = 0; i < str.size(); ++i)
+	for (size_t i = 0; i < str.size();)
 	{
-		if (isalnum(str[i]) || str[i] == '-' || str[i] == '_' || str[i] == '.'
-				|| str[i] == '~')
-			encoded += str[i];
-		else if (str[i] == ' ')
-			encoded += '+';
+		// Handle ASCII characters
+		if ((str[i] & 0x80) == 0)
+		{
+			if (isalnum(str[i]) || str[i] == '-' || str[i] == '_' || str[i] == '.' || str[i] == '~')
+				encoded += str[i];
+			else if (str[i] == ' ')
+				encoded += '+';
+			else
+			{
+				encoded += '%';
+				encoded += hex[str[i] >> 4];
+				encoded += hex[str[i] & 0xf];
+			}
+			++i;
+		}
+		// Handle non-ASCII characters
 		else
 		{
-			encoded += '%';
-			encoded += hex[str[i] >> 4];
-			encoded += hex[str[i] & 0xf];
+			int len = 0;
+			if ((str[i] & 0xe0) == 0xc0)
+				len = 2;
+			else if ((str[i] & 0xf0) == 0xe0)
+				len = 3;
+			else if ((str[i] & 0xf8) == 0xf0)
+				len = 4;
+			else
+				throw std::invalid_argument("urlEncode(): Invalid UTF-8");
+
+			while (len--)
+			{
+				encoded += '%';
+				encoded += hex[(unsigned char)str[i] >> 4];
+				encoded += hex[(unsigned char)str[i] & 0xf];
+				++i;
+			}
 		}
 	}
 

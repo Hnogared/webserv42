@@ -64,12 +64,12 @@ class	VirtualServer
 
 		/* Private methods */
 		bool	_checkServerNames(const std::string &host) const;
-		bool	_tryFileResponse(Client &client,
+		bool	_tryFileResponse(const std::string &uri, Client &client,
 			const LocationConfiguration &location);
-		bool	_tryDirectoryResponse(Client &client,
+		bool	_tryDirectoryResponse(const std::string &uri, Client &client,
 			const LocationConfiguration &location);
-		bool	_tryDirectoryListing(Client &client, const std::string &uri,
-			const std::string &path);
+		bool	_tryDirectoryListing(const std::string &uri,
+			const std::string &path, Client &client);
 		void	_sendErrorResponse(Client &client, int code);
 		void	_log(Harl::e_level level, const Client *client,
 			const std::string &message) const;

@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/12 02:08:16 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/17 16:16:44 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/17 20:20:37 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ bool	VirtualServer::tryHandleClientRequest(Client &client, bool lastTry)
 			return (false);
 		}
 
-		const std::string				&uri = request.getUri();
+		const std::string				uri = http::urlDecode(request.getUri());
 		const LocationConfiguration*	bestLocation
 			= this->_config.findBestLocation(uri);
 
@@ -63,10 +63,10 @@ bool	VirtualServer::tryHandleClientRequest(Client &client, bool lastTry)
 		}
 
 		if (*(uri.end() - 1) == '/')
-			return (this->_tryDirectoryResponse(client, *bestLocation));
+			return (this->_tryDirectoryResponse(uri, client, *bestLocation));
 
-		if (this->_tryFileResponse(client, *bestLocation)
-				|| this->_tryDirectoryResponse(client, *bestLocation))
+		if (this->_tryFileResponse(uri, client, *bestLocation)
+				|| this->_tryDirectoryResponse(uri, client, *bestLocation))
 			return (true);
 
 		if (lastTry)
@@ -107,13 +107,10 @@ bool	VirtualServer::_checkServerNames(const std::string &host) const
 		|| serverNames.find(hostName) != serverNames.end());
 }
 
-bool	VirtualServer::_tryFileResponse(Client &client,
+bool	VirtualServer::_tryFileResponse(const std::string &uri, Client &client,
 	const LocationConfiguration &location)
 {
-	std::string	uri = client.getRequest().getUri();
-	std::string	path;
-
-	path = tool::files::joinPaths(location.getRoot(), uri);
+	std::string	path = tool::files::joinPaths(location.getRoot(), uri);
 
 	try
 	{
@@ -137,10 +134,9 @@ bool	VirtualServer::_tryFileResponse(Client &client,
 	}
 }
 
-bool	VirtualServer::_tryDirectoryResponse(Client &client,
-	const LocationConfiguration &location)
+bool	VirtualServer::_tryDirectoryResponse(const std::string &uri,
+	Client &client, const LocationConfiguration &location)
 {
-	std::string	uri = client.getRequest().getUri();
 	std::string	path;
 	std::string	fileStr;
 
@@ -171,14 +167,14 @@ bool	VirtualServer::_tryDirectoryResponse(Client &client,
 	if (location.isAutoindex())
 	{
 		path = tool::files::joinPaths(location.getRoot(), uri);
-		return (this->_tryDirectoryListing(client, uri, path));
+		return (this->_tryDirectoryListing(uri, path, client));
 	}
 
 	return (false);
 }
 
-bool	VirtualServer::_tryDirectoryListing(Client &client,
-	const std::string &uri, const std::string &path)
+bool	VirtualServer::_tryDirectoryListing(const std::string &uri,
+	const std::string &path, Client &client)
 {
 	struct stat							statbuf;
 	std::string							icon;
@@ -202,7 +198,10 @@ bool	VirtualServer::_tryDirectoryListing(Client &client,
 	}
 
 	body = "<html>\n"
-		"<head><title>Index of " + uri + "</title></head>\n\n"
+		"<head>\n"
+		"  <meta charset=\"UTF-8\">\n"
+		"  <title>Index of " + uri + "</title>\n"
+		"</head>\n\n"
 		"<body>\n"
 		"  <h1>Index of " + uri + "</h1>\n"
 		"  <hr><pre>\n"
@@ -218,8 +217,15 @@ bool	VirtualServer::_tryDirectoryListing(Client &client,
 		else
 			size = "-";
 
+		std::string	entryPath(it->d_name);
+		std::string	encodedPath = http::urlEncode(entryPath);
+
 		if (it->d_type == DT_DIR)
+		{
 			icon = "&#128193;";
+			entryPath += "/";
+			encodedPath += "/";
+		}
 		else if (it->d_type == DT_LNK)
 			icon = "&#128279;";
 		else
@@ -228,8 +234,7 @@ bool	VirtualServer::_tryDirectoryListing(Client &client,
 		body += "    <tr>\n"
 			"      <td>" + icon + "</td>\n"
 			"      <td style=\"padding-right: 100\"><a href=\""
-				+ tool::files::joinPaths(uri, it->d_name)
-				+ "\">" + it->d_name + "</a></td>\n"
+				+ encodedPath + "\">" + entryPath + "</a></td>\n"
 			"      <td>" + size + "<td>\n"
 			"    </tr>\n";
 	}

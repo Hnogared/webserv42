@@ -1,47 +1,76 @@
 [INFO] STATUS Parsing config file: test/conf.d/webserv.conf
 [INFO] STATUS test/conf.d/webserv.conf: Success
 [INFO] STATUS Running...
-[INFO] 127.0.0.1:52096 CONN ACCEPTED
-[INFO] 127.0.0.1:52096 REQ 'GET /dwqdwq HTTP/1.1' 404 (Not found) - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
-[INFO] 127.0.0.1:52096 CONN CLOSED - Local host
-[INFO] 127.0.0.1:52110 CONN ACCEPTED
-[INFO] 127.0.0.1:52110 REQ 'GET /dwqdwq HTTP/1.1' 404 (Not found) - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
-[INFO] 127.0.0.1:52110 CONN CLOSED - Local host
-[INFO] 127.0.0.1:49186 CONN ACCEPTED
-[INFO] 127.0.0.1:49186 REQ 'GET /dwqdwq HTTP/1.1' 404 (Not found) - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
-[INFO] 127.0.0.1:49186 CONN CLOSED - Local host
-[INFO] STATUS Reloading...
-[INFO] STATUS Stopping...
-[INFO] STATUS Parsing config file: test/conf.d/webserv.conf
-[INFO] STATUS test/conf.d/webserv.conf: Success
-[INFO] STATUS Running...
-[INFO] 127.0.0.1:34526 CONN ACCEPTED
-[INFO] 127.0.0.1:34526 REQ 'GET /dwqdwq HTTP/1.1' 404 (Not found) - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
-[INFO] 127.0.0.1:34526 CONN CLOSED - Local host
-[INFO] 127.0.0.1:48668 CONN ACCEPTED
-[INFO] 127.0.0.1:48668 REQ 'GET /dwqdwq HTTP/1.1' 404 (Not found) - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
-[INFO] 127.0.0.1:48668 CONN CLOSED - Local host
-[INFO] 127.0.0.1:44238 CONN ACCEPTED
-[INFO] 127.0.0.1:44238 REQ 'GET /dwqdwq HTTP/1.1' 404 (Not found) - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
-[INFO] 127.0.0.1:44238 CONN CLOSED - Local host
-[INFO] 127.0.0.1:53488 CONN ACCEPTED
-[INFO] 127.0.0.1:53488 REQ 'GET /dwqdwq HTTP/1.1' 404 (Not found) - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
-[INFO] 127.0.0.1:53488 CONN CLOSED - Local host
-[INFO] 127.0.0.1:41324 CONN ACCEPTED
-[INFO] 127.0.0.1:41324 REQ 'GET /dwqdwq HTTP/1.1' 404 (Not found) - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
-[INFO] 127.0.0.1:41324 CONN CLOSED - Local host
-[INFO] 127.0.0.1:51072 CONN ACCEPTED
-[INFO] 127.0.0.1:51072 REQ 'GET /dwqdwq HTTP/1.1' 404 (Not found) - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
-[INFO] 127.0.0.1:51072 CONN CLOSED - Local host
-[INFO] STATUS Reloading...
-[INFO] STATUS Stopping...
-[INFO] STATUS Parsing config file: test/conf.d/webserv.conf
-[INFO] STATUS test/conf.d/webserv.conf: Success
-[INFO] STATUS Running...
-[INFO] 127.0.0.1:41546 CONN ACCEPTED
-[INFO] 127.0.0.1:41546 REQ 'GET /dwqdwq HTTP/1.1' 404 (Not found) - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
-[INFO] 127.0.0.1:41546 CONN CLOSED - Local host
-[INFO] 127.0.0.1:49634 CONN ACCEPTED
-[INFO] 127.0.0.1:49634 REQ 'GET /dwqdwq HTTP/1.1' 404 (Not found) - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
-[INFO] 127.0.0.1:49634 CONN CLOSED - Local host
+[INFO] 127.0.0.1:59996 CONN ACCEPTED
+[INFO] 127.0.0.1:59996 REQ 'GET /hnogared/ HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:59996 REQ 'GET /hnogared/Music/ HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:59996 REQ 'GET /hnogared/Music/Flume+-+Numb+%26+Getting+Colder+feat.+Ku%C4%8Dka.mp3 HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:59996 CONN CLOSED - Remote host
+[INFO] 127.0.0.1:48814 CONN ACCEPTED
+[INFO] 127.0.0.1:48814 REQ 'GET /hnogared/Music/Flume+-+Numb+%26+Getting+Colder+feat.+Ku%C4%8Dka.mp3 HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:48814 REQ 'GET /favicon.ico HTTP/1.1' 404 (Not found) - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:48814 CONN CLOSED - Local host
+[INFO] 127.0.0.1:48464 CONN ACCEPTED
+[INFO] 127.0.0.1:48464 REQ 'GET /hnogared/Music/Clips/ HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:48464 REQ 'GET /hnogared/Music/Clips/AMVs/ HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:48464 REQ 'GET /hnogared/Music/Clips/AMVs/Initial+D%E3%80%8CAMV%E3%80%8DKilling+My+Love.mp4 HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:48464 CONN CLOSED - Remote host
+[INFO] 127.0.0.1:39092 CONN ACCEPTED
+[INFO] 127.0.0.1:39092 REQ 'GET /hnogared/Music/Clips/AMVs/Initial+D%E3%80%8CAMV%E3%80%8DKilling+My+Love.mp4 HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:39092 REQ 'GET /favicon.ico HTTP/1.1' 404 (Not found) - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:39092 CONN CLOSED - Local host
+[INFO] 127.0.0.1:35310 CONN ACCEPTED
+[INFO] 127.0.0.1:35310 REQ 'GET /hnogared/Music/Clips/ HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:35310 REQ 'GET /hnogared/Music/ HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:35310 REQ 'GET /hnogared/ HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:35310 REQ 'GET / HTTP/1.1' 404 (Not found) - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:35310 CONN CLOSED - Local host
+[INFO] 127.0.0.1:32854 CONN ACCEPTED
+[INFO] 127.0.0.1:32854 REQ 'GET /hnogared/Music/ HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:32854 REQ 'GET /hnogared/Music/Bring+Me+The+Horizon+-+1x1.mp3 HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:32854 CONN CLOSED - Remote host
+[INFO] 127.0.0.1:32860 CONN ACCEPTED
+[INFO] 127.0.0.1:32860 REQ 'GET /hnogared/Music/Bring+Me+The+Horizon+-+1x1.mp3 HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:32860 REQ 'GET /favicon.ico HTTP/1.1' 404 (Not found) - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:32860 CONN CLOSED - Local host
+[INFO] 127.0.0.1:53750 CONN ACCEPTED
+[INFO] 127.0.0.1:53750 REQ 'GET /hnogared/Music/Clips/ HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:53750 REQ 'GET /hnogared/Music/Clips/AMVs/ HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:53750 REQ 'GET /hnogared/Music/Clips/AMVs/Initial+D%E3%80%8CAMV%E3%80%8DKilling+My+Love.mp4 HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:53750 CONN CLOSED - Remote host
+[INFO] 127.0.0.1:53764 CONN ACCEPTED
+[INFO] 127.0.0.1:53764 REQ 'GET /hnogared/Music/Clips/AMVs/Initial+D%E3%80%8CAMV%E3%80%8DKilling+My+Love.mp4 HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:53764 REQ 'GET /favicon.ico HTTP/1.1' 404 (Not found) - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:53764 CONN CLOSED - Local host
+[INFO] 127.0.0.1:41996 CONN ACCEPTED
+[INFO] 127.0.0.1:41996 REQ 'GET /hnogared/Music/Clips/AMVs/Speed+Racer+Final+Race+but+it+has+Jak+X+music.mp4 HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:41996 CONN CLOSED - Remote host
+[INFO] 127.0.0.1:33078 CONN ACCEPTED
+[INFO] 127.0.0.1:33078 REQ 'GET /hnogared/Music/Clips/AMVs/Speed+Racer+Final+Race+but+it+has+Jak+X+music.mp4 HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:33078 REQ 'GET /hnogared/Music/Clips/AMVs/Speed+Racer+Final+Race+but+it+has+Jak+X+music.mp4 HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:48780 CONN ACCEPTED
+[INFO] 127.0.0.1:48780 REQ 'GET /favicon.ico HTTP/1.1' 404 (Not found) - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:48780 CONN CLOSED - Local host
+[INFO] 127.0.0.1:33078 REQ 'GET /hnogared/Music/Clips/AMVs/Initial+D%E3%80%8CAMV%E3%80%8DKilling+My+Love.mp4 HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:33078 CONN CLOSED - Remote host
+[INFO] 127.0.0.1:53184 CONN ACCEPTED
+[INFO] 127.0.0.1:53184 REQ 'GET /hnogared/Music/Clips/AMVs/Initial+D%E3%80%8CAMV%E3%80%8DKilling+My+Love.mp4 HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:53184 REQ 'GET /favicon.ico HTTP/1.1' 404 (Not found) - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:53184 CONN CLOSED - Local host
+[INFO] 127.0.0.1:51008 CONN ACCEPTED
+[INFO] 127.0.0.1:51008 REQ 'GET /hnogared/Music/Clips/AMVs/Initial+D%E3%80%8CAMV%E3%80%8DKilling+My+Love.mp4 HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:51008 REQ 'GET /hnogared/Music/Clips/AMVs/Initial+D%E3%80%8CAMV%E3%80%8DKilling+My+Love.mp4 HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:51008 REQ 'GET /hnogared/Music/Clips/AMVs/Dan+Terminus+-+%27Restless+Destroyer%27+%28Redline+Music+Video+AMV%29.mp4 HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:52204 CONN ACCEPTED
+[INFO] 127.0.0.1:51008 CONN CLOSED - Remote host
+[INFO] 127.0.0.1:52204 REQ 'GET /hnogared/Music/Clips/AMVs/Dan+Terminus+-+%27Restless+Destroyer%27+%28Redline+Music+Video+AMV%29.mp4 HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:52204 REQ 'GET /hnogared/Music/Clips/AMVs/Dan+Terminus+-+%27Restless+Destroyer%27+%28Redline+Music+Video+AMV%29.mp4 HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:51394 CONN ACCEPTED
+[INFO] 127.0.0.1:51394 REQ 'GET /favicon.ico HTTP/1.1' 404 (Not found) - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:51394 CONN CLOSED - Local host
+[INFO] 127.0.0.1:52204 REQ 'GET /hnogared/Music/Clips/AMVs/Dan+Terminus+-+%27Restless+Destroyer%27+%28Redline+Music+Video+AMV%29.mp4 HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:51718 CONN ACCEPTED
+[INFO] 127.0.0.1:51718 REQ 'GET /hnogared/Music/Clips/AMVs/Dan+Terminus+-+%27Restless+Destroyer%27+%28Redline+Music+Video+AMV%29.mp4 HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:52204 CONN CLOSED - Remote host
+[INFO] 127.0.0.1:51718 CONN CLOSED - Remote host
 [INFO] STATUS Stopping...
