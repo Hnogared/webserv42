@@ -55,7 +55,7 @@ Configuration	&Configuration::operator=(const Configuration &original)
 	this->_serverNames = original.getServerNames();
 	this->_root = original.getRoot();
 	this->_index = original.getIndex();
-	this->_errorRedirects = original.getErrorRedirects();
+	this->_errorPages = original.getErrorPages();
 	this->_clientMaxBodySize = original.getClientMaxBodySize();
 	this->_locations = original.getLocations();
 	return (*this);
@@ -110,9 +110,9 @@ std::string	Configuration::getIndex(void) const
 	return (this->_index);
 }
 
-const std::map<int,std::string>	&Configuration::getErrorRedirects(void) const
+const std::map<int,std::string>	&Configuration::getErrorPages(void) const
 {
-	return (this->_errorRedirects);
+	return (this->_errorPages);
 }
 
 unsigned long int	Configuration::getClientMaxBodySize(void) const
@@ -177,14 +177,14 @@ void	Configuration::setIndex(const std::string &index)
 	this->_index = index;
 }
 
-void	Configuration::addErrorRedirect(int error, const std::string &redirect)
+void	Configuration::addErrorPage(int error, const std::string &redirect)
 {
 	if (error < 300 || error > 599)
 	{
 		throw std::invalid_argument("Invalid error code `"
 			+ tool::strings::toStr(error) + "`");
 	}
-	this->_errorRedirects[error] = redirect;
+	this->_errorPages[error] = redirect;
 }
 
 void	Configuration::setClientMaxBodySize(unsigned long int size)
@@ -238,13 +238,13 @@ std::ostream	&Configuration::print(std::ostream &os) const
 	os << "\nIndex    : '" << this->_index << "'"
 		<< "\nClient max body size : " << this->_clientMaxBodySize;
 
-	if (!this->_errorRedirects.empty())
+	if (!this->_errorPages.empty())
 	{
 		std::map<int, std::string>::const_iterator	it;
 
 		os << "\n\nError redirects";
-		for (it = this->_errorRedirects.begin();
-				it != this->_errorRedirects.end(); it++)
+		for (it = this->_errorPages.begin();
+				it != this->_errorPages.end(); it++)
 			os << "\n └ " << it->first << " -> " << it->second;
 	}
 

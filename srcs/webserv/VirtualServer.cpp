@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/12 02:08:16 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/15 17:38:01 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/17 16:16:44 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,68 +38,73 @@ const Configuration	&VirtualServer::getConfiguration(void) const
 /* ************************************************************************** */
 /* Public methods */
 
-bool	VirtualServer::tryHandleClientRequest(Client &client)
+bool	VirtualServer::tryHandleClientRequest(Client &client, bool lastTry)
 {
-	const http::HttpRequest			&request = client.getRequest();
-	std::string						uri = request.getUri();
-	const LocationConfiguration*	bestLocation = NULL;
-	std::string						host = request.getHeader("Host");
-
+	try
 	{
-		size_t	colonPos = host.find(':');
+		const http::HttpRequest	&request = client.getRequest();
 
-		if (colonPos != std::string::npos)
-			host = host.substr(0, colonPos);
+		if (!this->_checkServerNames(request.getHeader("Host")))
+		{
+			if (lastTry)
+				throw http::HttpRequest::RequestException("Not found", 404);
+			return (false);
+		}
+
+		const std::string				&uri = request.getUri();
+		const LocationConfiguration*	bestLocation
+			= this->_config.findBestLocation(uri);
+
+		if (!bestLocation)
+		{
+			if (lastTry)
+				throw http::HttpRequest::RequestException("Not found", 404);
+			return (false);
+		}
+
+		if (*(uri.end() - 1) == '/')
+			return (this->_tryDirectoryResponse(client, *bestLocation));
+
+		if (this->_tryFileResponse(client, *bestLocation)
+				|| this->_tryDirectoryResponse(client, *bestLocation))
+			return (true);
+
+		if (lastTry)
+			throw http::HttpRequest::RequestException("Not found", 404);
+		
+		return (false);
 	}
-
-	if (!this->_config.getServerNames().empty()
-			&& this->_config.getServerNames().find(host)
-			== this->_config.getServerNames().end())
-		return (false);
-
-	bestLocation = this->_config.findBestLocation(uri);
-
-	if (!bestLocation)
-		return (false);
-
-	if (*(uri.end() - 1) == '/')
-		return (this->_tryDirectoryResponse(client, *bestLocation));
-
-	if (this->_tryFileResponse(client, *bestLocation))
-		return (true);
-
-	return (this->_tryDirectoryResponse(client, *bestLocation));
+	catch (const http::HttpRequest::RequestException &e)
+	{
+		this->_log(Harl::INFO, &client, tool::strings::toStr(e.code()) + " ("
+			+ std::string(e.what()) + ")");
+		this->_sendErrorResponse(client, e.code());
+		throw ;
+	}
+	catch (const std::exception &e)
+	{
+		this->_log(Harl::ERROR, &client, "500 (Internal server error) - "
+			+ std::string(e.what()));
+		this->_sendErrorResponse(client, 500);
+		throw ;
+	}
 }
 
 
 /* ************************************************************************** */
 /* Private methods */
 
-void	VirtualServer::_log(Harl::e_level level, const Client *client,
-	const std::string &message) const
+bool	VirtualServer::_checkServerNames(const std::string &host) const
 {
-	if (!client)
-	{
-		if (this->_logger)
-			this->_logger->log(level, message);
-		else
-			Harl::complain(level, message);
-		return ;
-	}
+	size_t		colonPos = host.find(':');
+	std::string	hostName = host;
+	const std::set<std::string>	&serverNames = this->_config.getServerNames();
 
-	std::string	logMessage = client->getAddrStr(Client::PEER);
-	std::string	statusLine = client->getRequest().getStatusLine();
+	if (colonPos != std::string::npos)
+		hostName = host.substr(0, colonPos);
 
-	if (!statusLine.empty())
-		logMessage += " REQ '" + client->getRequest().getStatusLine() + "'";
-
-	logMessage += " " + message + " - " + client->getRequest().getHeader("Host")
-		+ " - " + client->getRequest().getHeader("User-Agent");
-
-	if (this->_logger)
-		this->_logger->log(level, logMessage);
-	else
-		Harl::complain(level, logMessage);
+	return  (serverNames.empty()
+		|| serverNames.find(hostName) != serverNames.end());
 }
 
 bool	VirtualServer::_tryFileResponse(Client &client,
@@ -125,8 +130,8 @@ bool	VirtualServer::_tryFileResponse(Client &client,
 	{
 		if (e.code() == EACCES)
 			throw http::HttpRequest::RequestException("Forbidden", 403);
-		if (e.code() != ENOENT && e.code() != EISDIR)
-			throw;
+		if (e.code() != ENOENT && e.code() != EISDIR && e.code() != ENOTDIR)
+			throw ;
 
 		return (false);
 	}
@@ -158,7 +163,7 @@ bool	VirtualServer::_tryDirectoryResponse(Client &client,
 		{
 			if (e.code() == EACCES)
 				throw http::HttpRequest::RequestException("Forbidden", 403);
-			if (e.code() != ENOENT && e.code() != EISDIR)
+			if (e.code() != ENOENT && e.code() != EISDIR && e.code() != ENOTDIR)
 				throw;
 		}
 	}
@@ -190,10 +195,10 @@ bool	VirtualServer::_tryDirectoryListing(Client &client,
 	{
 		if (e.code() == EACCES)
 			throw http::HttpRequest::RequestException("Forbidden", 403);
-		if (e.code() != ENOENT && e.code() != ENOTDIR)
-			throw;
+		if (e.code() == ENOENT || e.code() == ENOTDIR)
+			return (false);
 
-		return (false);
+		throw ;
 	}
 
 	body = "<html>\n"
@@ -241,6 +246,72 @@ bool	VirtualServer::_tryDirectoryListing(Client &client,
 	client.sendResponse(response);
 
 	return (true);
+}
+
+void	VirtualServer::_sendErrorResponse(Client &client, int code)
+{
+	try
+	{
+		std::string			path;
+		const Configuration	&config = this->getConfiguration();
+		http::HttpResponse	response(code, client.getRequest());
+		std::map<int, std::string>::const_iterator	it;
+
+		it = config.getErrorPages().find(code);
+
+		if (it != config.getErrorPages().end())
+		{
+			path = tool::files::joinPaths(config.getRoot(), it->second);
+
+			response.setBody(tool::files::readFile(path),
+				http::HttpMessage::TEXT_HTML);
+		}
+
+		client.sendResponse(response);
+	}
+	catch (const std::exception &e)
+	{
+		this->_log(Harl::ERROR, &client, "500 - Failed to read error page: "
+			+ std::string(e.what()));
+
+		if (code != 500)
+			this->_sendErrorResponse(client, 500);
+		else
+			client.sendResponse(http::HttpResponse(500, client.getRequest()));
+	}
+}
+
+void	VirtualServer::_log(Harl::e_level level, const Client *client,
+	const std::string &message) const
+{
+	if (!client)
+	{
+		if (this->_logger)
+			this->_logger->log(level, message);
+		else
+			Harl::complain(level, message);
+		return ;
+	}
+
+	const http::HttpRequest	&request = client->getRequest();
+	std::string				logMessage = client->getAddrStr(Client::PEER);
+	std::string				statusLine = request.getStatusLine();
+
+	if (!statusLine.empty())
+		logMessage += " REQ '" + request.getStatusLine() + "'";
+
+	logMessage += " " + message;
+
+	if (!request.getHeader("Host").empty())
+		logMessage += " - " + request.getHeader("Host");
+
+	if (!request.getHeader("User-Agent").empty())
+		logMessage += " - '" + request.getHeader("User-Agent") + "'";
+
+	if (this->_logger)
+		this->_logger->log(level, logMessage);
+	else
+		Harl::complain(level, logMessage);
 }
 
 } // namespace webserv

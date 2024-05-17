@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/07 23:03:52 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/14 19:36:13 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/16 17:01:55 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ std::vector<dirent>	readDirectory(const std::string &path)
 	if (!dir)
 	{
 		throw webserv::RuntimeError("opendir(): '" + path + "': "
-			+ std::string(strerror(errno)));
+			+ std::string(strerror(errno)), errno);
 	}
 
 	while ((entry = readdir(dir)))

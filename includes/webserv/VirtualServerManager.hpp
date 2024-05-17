@@ -6,12 +6,14 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/08 20:51:17 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/15 16:07:31 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/17 11:35:16 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef VIRTUALSERVERMANAGER_HPP
 # define VIRTUALSERVERMANAGER_HPP
+
+# include <typeinfo>
 
 # include "VirtualServer.hpp"
 

@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 10:21:20 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/15 12:47:09 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/16 14:48:37 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -371,7 +371,7 @@ void	ConfigurationParser::_parseServerErrorPage(std::queue<t_token> &tokens,
 		}
 
 		for (it = codes.begin(); it != codes.end(); ++it)
-			config.addErrorRedirect(*it, token.content);
+			config.addErrorPage(*it, token.content);
 	}
 	catch (const std::exception &e)
 	{

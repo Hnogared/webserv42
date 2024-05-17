@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 23:28:04 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/14 20:30:40 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/17 16:15:19 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,8 @@ HttpResponse::HttpResponse(int statusCode, const HttpRequest &request,
 
 	if (!request.getHeader("User-Agent").empty())
 		this->setHeader("User-Agent", request.getHeader("User-Agent"));
+	
+	this->_buildHeadersAndBody();
 }
 
 /* Copy constructor */

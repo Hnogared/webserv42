@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 12:06:54 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/15 17:22:04 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/17 15:40:02 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -230,36 +230,26 @@ void	VirtualServerManager::_acceptConnection(void)
 void	VirtualServerManager::_serveClient(
 		std::vector<webserv::Client*>::iterator clientIt)
 {
-	Client	*client = *clientIt;
+	Client									*client = *clientIt;
+	std::vector<VirtualServer*>::iterator	serverIt = this->_servers.begin();
 
 	try
 	{
-		std::vector<VirtualServer*>::iterator	serverIt;
-
 		client->fetchRequestLineAndHeaders(this->_protocol);
 
-		for (serverIt = this->_servers.begin();
-			serverIt != this->_servers.end(); serverIt++)
+		for (; serverIt != this->_servers.end(); serverIt++)
 		{
 			if ((*serverIt)->tryHandleClientRequest(*client))
 				return ;
 		}
 
-		if (this->_defaultServer->tryHandleClientRequest(*client)
-				|| ((this->_catchAllServer
-			&& this->_catchAllServer->tryHandleClientRequest(*client))))
+		if (this->_defaultServer->tryHandleClientRequest(*client,
+				this->_catchAllServer == this->_defaultServer))
 			return ;
 
-		throw http::HttpRequest::RequestException(
-			client->getRequest().getStatusLine(), 404);
-	}
-	catch (const http::HttpRequest::RequestException &e)
-	{
-		this->_log(Harl::INFO, client, tool::strings::toStr(e.code()));
-		client->sendResponse(http::HttpResponse(e.code(),client->getRequest()));
-		this->_log(Harl::INFO, client, "CONN CLOSED - Local host");
-		delete client;
-		this->_clients.erase(clientIt);
+		if (this->_catchAllServer
+				&& this->_catchAllServer != this->_defaultServer)
+			this->_catchAllServer->tryHandleClientRequest(*client, true);
 	}
 	catch (const SocketConnectionClosed &e)
 	{
@@ -269,8 +259,6 @@ void	VirtualServerManager::_serveClient(
 	}
 	catch(const std::exception &e)
 	{
-		this->_log(Harl::ERROR, client, "500 - " + std::string(e.what()));
-		client->sendResponse(http::HttpResponse(500, client->getRequest()));
 		this->_log(Harl::INFO, client, "CONN CLOSED - Local host");
 		delete client;
 		this->_clients.erase(clientIt);
@@ -297,7 +285,7 @@ void	VirtualServerManager::_log(Harl::e_level level, const Client *client,
 		logMessage += " REQ '" + request.getStatusLine() + "'";
 
 	logMessage += " " + message;
-	
+
 	if (!request.getHeader("Host").empty())
 		logMessage += " - " + request.getHeader("Host");
 

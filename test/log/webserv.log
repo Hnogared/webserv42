@@ -1,13 +1,13 @@
 [INFO] STATUS Parsing config file: test/conf.d/webserv.conf
 [INFO] STATUS test/conf.d/webserv.conf: Success
 [INFO] STATUS Running...
-[INFO] 127.0.0.1:52882 CONN ACCEPTED
-[INFO] 127.0.0.1:52882 REQ 'GET /html HTTP/1.1' 200 - mywebsite.com:9090 - Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36
-[INFO] 127.0.0.1:52882 CONN CLOSED - Remote host
-[INFO] 127.0.0.1:52884 CONN ACCEPTED
-[INFO] 127.0.0.1:52884 REQ 'GET /icons/ubuntu-logo.png HTTP/1.1' 404 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
-[INFO] 127.0.0.1:52884 CONN CLOSED - Local host
-[INFO] 127.0.0.1:52896 CONN ACCEPTED
-[INFO] 127.0.0.1:52896 REQ 'GET /favicon.ico HTTP/1.1' 404 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
-[INFO] 127.0.0.1:52896 CONN CLOSED - Local host
+[INFO] 127.0.0.1:60878 CONN ACCEPTED
+[INFO] 127.0.0.1:60878 REQ 'GET /dwdwq HTTP/1.1' 404 (Not found) - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:60878 CONN CLOSED - Local host
+[INFO] 127.0.0.1:42866 CONN ACCEPTED
+[INFO] 127.0.0.1:54900 CONN ACCEPTED
+[INFO] 127.0.0.1:42866 REQ 'GET /dwqdwqd HTTP/1.1' 404 (Not found) - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:42866 CONN CLOSED - Local host
+[INFO] 127.0.0.1:54900 REQ 'GET /dwqdwq HTTP/1.1' 404 (Not found) - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:54900 CONN CLOSED - Local host
 [INFO] STATUS Stopping...

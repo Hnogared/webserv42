@@ -35,6 +35,7 @@
 # include "Socket.hpp"
 # include "Client.hpp"
 # include "HttpRequest.hpp"
+# include "HttpResponse.hpp"
 # include "Configuration.hpp"
 
 namespace	webserv
@@ -53,7 +54,7 @@ class	VirtualServer
 		const Configuration	&getConfiguration(void) const;
 
 		/* Public methods */
-		bool	tryHandleClientRequest(Client &client);
+		bool	tryHandleClientRequest(Client &client, bool lastTry = false);
 
 
 	private:
@@ -62,17 +63,16 @@ class	VirtualServer
 		Harl			*_logger;
 
 		/* Private methods */
-		void	_log(Harl::e_level level, const Client *client,
-			const std::string &message) const;
+		bool	_checkServerNames(const std::string &host) const;
 		bool	_tryFileResponse(Client &client,
 			const LocationConfiguration &location);
 		bool	_tryDirectoryResponse(Client &client,
 			const LocationConfiguration &location);
 		bool	_tryDirectoryListing(Client &client, const std::string &uri,
 			const std::string &path);
-
-		static const std::vector<const dirent*>	_readDirectory(
-			const std::string &path);
+		void	_sendErrorResponse(Client &client, int code);
+		void	_log(Harl::e_level level, const Client *client,
+			const std::string &message) const;
 
 		/* [delete] */
 		VirtualServer(void);
