@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 23:01:55 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/15 10:36:30 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/18 13:17:19 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,18 @@ namespace	http
 {
 
 /* ************************************************************************** */
+/* Static attributes initialization */
+
+const std::map<std::string, HttpRequest::e_method>
+	HttpRequest::_strToMethodMap = HttpRequest::_initStrToMethodMap();
+
+
+/* ************************************************************************** */
 /* Constructors */
 
 /* Default constructor */
 HttpRequest::HttpRequest(void)
-	: HttpMessage(), _method(), _uri() {}
+	: HttpMessage(), _method(HttpRequest::UNKNOWN), _uri() {}
 
 /* Copy constructor */
 HttpRequest::HttpRequest(const HttpRequest &original) : HttpMessage()
@@ -51,7 +58,7 @@ HttpRequest	&HttpRequest::operator=(const HttpRequest &original)
 /* ************************************************************************** */
 /* Getters */
 
-const std::string	&HttpRequest::getMethod(void) const
+HttpRequest::e_method	HttpRequest::getMethod(void) const
 {
 	return (this->_method);
 }
@@ -63,12 +70,30 @@ const std::string	&HttpRequest::getUri(void) const
 
 
 /* ************************************************************************** */
+/* Static private methods */
+
+const std::map<std::string, HttpRequest::e_method>
+	HttpRequest::_initStrToMethodMap(void)
+{
+	std::map<std::string, HttpRequest::e_method>	methods;
+
+	methods["GET"] = HttpRequest::GET;
+	methods["POST"] = HttpRequest::POST;
+	methods["PUT"] = HttpRequest::PUT;
+	methods["DELETE"] = HttpRequest::DELETE;
+
+	return (methods);
+}
+
+
+/* ************************************************************************** */
 /* Private methods */
 
 /* Method to parse amd store the request line */
 void	HttpRequest::parseRequestLine(std::string &line)
 {
-	std::string	version;
+	std::string	methodStr;
+	std::string	versionStr;
 	
 	this->setStatusLine(line);
 
@@ -78,23 +103,26 @@ void	HttpRequest::parseRequestLine(std::string &line)
 	{
 		std::istringstream	lineStream(line);
 
-		lineStream >> this->_method >> this->_uri >> version;
+		lineStream >> methodStr >> this->_uri >> versionStr;
 	}
 
-
-	if (this->_method.empty() || this->_uri.empty() || version.empty())
+	if (methodStr.empty() || this->_uri.empty() || versionStr.empty())
 		throw BadRequest();
 
 	try
 	{
+		this->_method = HttpRequest::_strToMethodMap.at(methodStr);
 		this->_uri = urlDecode(this->_uri);
-		this->setProtocol(version);
+		this->setProtocol(versionStr);
 	}
-	catch(const std::invalid_argument &e)
+	catch (const std::out_of_range& /* e */)
 	{
 		throw BadRequest();
 	}
-	
+	catch (const std::invalid_argument& /* e */)
+	{
+		throw BadRequest();
+	}
 }
 
 /* Method to parse and store the headers */

@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 22:57:07 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/14 21:52:13 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/18 13:13:08 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,15 @@ namespace	http
 class	HttpRequest : public HttpMessage
 {
 	public:
+		enum	e_method
+		{
+			GET,
+			POST,
+			PUT,
+			DELETE,
+			UNKNOWN,
+		};
+
 		/* Constructors */
 		explicit HttpRequest(void);
 		HttpRequest(const HttpRequest &original);
@@ -41,8 +50,8 @@ class	HttpRequest : public HttpMessage
 		HttpRequest	&operator=(const HttpRequest &original);
 
 		/* Getters */
-		const std::string	&getMethod(void) const;
-		const std::string	&getUri(void) const;
+		HttpRequest::e_method	getMethod(void) const;
+		const std::string		&getUri(void) const;
 
 		/* Public methods */
 		void	parseRequestLine(std::string &line);
@@ -54,8 +63,14 @@ class	HttpRequest : public HttpMessage
 
 	private:
 		/* Private attributes */
-		std::string	_method;
+		e_method	_method;
 		std::string	_uri;
+
+		/* Static private attributes */
+		static const std::map<std::string, e_method>	_strToMethodMap;
+
+		/* Static private methods */
+		static const std::map<std::string, e_method>	_initStrToMethodMap();
 
 
 	/* Exceptions */
