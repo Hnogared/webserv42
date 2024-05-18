@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/12 02:08:16 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/18 15:08:55 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/18 15:29:31 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,13 +141,26 @@ bool	VirtualServer::_tryGetResponse(const std::string &uri, Client &client,
 bool	VirtualServer::_tryPostResponse(const std::string &uri, Client &client,
 	const LocationConfiguration &location)
 {
-	(void)client;
-	(void)location;
+	client.fetchRequestBody(this->_config.getClientMaxBodySize());
 
 	if (*(uri.end() - 1) == '/')
 		throw http::HttpRequest::RequestException("Forbidden", 403);
 
-	throw http::HttpRequest::RequestException("Method not allowed", 405);
+	std::string		path = tool::files::joinPaths(location.getRoot(), uri);
+	std::ofstream	file;
+
+	if (tool::files::fileExists(path))
+		file.open(path.c_str(), std::ios::binary | std::ios::app);
+	else
+		file.open(path.c_str(), std::ios::binary);
+
+	if (!file)
+		throw http::HttpRequest::RequestException("Internal Server Error", 500);
+
+	file << client.getRequest().getBody();
+	file.close();
+
+	return (true);
 }
 
 bool	VirtualServer::_tryFileResponse(const std::string &uri, Client &client,

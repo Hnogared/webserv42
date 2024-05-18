@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/07 23:03:52 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/16 17:01:55 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/18 15:26:28 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,13 @@ namespace	tool
 
 namespace	files
 {
+
+bool	fileExists(const std::string &filePath)
+{
+	struct stat	buffer;
+
+	return (stat(filePath.c_str(), &buffer) == 0);
+}
 
 std::string	readFile(const std::string &filePath)
 {
