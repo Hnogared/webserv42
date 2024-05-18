@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/01 14:41:57 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/14 17:48:37 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/18 13:38:17 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,10 @@ LocationConfiguration::LocationConfiguration(const std::string &path)
 	: _path(path),
 	_root(""),
 	_index(""),
-	_allowedMethods(),
 	_autoindex(false),
 	_returnCode(0),
 	_returnMessage(""),
+	_allowedMethods(),
 	_fcgiServer(""),
 	_fcgiParams()
 {}
@@ -53,10 +53,10 @@ LocationConfiguration	&LocationConfiguration::operator=(
 	this->_path = original.getPath();
 	this->_root = original.getRoot();
 	this->_index = original.getIndex();
-	this->_allowedMethods = original.getAllowedMethods();
 	this->_autoindex = original.isAutoindex();
 	this->_returnCode = original.getReturnCode();
 	this->_returnMessage = original.getReturnMessage();
+	this->_allowedMethods = original.getAllowedMethods();
 	this->_fcgiServer = original.getFCGIServer();
 	this->_fcgiParams = original.getFCGIParams();
 	return (*this);
@@ -71,14 +71,14 @@ bool	LocationConfiguration::operator<(const LocationConfiguration &other)
 		return (this->_root < other.getRoot());
 	if (this->_index != other.getIndex())
 		return (this->_index < other.getIndex());
-	if (this->_allowedMethods != other.getAllowedMethods())
-		return (this->_allowedMethods < other.getAllowedMethods());
 	if (this->_autoindex != other.isAutoindex())
 		return (this->_autoindex < other.isAutoindex());
 	if (this->_returnCode != other.getReturnCode())
 		return (this->_returnCode < other.getReturnCode());
 	if (this->_returnMessage != other.getReturnMessage())
 		return (this->_returnMessage < other.getReturnMessage());
+	if (this->_allowedMethods != other.getAllowedMethods())
+		return (this->_allowedMethods < other.getAllowedMethods());
 	if (this->_fcgiServer != other.getFCGIServer())
 		return (this->_fcgiServer < other.getFCGIServer());
 	return (this->_fcgiParams < other.getFCGIParams());
@@ -103,12 +103,6 @@ std::string	LocationConfiguration::getIndex(void) const
 	return (this->_index);
 }
 
-const std::set<std::string>	&LocationConfiguration::getAllowedMethods(void)
-	const
-{
-	return (this->_allowedMethods);
-}
-
 bool	LocationConfiguration::isAutoindex(void) const
 {
 	return (this->_autoindex);
@@ -122,6 +116,12 @@ int	LocationConfiguration::getReturnCode(void) const
 std::string	LocationConfiguration::getReturnMessage(void) const
 {
 	return (this->_returnMessage);
+}
+
+const std::set<http::HttpRequest::e_method>
+	&LocationConfiguration::getAllowedMethods(void) const
+{
+	return (this->_allowedMethods);
 }
 
 std::string	LocationConfiguration::getFCGIServer(void) const
@@ -156,17 +156,6 @@ void	LocationConfiguration::setIndex(const std::string &index)
 	this->_index = index;
 }
 
-void	LocationConfiguration::setAllowedMethods(
-	const std::set<std::string> &allowedMethods)
-{
-	this->_allowedMethods = allowedMethods;
-}
-
-void	LocationConfiguration::addAllowedMethod(const std::string &method)
-{
-	this->_allowedMethods.insert(method);
-}
-
 void	LocationConfiguration::setAutoindex(bool autoindexState)
 {
 	this->_autoindex = autoindexState;
@@ -186,6 +175,18 @@ void	LocationConfiguration::setReturnMessage(const std::string
 	&returnMessage)
 {
 	this->_returnMessage = returnMessage;
+}
+
+void	LocationConfiguration::setAllowedMethods(
+	const std::set<http::HttpRequest::e_method> &allowedMethods)
+{
+	this->_allowedMethods = allowedMethods;
+}
+
+void	LocationConfiguration::addAllowedMethod(http::HttpRequest::e_method
+	method)
+{
+	this->_allowedMethods.insert(method);
 }
 
 void	LocationConfiguration::setFCGIServer(const std::string &fcgiServer)
@@ -209,7 +210,8 @@ void	LocationConfiguration::addFCGIParam(const std::string &key,
 /* ************************************************************************** */
 /* Public methods */
 
-bool	LocationConfiguration::isMethodAllowed(const std::string &method) const
+bool	LocationConfiguration::methodAllowed(http::HttpRequest::e_method method)
+	const
 {
 	return (this->_allowedMethods.empty()
 		|| this->_allowedMethods.find(method) != this->_allowedMethods.end());

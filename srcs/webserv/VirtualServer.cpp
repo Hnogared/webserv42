@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/12 02:08:16 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/18 13:16:44 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/18 14:05:53 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,9 @@ bool	VirtualServer::tryHandleClientRequest(Client &client, bool lastTry)
 				throw http::HttpRequest::RequestException("Not found", 404);
 			return (false);
 		}
+
+		if (!bestLocation->methodAllowed(request.getMethod()))
+			throw http::HttpRequest::RequestException("Method not allowed",405);
 
 		if (*(uri.end() - 1) == '/')
 			return (this->_tryDirectoryResponse(uri, client, *bestLocation));

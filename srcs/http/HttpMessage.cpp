@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/08 18:25:00 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/18 13:04:53 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/18 13:40:18 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,6 @@ namespace	http
 
 /* ************************************************************************** */
 /* Static attributes initialization */
-
-const std::map<std::string, HttpMessage::e_method>
-	HttpMessage::_strToMethodMap = HttpMessage::_initStrToMethodMap();
 
 const std::map<std::string, HttpMessage::e_mimeType>
 	HttpMessage::_extToMimeMap = HttpMessage::_initExtToMimeMap();

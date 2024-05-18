@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 10:21:20 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/16 14:48:37 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/18 13:50:24 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -564,7 +564,8 @@ void	ConfigurationParser::_parseLocAutoindex(std::queue<t_token> &tokens,
 void	ConfigurationParser::_parseLocAllowedMethods(
 	std::queue<t_token> &tokens, LocationConfiguration &config)
 {
-	t_token	token;
+	t_token						token;
+	http::HttpRequest::e_method	method;
 
 	if (tokens.empty())
 		throw MissingToken("allow_methods", "string");
@@ -584,7 +585,14 @@ void	ConfigurationParser::_parseLocAllowedMethods(
 				"Cannot mix `all` with other methods");
 		}
 
-		config.addAllowedMethod(token.content);
+		method = http::HttpRequest::strToMethod(token.content);
+		if (method == http::HttpRequest::UNKNOWN)
+		{
+			throw InvalidConfigFile(token.lineNbr, "allow_methods",
+				"Unknown method `" + token.content + "`");
+		}
+
+		config.addAllowedMethod(method);
 	}
 
 	if (tokens.empty())

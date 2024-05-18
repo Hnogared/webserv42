@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 22:57:07 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/18 13:13:08 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/18 13:45:01 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,9 @@ class	HttpRequest : public HttpMessage
 
 		/* HttpMessage virtual methods overloads */
 		void	clear(void);
+
+		/* Static public methods */
+		static e_method	strToMethod(const std::string &str);
 
 
 	private:

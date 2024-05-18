@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 14:43:33 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/13 19:06:27 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/18 13:56:08 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -187,7 +187,7 @@ void	Client::fetchRequestBody(size_t maxBodyLen)
 	content = this->_buffer;
 	this->_buffer.clear();
 
-	if (this->_request.getMethod() != "POST")
+	if (this->_request.getMethod() != http::HttpRequest::POST)
 		return ;
 
 	bodySize = tool::strings::stoi(this->_request.getHeader("Content-Length"));

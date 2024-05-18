@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 23:01:55 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/18 13:17:19 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/18 13:48:14 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,24 +70,7 @@ const std::string	&HttpRequest::getUri(void) const
 
 
 /* ************************************************************************** */
-/* Static private methods */
-
-const std::map<std::string, HttpRequest::e_method>
-	HttpRequest::_initStrToMethodMap(void)
-{
-	std::map<std::string, HttpRequest::e_method>	methods;
-
-	methods["GET"] = HttpRequest::GET;
-	methods["POST"] = HttpRequest::POST;
-	methods["PUT"] = HttpRequest::PUT;
-	methods["DELETE"] = HttpRequest::DELETE;
-
-	return (methods);
-}
-
-
-/* ************************************************************************** */
-/* Private methods */
+/* Public methods */
 
 /* Method to parse amd store the request line */
 void	HttpRequest::parseRequestLine(std::string &line)
@@ -148,7 +131,8 @@ void	HttpRequest::parseHeaders(std::string &headers)
 		}
 	}
 
-	if ((this->_method == "POST" && this->getHeader("Content-Length").empty())
+	if ((this->_method == HttpRequest::POST
+		&& this->getHeader("Content-Length").empty())
 			|| this->getHeader("Host").empty()
 			|| this->getHeader("Host").find(' ') != std::string::npos)
 		throw BadRequest();
@@ -161,9 +145,42 @@ void	HttpRequest::parseHeaders(std::string &headers)
 void	HttpRequest::clear(void)
 {
 	this->HttpMessage::clear();
-	this->_method.clear();
+	this->_method = HttpRequest::UNKNOWN;
 	this->_uri.clear();
 }
+
+
+/* ************************************************************************** */
+/* Static public methods */
+
+HttpRequest::e_method	HttpRequest::strToMethod(const std::string &methodStr)
+{
+	std::map<std::string, HttpRequest::e_method>::const_iterator	it;
+
+	it = HttpRequest::_strToMethodMap.find(methodStr);
+	if (it == HttpRequest::_strToMethodMap.end())
+		return (HttpRequest::UNKNOWN);
+
+	return (it->second);
+}
+
+
+/* ************************************************************************** */
+/* Static private methods */
+
+const std::map<std::string, HttpRequest::e_method>
+	HttpRequest::_initStrToMethodMap(void)
+{
+	std::map<std::string, HttpRequest::e_method>	methods;
+
+	methods["GET"] = HttpRequest::GET;
+	methods["POST"] = HttpRequest::POST;
+	methods["PUT"] = HttpRequest::PUT;
+	methods["DELETE"] = HttpRequest::DELETE;
+
+	return (methods);
+}
+
 
 
 /* ************************************************************************** */

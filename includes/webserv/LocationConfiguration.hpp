@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/01 14:34:11 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/02 17:13:46 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/18 13:34:41 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 # include <cerrno>
 # include <cstring>
 
+# include "HttpRequest.hpp"
 # include "webserv.hpp"
 # include "strings.hpp"
 # include "exceptions.hpp"
@@ -47,42 +48,44 @@ class	LocationConfiguration
 		std::string					getPath(void) const;
 		std::string					getRoot(void) const;
 		std::string					getIndex(void) const;
-		const std::set<std::string>	&getAllowedMethods(void) const;
 		bool						isAutoindex(void) const;
 		int							getReturnCode(void) const;
 		std::string					getReturnMessage(void) const;
-		std::string					getFCGIServer(void) const;
+		const std::set<http::HttpRequest::e_method>	&getAllowedMethods(void)
+			const;
+		std::string									getFCGIServer(void) const;
 		const std::map<std::string, std::string>	&getFCGIParams(void) const;
 
 		/* Setters */
 		void	setPath(const std::string &path);
 		void	setRoot(const std::string &root);
 		void	setIndex(const std::string &index);
-		void	setAllowedMethods(const std::set<std::string> &allowedMethods);
-		void	addAllowedMethod(const std::string &method);
 		void	setAutoindex(bool autoindex);
 		void	setReturnCode(int returnCode);
 		void	setReturnMessage(const std::string &returnMessage);
+		void	setAllowedMethods(const std::set<http::HttpRequest::e_method>
+			&allowedMethods);
+		void	addAllowedMethod(http::HttpRequest::e_method method);
 		void	setFCGIServer(const std::string &fcgiServer);
 		void	setFCGIParams(const std::map<std::string, std::string> &params);
 		void	addFCGIParam(const std::string &key, const std::string &value);
 
 		/* Public methods */
-		bool			isMethodAllowed(const std::string &method) const;
+		bool			methodAllowed(http::HttpRequest::e_method method) const;
 		std::ostream	&print(std::ostream &os) const;
 
 
 	private:
 		/* Private attributes */
-		std::string				_path;
-		std::string				_root;
-		std::string				_index;
-		std::set<std::string>	_allowedMethods;
-		bool					_autoindex;
-		int						_returnCode;
-		std::string				_returnMessage;
-		std::string				_fcgiServer;
-		std::map<std::string, std::string>	_fcgiParams;
+		std::string								_path;
+		std::string								_root;
+		std::string								_index;
+		bool									_autoindex;
+		int										_returnCode;
+		std::string								_returnMessage;
+		std::set<http::HttpRequest::e_method>	_allowedMethods;
+		std::string								_fcgiServer;
+		std::map<std::string, std::string>		_fcgiParams;
 
 		/* [delete] */
 		LocationConfiguration(void);
