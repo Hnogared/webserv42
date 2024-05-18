@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/12 02:08:16 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/18 15:29:31 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/18 15:31:35 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,7 +155,11 @@ bool	VirtualServer::_tryPostResponse(const std::string &uri, Client &client,
 		file.open(path.c_str(), std::ios::binary);
 
 	if (!file)
+	{
+		if (errno == EACCES || errno == EISDIR)
+			throw http::HttpRequest::RequestException("Forbidden", 403);
 		throw http::HttpRequest::RequestException("Internal Server Error", 500);
+	}
 
 	file << client.getRequest().getBody();
 	file.close();
