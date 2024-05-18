@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/12 02:08:16 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/18 14:05:53 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/18 15:08:55 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,20 +42,11 @@ bool	VirtualServer::tryHandleClientRequest(Client &client, bool lastTry)
 {
 	try
 	{
-		const http::HttpRequest	&request = client.getRequest();
+		const http::HttpRequest		&request = client.getRequest();
+		const LocationConfiguration	*bestLocation = NULL;
 
-		if (!this->_checkServerNames(request.getHeader("Host")))
-		{
-			if (lastTry)
-				throw http::HttpRequest::RequestException("Not found", 404);
-			return (false);
-		}
-
-		const std::string				uri = request.getUri();
-		const LocationConfiguration*	bestLocation
-			= this->_config.findBestLocation(uri);
-
-		if (!bestLocation)
+		if (!this->_checkServerNames(request.getHeader("Host"))
+			|| !this->_findBestLocation(request.getUri(), &bestLocation))
 		{
 			if (lastTry)
 				throw http::HttpRequest::RequestException("Not found", 404);
@@ -65,16 +56,12 @@ bool	VirtualServer::tryHandleClientRequest(Client &client, bool lastTry)
 		if (!bestLocation->methodAllowed(request.getMethod()))
 			throw http::HttpRequest::RequestException("Method not allowed",405);
 
-		if (*(uri.end() - 1) == '/')
-			return (this->_tryDirectoryResponse(uri, client, *bestLocation));
-
-		if (this->_tryFileResponse(uri, client, *bestLocation)
-				|| this->_tryDirectoryResponse(uri, client, *bestLocation))
+		if (this->_tryResponse(client, *bestLocation))
 			return (true);
 
 		if (lastTry)
 			throw http::HttpRequest::RequestException("Not found", 404);
-		
+
 		return (false);
 	}
 	catch (const http::HttpRequest::RequestException &e)
@@ -108,6 +95,59 @@ bool	VirtualServer::_checkServerNames(const std::string &host) const
 
 	return  (serverNames.empty()
 		|| serverNames.find(hostName) != serverNames.end());
+}
+
+const LocationConfiguration	*VirtualServer::_findBestLocation(
+	const std::string &uri, const LocationConfiguration **bestLocation) const
+{
+	if (!bestLocation)
+		return (NULL);
+
+	*bestLocation = this->_config.findBestLocation(uri);
+	return (*bestLocation);
+}
+
+bool	VirtualServer::_tryResponse(Client &client,
+	const LocationConfiguration &location)
+{
+	const http::HttpRequest				&request = client.getRequest();
+	const http::HttpRequest::e_method	method = request.getMethod();
+
+	switch (method)
+	{
+		case http::HttpRequest::GET:
+		//case http::HttpRequest::HEAD:
+			return (this->_tryGetResponse(request.getUri(), client, location));
+		case http::HttpRequest::POST:
+			return (this->_tryPostResponse(request.getUri(), client, location));
+		default:
+			throw http::HttpRequest::RequestException("Method not allowed",405);
+	}
+}
+
+bool	VirtualServer::_tryGetResponse(const std::string &uri, Client &client,
+	const LocationConfiguration &location)
+{
+	if (*(uri.end() - 1) == '/')
+		return (this->_tryDirectoryResponse(uri, client, location));
+
+	if (this->_tryFileResponse(uri, client, location)
+			|| this->_tryDirectoryResponse(uri, client, location))
+		return (true);
+	
+	return (false);
+}
+
+bool	VirtualServer::_tryPostResponse(const std::string &uri, Client &client,
+	const LocationConfiguration &location)
+{
+	(void)client;
+	(void)location;
+
+	if (*(uri.end() - 1) == '/')
+		throw http::HttpRequest::RequestException("Forbidden", 403);
+
+	throw http::HttpRequest::RequestException("Method not allowed", 405);
 }
 
 bool	VirtualServer::_tryFileResponse(const std::string &uri, Client &client,

@@ -1,12 +1,7 @@
 [INFO] STATUS Parsing config file: test/conf.d/webserv.conf
 [INFO] STATUS test/conf.d/webserv.conf: Success
 [INFO] STATUS Running...
-[INFO] 127.0.0.1:36436 CONN ACCEPTED
-[INFO] 127.0.0.1:36436 REQ 'GET /hnogared HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
-[INFO] 127.0.0.1:36436 REQ 'GET /favicon.ico HTTP/1.1' 404 (Not found) - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
-[INFO] 127.0.0.1:36436 CONN CLOSED - Local host
-[INFO] 127.0.0.1:36444 CONN ACCEPTED
-[INFO] 127.0.0.1:36444 REQ 'GET /hnogared HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
-[INFO] 127.0.0.1:36452 CONN ACCEPTED
-[INFO] 127.0.0.1:36452 REQ 'GET /hnogared/ HTTP/1.1' 200 - mywebsite.com
-[INFO] 127.0.0.1:36452 CONN CLOSED - Remote host
+[INFO] 127.0.0.1:33236 CONN ACCEPTED
+[INFO] 127.0.0.1:33236 REQ 'GET /html HTTP/1.1' 200 - mywebsite.com
+[INFO] 127.0.0.1:33236 CONN CLOSED - Remote host
+[INFO] STATUS Stopping...

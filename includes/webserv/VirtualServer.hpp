@@ -62,8 +62,17 @@ class	VirtualServer
 		Configuration	_config;
 		Harl			*_logger;
 
+
 		/* Private methods */
 		bool	_checkServerNames(const std::string &host) const;
+		const LocationConfiguration	*_findBestLocation(const std::string &uri,
+			const LocationConfiguration **bestLocation) const;
+		bool	_tryResponse(Client &client,
+			const LocationConfiguration &location);
+		bool	_tryGetResponse(const std::string &uri, Client &client,
+			const LocationConfiguration &location);
+		bool	_tryPostResponse(const std::string &uri, Client &client,
+			const LocationConfiguration &location);
 		bool	_tryFileResponse(const std::string &uri, Client &client,
 			const LocationConfiguration &location);
 		bool	_tryDirectoryResponse(const std::string &uri, Client &client,
@@ -73,6 +82,7 @@ class	VirtualServer
 		void	_sendErrorResponse(Client &client, int code);
 		void	_log(Harl::e_level level, const Client *client,
 			const std::string &message) const;
+
 
 		/* [delete] */
 		VirtualServer(void);
