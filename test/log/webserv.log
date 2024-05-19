@@ -1,7 +1,52 @@
 [INFO] STATUS Parsing config file: test/conf.d/webserv.conf
 [INFO] STATUS test/conf.d/webserv.conf: Success
 [INFO] STATUS Running...
-[INFO] 127.0.0.1:46226 CONN ACCEPTED
-[INFO] 127.0.0.1:46226 REQ 'DELETE /sandbox/ HTTP/1.1' 403 (Forbidden) - locladwq
-[INFO] 127.0.0.1:46226 CONN CLOSED - Local host
+[INFO] 127.0.0.1:45206 CONN ACCEPTED
+[INFO] 127.0.0.1:45206 REQ 'GET /redirect HTTP/1.1' 102 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:45206 CONN CLOSED - Remote host
+[INFO] 127.0.0.1:45208 CONN ACCEPTED
+[INFO] 127.0.0.1:45208 REQ 'GET /redirect HTTP/1.1' 102 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:45208 CONN CLOSED - Remote host
+[INFO] 127.0.0.1:47894 CONN ACCEPTED
+[INFO] 127.0.0.1:47894 REQ 'GET /redirect HTTP/1.1' 102 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:47894 CONN CLOSED - Remote host
+[INFO] 127.0.0.1:47906 CONN ACCEPTED
+[INFO] 127.0.0.1:47906 REQ 'GET /images HTTP/1.1' 404 (Not found) - localhost
+[INFO] 127.0.0.1:47906 CONN CLOSED - Local host
+[INFO] 127.0.0.1:33356 CONN ACCEPTED
+[INFO] 127.0.0.1:33370 CONN ACCEPTED
+[INFO] 127.0.0.1:33370 REQ 'GET /redirect HTTP/1.1' 102 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:33370 CONN CLOSED - Remote host
+[INFO] 127.0.0.1:33356 REQ 'GET /redirect HTTP/1.1' 102 - localhost
+[INFO] 127.0.0.1:56422 CONN ACCEPTED
+[INFO] 127.0.0.1:56422 REQ 'GET /redirect HTTP/1.1' 102 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:56422 CONN CLOSED - Remote host
+[INFO] 127.0.0.1:33356 CONN CLOSED - Remote host
+[INFO] STATUS Reloading...
+[INFO] STATUS Stopping...
+[INFO] STATUS Parsing config file: test/conf.d/webserv.conf
+[INFO] STATUS test/conf.d/webserv.conf: Success
+[INFO] STATUS Running...
+[INFO] 127.0.0.1:58880 CONN ACCEPTED
+[INFO] 127.0.0.1:58880 REQ 'GET /redirect HTTP/1.1' 404 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:58880 CONN CLOSED - Remote host
+[INFO] 127.0.0.1:40332 CONN ACCEPTED
+[INFO] 127.0.0.1:40332 REQ 'GET /redirect HTTP/1.1' 404 - localhosr
+[INFO] 127.0.0.1:40332 CONN CLOSED - Remote host
+[INFO] 127.0.0.1:59940 CONN ACCEPTED
+[INFO] 127.0.0.1:59940 REQ 'GET /redirect HTTP/1.1' 404 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:59940 CONN CLOSED - Remote host
+[INFO] STATUS Reloading...
+[INFO] STATUS Stopping...
+[INFO] STATUS Parsing config file: test/conf.d/webserv.conf
+[INFO] STATUS test/conf.d/webserv.conf: Success
+[INFO] STATUS Running...
+[INFO] 127.0.0.1:40494 CONN ACCEPTED
+[INFO] 127.0.0.1:40494 REQ 'GET /redirect HTTP/1.1' 302 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:40494 REQ 'GET /Hello%20World%20! HTTP/1.1' 404 (Not found) - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:40494 CONN CLOSED - Local host
+[INFO] 127.0.0.1:38058 CONN ACCEPTED
+[INFO] 127.0.0.1:38058 REQ 'GET /redirect HTTP/1.1' 302 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:38058 REQ 'GET /Hello%20World%20! HTTP/1.1' 404 (Not found) - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:38058 CONN CLOSED - Local host
 [INFO] STATUS Stopping...

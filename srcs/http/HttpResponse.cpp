@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 23:28:04 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/19 22:32:24 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/19 23:06:12 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,15 @@ HttpResponse::HttpResponse(int statusCode, const HttpRequest &request,
         throw std::invalid_argument("Invalid status code");
 
     if (statusLine.empty())
-        this->setStatusLine(HttpResponse::_statusLines.at(statusCode));
+    {
+        std::map<int, std::string>::const_iterator it =
+            HttpResponse::_statusLines.find(statusCode);
+
+        if (it != HttpResponse::_statusLines.end())
+            this->setStatusLine(it->second);
+        else
+            this->setStatusLine("Unknown Status Code");
+    }
 
     if (!request.getHeader("User-Agent").empty())
         this->setHeader("User-Agent", request.getHeader("User-Agent"));

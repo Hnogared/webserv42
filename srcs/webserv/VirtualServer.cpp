@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/12 02:08:16 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/19 22:34:33 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/19 22:58:50 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,6 +109,18 @@ bool VirtualServer::_tryResponse(Client &client,
 {
     const http::HttpRequest &request = client.getRequest();
     const http::HttpRequest::e_method method = request.getMethod();
+
+    if (location.getReturnCode())
+    {
+        http::HttpResponse response(location.getReturnCode(), request);
+
+        response.setStatusLine(location.getReturnMessage());
+        response.setHeader("Location", location.getReturnMessage());
+        this->_log(Harl::INFO, &client,
+                   tool::strings::toStr(location.getReturnCode()));
+        client.sendResponse(response);
+        return (true);
+    }
 
     switch (method)
     {
