@@ -6,139 +6,130 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 21:03:07 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/14 10:58:15 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/19 22:30:41 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef EXCEPTIONS_HPP
-# define EXCEPTIONS_HPP
+#define EXCEPTIONS_HPP
 
-# include <stdexcept>
-# include <string>
+#include <stdexcept>
+#include <string>
 
-namespace	webserv
+namespace webserv
 {
 
-class	RuntimeError : public std::runtime_error
+class RuntimeError : public std::runtime_error
 {
-	public:
-		/* Constructors */
-		explicit RuntimeError(int code = 3);
-		explicit RuntimeError(const std::string &message, int code = 3);
-		RuntimeError(const RuntimeError &original);
+public:
+    /* Constructors */
+    explicit RuntimeError(int code = 3);
+    explicit RuntimeError(const std::string &message, int code = 3);
+    RuntimeError(const RuntimeError &original);
 
-		/* Destructor */
-		~RuntimeError(void) throw();
+    /* Destructor */
+    ~RuntimeError(void) throw();
 
-		/* Operator overloads */
-		RuntimeError	&operator=(const RuntimeError &original);
+    /* Operator overloads */
+    RuntimeError &operator=(const RuntimeError &original);
 
-		/* Getters */
-		int	code(void) const;
+    /* Getters */
+    int code(void) const;
 
-
-	private:
-		/* Private attributes */
-		int	_code;
+private:
+    /* Private attributes */
+    int _code;
 };
 
-
-class	SocketError : public RuntimeError
+class SocketError : public RuntimeError
 {
-	public:
-		/* Constructors */
-		explicit SocketError(int code = 6);
-		explicit SocketError(const std::string &message, int code = 6);
-		SocketError(const SocketError &original);
+public:
+    /* Constructors */
+    explicit SocketError(int code = 6);
+    explicit SocketError(const std::string &message, int code = 6);
+    SocketError(const SocketError &original);
 
-		/* Destructor */
-		~SocketError(void) throw();
+    /* Destructor */
+    ~SocketError(void) throw();
 
-		/* Operator overloads */
-		SocketError	&operator=(const SocketError &original);
+    /* Operator overloads */
+    SocketError &operator=(const SocketError &original);
 };
 
-
-class	SocketCreationError : public SocketError
+class SocketCreationError : public SocketError
 {
-	public:
-		/* Constructors */
-		explicit SocketCreationError();
-		explicit SocketCreationError(const std::string &message);
-		SocketCreationError(const SocketCreationError &original);
+public:
+    /* Constructors */
+    explicit SocketCreationError();
+    explicit SocketCreationError(const std::string &message);
+    SocketCreationError(const SocketCreationError &original);
 
-		/* Destructor */
-		~SocketCreationError(void) throw();
+    /* Destructor */
+    ~SocketCreationError(void) throw();
 
-		/* Operator overloads */
-		SocketCreationError	&operator=(const SocketCreationError &original);
+    /* Operator overloads */
+    SocketCreationError &operator=(const SocketCreationError &original);
 };
 
-
-class	SocketConnectionError : public SocketError
+class SocketConnectionError : public SocketError
 {
-	public:
-		/* Constructors */
-		explicit SocketConnectionError();
-		explicit SocketConnectionError(const std::string &message);
-		SocketConnectionError(const SocketConnectionError &original);
+public:
+    /* Constructors */
+    explicit SocketConnectionError();
+    explicit SocketConnectionError(const std::string &message);
+    SocketConnectionError(const SocketConnectionError &original);
 
-		/* Destructor */
-		~SocketConnectionError(void) throw();
+    /* Destructor */
+    ~SocketConnectionError(void) throw();
 
-		/* Operator overloads */
-		SocketConnectionError	&operator=(const SocketConnectionError
-				&original);
+    /* Operator overloads */
+    SocketConnectionError &operator=(const SocketConnectionError &original);
 };
 
-
-class	SocketConnectionClosed : public SocketError
+class SocketConnectionClosed : public SocketError
 {
-	public:
-		/* Constructors */
-		explicit SocketConnectionClosed();
-		explicit SocketConnectionClosed(const std::string &message);
-		SocketConnectionClosed(const SocketConnectionClosed &original);
+public:
+    /* Constructors */
+    explicit SocketConnectionClosed();
+    explicit SocketConnectionClosed(const std::string &message);
+    SocketConnectionClosed(const SocketConnectionClosed &original);
 
-		/* Destructor */
-		~SocketConnectionClosed(void) throw();
+    /* Destructor */
+    ~SocketConnectionClosed(void) throw();
 
-		/* Operator overloads */
-		SocketConnectionClosed	&operator=(const SocketConnectionClosed
-				&original);
+    /* Operator overloads */
+    SocketConnectionClosed &operator=(const SocketConnectionClosed &original);
 };
 
-
-class	InvalidPath : public RuntimeError
+class InvalidPath : public RuntimeError
 {
-	public:
-		/* Constructors */
-		explicit InvalidPath(void);
-		explicit InvalidPath(const std::string &message);
-		InvalidPath(const InvalidPath &original);
+public:
+    /* Constructors */
+    explicit InvalidPath(void);
+    explicit InvalidPath(const std::string &message);
+    InvalidPath(const InvalidPath &original);
 
-		/* Destructor */
-		~InvalidPath(void) throw();
+    /* Destructor */
+    ~InvalidPath(void) throw();
 
-		/* Operator overloads */
-		InvalidPath	&operator=(const InvalidPath &original);
+    /* Operator overloads */
+    InvalidPath &operator=(const InvalidPath &original);
 };
 
-
-class	FileException : public RuntimeError
+class FileException : public RuntimeError
 {
-	public:
-		/* Constructors */
-		explicit FileException(const std::string &message, int code);
-		FileException(const FileException &original);
+public:
+    /* Constructors */
+    explicit FileException(const std::string &message, int code);
+    FileException(const FileException &original);
 
-		/* Destructor */
-		~FileException(void) throw();
+    /* Destructor */
+    ~FileException(void) throw();
 
-		/* Operator overloads */
-		FileException	&operator=(const FileException &original);
-}; // class FileException
+    /* Operator overloads */
+    FileException &operator=(const FileException &original);
+};  // class FileException
 
-} // namespace webserv
+}  // namespace webserv
 
-#endif // EXCEPTIONS_HPP
+#endif  // EXCEPTIONS_HPP

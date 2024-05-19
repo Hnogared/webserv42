@@ -6,22 +6,22 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 21:30:42 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/18 12:52:34 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/19 22:24:54 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef HTTP_COMMON_HPP
-# define HTTP_COMMON_HPP
+#define HTTP_COMMON_HPP
 
-# include <string>
-# include <stdexcept>
+#include <stdexcept>
+#include <string>
 
-namespace	http
+namespace http
 {
 
-std::string	urlEncode(const std::string &str);
-std::string	urlDecode(const std::string &str);
+std::string urlEncode(const std::string &str);
+std::string urlDecode(const std::string &str);
 
-} // namespace http
+}  // namespace http
 
-#endif // HTTP_COMMON_HPP
+#endif  // HTTP_COMMON_HPP

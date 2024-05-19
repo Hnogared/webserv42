@@ -6,228 +6,198 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 14:43:33 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/19 18:23:22 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/19 22:33:33 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Client.hpp"
 
-namespace	webserv
+namespace webserv
 {
 
 /* ************************************************************************** */
 
 /* Socket fd constructor */
 Client::Client(const Socket &socket)
-	: _socket(socket), _requestPending(), _request(), _buffer("") {}
-
-/* Copy constructor */
-Client::Client(const Client &original)
+    : _socket(socket), _requestPending(), _request(), _buffer("")
 {
-	*this = original;
 }
 
+/* Copy constructor */
+Client::Client(const Client &original) { *this = original; }
 
 /* Destructor */
 Client::~Client(void) {}
-
 
 /* ************************************************************************** */
 /* Operator overloads */
 
 /* Copy assignment operator */
-Client	&Client::operator=(const Client &original)
+Client &Client::operator=(const Client &original)
 {
-	if (this == &original)
-		return (*this);
+    if (this == &original) return (*this);
 
-	this->_socket = original.getSocket();
-	this->_requestPending = original.isRequestPending();
-	this->_request = original.getRequest();
-	this->_buffer = original.getBuffer();
-	return (*this);
+    this->_socket = original.getSocket();
+    this->_requestPending = original.isRequestPending();
+    this->_request = original.getRequest();
+    this->_buffer = original.getBuffer();
+    return (*this);
 }
 
 /* Equality comparison operator */
-bool	Client::operator==(const Client &other) const
+bool Client::operator==(const Client &other) const
 {
-	return (this->_socket == other.getSocket());
+    return (this->_socket == other.getSocket());
 }
-
 
 /* ************************************************************************** */
 /* Getters */
 
-int	Client::getSocketFd(void) const
+int Client::getSocketFd(void) const { return (this->_socket.getFd()); }
+
+webserv::Socket Client::getSocket(void) const { return (this->_socket); }
+
+const Socket *Client::getSocketPtr(void) const { return (&this->_socket); }
+
+std::string Client::getAddrStr(e_addr_choice choice) const
 {
-	return (this->_socket.getFd());
+    std::ostringstream oss;
+    struct sockaddr_in addr;
+
+    if (choice == LOCAL)
+        addr = this->_socket.getLocalAddr();
+    else if (this->_socket.isPeerAddrSet())
+        addr = this->_socket.getPeerAddr();
+    else
+        return ("Unknown");
+
+    oss << tool::net::inet_ntoa(addr.sin_addr) << ":" << ntohs(addr.sin_port);
+    return (oss.str());
 }
 
-webserv::Socket	Client::getSocket(void) const
+bool Client::isRequestPending(void) const { return (this->_requestPending); }
+
+const http::HttpRequest &Client::getRequest(void) const
 {
-	return (this->_socket);
+    return (this->_request);
 }
 
-const Socket	*Client::getSocketPtr(void) const
-{
-	return (&this->_socket);
-}
-
-std::string	Client::getAddrStr(e_addr_choice choice) const
-{
-	std::ostringstream	oss;
-	struct sockaddr_in	addr;
-
-	if (choice == LOCAL)
-		addr = this->_socket.getLocalAddr();
-	else if (this->_socket.isPeerAddrSet())
-		addr = this->_socket.getPeerAddr();
-	else
-		return ("Unknown");
-
-	oss << tool::net::inet_ntoa(addr.sin_addr) << ":" << ntohs(addr.sin_port);
-	return (oss.str());
-}
-
-bool	Client::isRequestPending(void) const
-{
-	return (this->_requestPending);
-}
-
-const http::HttpRequest	&Client::getRequest(void) const
-{
-	return (this->_request);
-}
-
-const std::string	&Client::getBuffer(void) const
-{
-	return (this->_buffer);
-}
-
+const std::string &Client::getBuffer(void) const { return (this->_buffer); }
 
 /* ************************************************************************** */
 /* Public methods */
 
-void	Client::sendResponse(const http::HttpResponse &response)
+void Client::sendResponse(const http::HttpResponse &response)
 {
-	const int			code = response.getStatusCode();
-	const std::string	response_str = response.toString(
-		this->_request.getMethod() != http::HttpRequest::HEAD);
+    const int code = response.getStatusCode();
+    const std::string response_str = response.toString(
+        this->_request.getMethod() != http::HttpRequest::HEAD);
 
-	if (code >= 100 && code < 400 && this->_requestPending)
-		this->fetchRequestBody(0);
-	this->_request.clear();
+    if (code >= 100 && code < 400 && this->_requestPending)
+        this->fetchRequestBody(0);
+    this->_request.clear();
 
-	if (send(this->_socket.getFd(), response_str.c_str(), response_str.size(),
-			0) < 0)
-		throw ClientWriteException(strerror(errno));
+    if (send(this->_socket.getFd(), response_str.c_str(), response_str.size(),
+             0) < 0)
+        throw ClientWriteException(strerror(errno));
 }
 
-void	Client::fetchRequestLineAndHeaders(const http::Protocol &protocol)
+void Client::fetchRequestLineAndHeaders(const http::Protocol &protocol)
 {
-	size_t		pos;
-	std::string	content("");
-	std::string	temp;
+    size_t pos;
+    std::string content("");
+    std::string temp;
 
-	while (content.find("\r\n") == std::string::npos)
-	{
-		temp = this->_readRequestBlock();
-		content += temp;
+    while (content.find("\r\n") == std::string::npos)
+    {
+        temp = this->_readRequestBlock();
+        content += temp;
 
-		if (!temp.empty())
-			continue ;
+        if (!temp.empty()) continue;
 
-		if (content.empty())
-			throw SocketConnectionClosed();
-		
-		this->_request.setStatusLine(content);
-		throw http::HttpRequest::BadRequest();
-	}
+        if (content.empty()) throw SocketConnectionClosed();
 
-	pos = content.find("\r\n");
-	temp = content.substr(0, pos);
-	this->_request.parseRequestLine(temp);
+        this->_request.setStatusLine(content);
+        throw http::HttpRequest::BadRequest();
+    }
 
-	if (this->_request.getProtocol() > protocol)
-		throw http::HttpRequest::RequestException("Bad protocol", 505);
+    pos = content.find("\r\n");
+    temp = content.substr(0, pos);
+    this->_request.parseRequestLine(temp);
 
-	content = content.substr(pos + 2);
+    if (this->_request.getProtocol() > protocol)
+        throw http::HttpRequest::RequestException("Bad protocol", 505);
 
-	while (true)
-	{
-		pos = content.find("\r\n");
-		if (pos == 0)
-			break;
+    content = content.substr(pos + 2);
 
-		pos = content.find("\r\n\r\n");
-		if (pos != std::string::npos)
-			break;
+    while (true)
+    {
+        pos = content.find("\r\n");
+        if (pos == 0) break;
 
-		temp = this->_readRequestBlock();
-		if (temp.empty())
-			break;
+        pos = content.find("\r\n\r\n");
+        if (pos != std::string::npos) break;
 
-		content += temp;
-	}
+        temp = this->_readRequestBlock();
+        if (temp.empty()) break;
 
-	temp = content.substr(0, pos);
-	this->_request.parseHeaders(temp);
+        content += temp;
+    }
 
-	this->_buffer = content.substr(pos + 4 - 2 * (pos == 0));
-	this->_requestPending = true;
+    temp = content.substr(0, pos);
+    this->_request.parseHeaders(temp);
+
+    this->_buffer = content.substr(pos + 4 - 2 * (pos == 0));
+    this->_requestPending = true;
 }
 
-void	Client::fetchRequestBody(size_t maxBodyLen)
+void Client::fetchRequestBody(size_t maxBodyLen)
 {
-	size_t		bodySize;
-	std::string	content;
-	std::string	temp;
+    size_t bodySize;
+    std::string content;
+    std::string temp;
 
-	content = this->_buffer;
-	this->_buffer.clear();
+    content = this->_buffer;
+    this->_buffer.clear();
 
-	if (this->_request.getMethod() != http::HttpRequest::POST
-			&& this->_request.getMethod() != http::HttpRequest::PUT)
-		return ;
+    if (this->_request.getMethod() != http::HttpRequest::POST &&
+        this->_request.getMethod() != http::HttpRequest::PUT)
+        return;
 
-	bodySize = tool::strings::stoi(this->_request.getHeader("Content-Length"));
-	if (maxBodyLen && bodySize > maxBodyLen)
-		throw http::HttpRequest::BodyTooLarge(this->_request.getStatusLine());
+    bodySize = tool::strings::stoi(this->_request.getHeader("Content-Length"));
+    if (maxBodyLen && bodySize > maxBodyLen)
+        throw http::HttpRequest::BodyTooLarge(this->_request.getStatusLine());
 
-	while (content.size() < bodySize)
-	{
-		temp = this->_readRequestBlock(bodySize - content.size());
-		if (temp.empty())
-			break;
+    while (content.size() < bodySize)
+    {
+        temp = this->_readRequestBlock(bodySize - content.size());
+        if (temp.empty()) break;
 
-		content += temp;
-	}
+        content += temp;
+    }
 
-	this->_request.setBody(content);
-	this->_requestPending = false;
+    this->_request.setBody(content);
+    this->_requestPending = false;
 }
-
 
 /* ************************************************************************** */
 /* Private methods */
 
-std::string	Client::_readRequestBlock(size_t maxBuffSize) const
+std::string Client::_readRequestBlock(size_t maxBuffSize) const
 {
-	int		bytesRead;
-	char	buffer[WS_CLIENT_BUFF_SIZE];
+    int bytesRead;
+    char buffer[WS_CLIENT_BUFF_SIZE];
 
-	if (maxBuffSize == 0 || WS_CLIENT_BUFF_SIZE - 1 < maxBuffSize)
-		maxBuffSize = WS_CLIENT_BUFF_SIZE - 1;
+    if (maxBuffSize == 0 || WS_CLIENT_BUFF_SIZE - 1 < maxBuffSize)
+        maxBuffSize = WS_CLIENT_BUFF_SIZE - 1;
 
-	bytesRead = recv(this->_socket.getFd(), buffer, maxBuffSize, 0);
+    bytesRead = recv(this->_socket.getFd(), buffer, maxBuffSize, 0);
 
-	if (bytesRead < 0)
-		throw ClientReadException(strerror(errno));
-	
-	buffer[bytesRead] = '\0';
-	return (std::string(buffer));
+    if (bytesRead < 0) throw ClientReadException(strerror(errno));
+
+    buffer[bytesRead] = '\0';
+    return (std::string(buffer));
 }
-
 
 /* ************************************************************************** */
 /* Exceptions                                                                 */
@@ -239,31 +209,34 @@ std::string	Client::_readRequestBlock(size_t maxBuffSize) const
 
 /* Default constructor */
 Client::ClientException::ClientException(void)
-	: RuntimeError("Client exception", 31) {}
+    : RuntimeError("Client exception", 31)
+{
+}
 
 /* String and code constructor */
 Client::ClientException::ClientException(const std::string &msg, int code)
-	: RuntimeError(msg, code) {}
+    : RuntimeError(msg, code)
+{
+}
 
 /* Copy constructor */
 Client::ClientException::ClientException(const ClientException &original)
-	: RuntimeError(original) {}
-
+    : RuntimeError(original)
+{
+}
 
 /* Destructor */
 Client::ClientException::~ClientException(void) throw() {}
 
-
 /* *********************************** */
 /* Operator overloads */
 
-Client::ClientException	&Client::ClientException::operator=(
-	const ClientException &original)
+Client::ClientException &Client::ClientException::operator=(
+    const ClientException &original)
 {
-	RuntimeError::operator=(original);
-	return (*this);
+    RuntimeError::operator=(original);
+    return (*this);
 }
-
 
 /* *********************************** */
 /* ClientReadException                 */
@@ -271,31 +244,35 @@ Client::ClientException	&Client::ClientException::operator=(
 
 /* Default constructor */
 Client::ClientReadException::ClientReadException(void)
-	: ClientException("Failed read from client", 32) {}
+    : ClientException("Failed read from client", 32)
+{
+}
 
 /* String and code constructor */
 Client::ClientReadException::ClientReadException(const std::string &msg)
-	: ClientException("Failed read from client: " + msg, 32) {}
+    : ClientException("Failed read from client: " + msg, 32)
+{
+}
 
 /* Copy constructor */
-Client::ClientReadException::ClientReadException(const ClientReadException
-	&original) : ClientException(original) {}
-
+Client::ClientReadException::ClientReadException(
+    const ClientReadException &original)
+    : ClientException(original)
+{
+}
 
 /* Destructor */
 Client::ClientReadException::~ClientReadException(void) throw() {}
 
-
 /* *********************************** */
 /* Operator overloads */
 
-Client::ClientReadException	&Client::ClientReadException::operator=(
-	const ClientReadException &original)
+Client::ClientReadException &Client::ClientReadException::operator=(
+    const ClientReadException &original)
 {
-	ClientException::operator=(original);
-	return (*this);
+    ClientException::operator=(original);
+    return (*this);
 }
-
 
 /* *********************************** */
 /* ClientWriteException                */
@@ -303,28 +280,33 @@ Client::ClientReadException	&Client::ClientReadException::operator=(
 
 /* Default constructor */
 Client::ClientWriteException::ClientWriteException(void)
-	: ClientException("Failed write to client", 33) {}
+    : ClientException("Failed write to client", 33)
+{
+}
 
 /* String and code constructor */
 Client::ClientWriteException::ClientWriteException(const std::string &msg)
-	: ClientException("Failed write to client: " + msg, 33) {}
+    : ClientException("Failed write to client: " + msg, 33)
+{
+}
 
 /* Copy constructor */
-Client::ClientWriteException::ClientWriteException(const ClientWriteException
-	&original) : ClientException(original) {}
-
+Client::ClientWriteException::ClientWriteException(
+    const ClientWriteException &original)
+    : ClientException(original)
+{
+}
 
 /* Destructor */
 Client::ClientWriteException::~ClientWriteException(void) throw() {}
 
-
 /* *********************************** */
 /* Operator overloads */
 
-Client::ClientWriteException	&Client::ClientWriteException::operator=(
-	const ClientWriteException &original)
+Client::ClientWriteException &Client::ClientWriteException::operator=(
+    const ClientWriteException &original)
 {
-	ClientException::operator=(original);
-	return (*this);
+    ClientException::operator=(original);
+    return (*this);
 }
-} // namespace webserv
+}  // namespace webserv

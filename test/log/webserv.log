@@ -1,19 +1,7 @@
 [INFO] STATUS Parsing config file: test/conf.d/webserv.conf
 [INFO] STATUS test/conf.d/webserv.conf: Success
 [INFO] STATUS Running...
-[INFO] 127.0.0.1:47746 CONN ACCEPTED
-[INFO] 127.0.0.1:47746 REQ 'HEAD /sandbox/test HTTP/1.1' 404 (Not found) - localhost
-[INFO] 127.0.0.1:47746 CONN CLOSED - Local host
-[INFO] 127.0.0.1:46528 CONN ACCEPTED
-[INFO] 127.0.0.1:46528 REQ 'PUT /sandbox/test HTTP/1.1' CONN CLOSED - Local host
-[INFO] 127.0.0.1:40922 CONN ACCEPTED
-[INFO] 127.0.0.1:40922 REQ 'POST /sandbox/test HTTP/1.1' 201 - mywebsite.com:9090 - 'curl/7.81.0'
-[INFO] 127.0.0.1:40922 CONN CLOSED - Remote host
-[INFO] 127.0.0.1:40930 CONN ACCEPTED
-[INFO] 127.0.0.1:40930 REQ 'DELETE / HTTP/1.1' 405 (Method not allowed) - localhost
-[INFO] 127.0.0.1:40930 CONN CLOSED - Local host
-[INFO] 127.0.0.1:35782 CONN ACCEPTED
-[INFO] 127.0.0.1:35782 REQ 'DELETE /sandbox/test HTTP/1.1' 204 - localhost
-[INFO] 127.0.0.1:35782 REQ 'DELETE /sandbox/test HTTP/1.1' 404 (Not found) - localhost
-[INFO] 127.0.0.1:35782 CONN CLOSED - Local host
+[INFO] 127.0.0.1:46226 CONN ACCEPTED
+[INFO] 127.0.0.1:46226 REQ 'DELETE /sandbox/ HTTP/1.1' 403 (Forbidden) - locladwq
+[INFO] 127.0.0.1:46226 CONN CLOSED - Local host
 [INFO] STATUS Stopping...

@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/01 14:41:57 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/19 18:51:42 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/19 22:34:16 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,253 +19,233 @@ namespace webserv
 
 /* Path constructor */
 LocationConfiguration::LocationConfiguration(const std::string &path)
-	: _path(path),
-	_root(""),
-	_index(""),
-	_autoindex(false),
-	_returnCode(0),
-	_returnMessage(""),
-	_allowedMethods(),
-	_fcgiServer(""),
-	_fcgiParams()
+    : _path(path),
+      _root(""),
+      _index(""),
+      _autoindex(false),
+      _returnCode(0),
+      _returnMessage(""),
+      _allowedMethods(),
+      _fcgiServer(""),
+      _fcgiParams()
 {
-	this->_allowedMethods.insert(http::HttpRequest::GET);
-	this->_allowedMethods.insert(http::HttpRequest::HEAD);
+    this->_allowedMethods.insert(http::HttpRequest::GET);
+    this->_allowedMethods.insert(http::HttpRequest::HEAD);
 }
 
 /* Copy constructor */
-LocationConfiguration::LocationConfiguration(const LocationConfiguration
-	&original)
+LocationConfiguration::LocationConfiguration(
+    const LocationConfiguration &original)
 {
-	*this = original;
+    *this = original;
 }
-
 
 /* Destructor */
 LocationConfiguration::~LocationConfiguration(void) {}
 
-
 /* ************************************************************************** */
 /* Operator overloads */
 
-LocationConfiguration	&LocationConfiguration::operator=(
-	const LocationConfiguration &original)
+LocationConfiguration &LocationConfiguration::operator=(
+    const LocationConfiguration &original)
 {
-	if (this == &original)
-		return (*this);
-	this->_path = original.getPath();
-	this->_root = original.getRoot();
-	this->_index = original.getIndex();
-	this->_autoindex = original.isAutoindex();
-	this->_returnCode = original.getReturnCode();
-	this->_returnMessage = original.getReturnMessage();
-	this->_allowedMethods = original.getAllowedMethods();
-	this->_fcgiServer = original.getFCGIServer();
-	this->_fcgiParams = original.getFCGIParams();
-	return (*this);
+    if (this == &original) return (*this);
+    this->_path = original.getPath();
+    this->_root = original.getRoot();
+    this->_index = original.getIndex();
+    this->_autoindex = original.isAutoindex();
+    this->_returnCode = original.getReturnCode();
+    this->_returnMessage = original.getReturnMessage();
+    this->_allowedMethods = original.getAllowedMethods();
+    this->_fcgiServer = original.getFCGIServer();
+    this->_fcgiParams = original.getFCGIParams();
+    return (*this);
 }
 
-bool	LocationConfiguration::operator<(const LocationConfiguration &other)
-	const
+bool LocationConfiguration::operator<(const LocationConfiguration &other) const
 {
-	if (this->_path != other.getPath())
-		return (this->_path < other.getPath());
-	if (this->_root != other.getRoot())
-		return (this->_root < other.getRoot());
-	if (this->_index != other.getIndex())
-		return (this->_index < other.getIndex());
-	if (this->_autoindex != other.isAutoindex())
-		return (this->_autoindex < other.isAutoindex());
-	if (this->_returnCode != other.getReturnCode())
-		return (this->_returnCode < other.getReturnCode());
-	if (this->_returnMessage != other.getReturnMessage())
-		return (this->_returnMessage < other.getReturnMessage());
-	if (this->_allowedMethods != other.getAllowedMethods())
-		return (this->_allowedMethods < other.getAllowedMethods());
-	if (this->_fcgiServer != other.getFCGIServer())
-		return (this->_fcgiServer < other.getFCGIServer());
-	return (this->_fcgiParams < other.getFCGIParams());
+    if (this->_path != other.getPath()) return (this->_path < other.getPath());
+    if (this->_root != other.getRoot()) return (this->_root < other.getRoot());
+    if (this->_index != other.getIndex())
+        return (this->_index < other.getIndex());
+    if (this->_autoindex != other.isAutoindex())
+        return (this->_autoindex < other.isAutoindex());
+    if (this->_returnCode != other.getReturnCode())
+        return (this->_returnCode < other.getReturnCode());
+    if (this->_returnMessage != other.getReturnMessage())
+        return (this->_returnMessage < other.getReturnMessage());
+    if (this->_allowedMethods != other.getAllowedMethods())
+        return (this->_allowedMethods < other.getAllowedMethods());
+    if (this->_fcgiServer != other.getFCGIServer())
+        return (this->_fcgiServer < other.getFCGIServer());
+    return (this->_fcgiParams < other.getFCGIParams());
 }
-
 
 /* ************************************************************************** */
 /* Getters */
 
-std::string	LocationConfiguration::getPath(void) const
+std::string LocationConfiguration::getPath(void) const { return (this->_path); }
+
+std::string LocationConfiguration::getRoot(void) const { return (this->_root); }
+
+std::string LocationConfiguration::getIndex(void) const
 {
-	return (this->_path);
+    return (this->_index);
 }
 
-std::string	LocationConfiguration::getRoot(void) const
+bool LocationConfiguration::isAutoindex(void) const
 {
-	return (this->_root);
+    return (this->_autoindex);
 }
 
-std::string	LocationConfiguration::getIndex(void) const
+int LocationConfiguration::getReturnCode(void) const
 {
-	return (this->_index);
+    return (this->_returnCode);
 }
 
-bool	LocationConfiguration::isAutoindex(void) const
+std::string LocationConfiguration::getReturnMessage(void) const
 {
-	return (this->_autoindex);
-}
-
-int	LocationConfiguration::getReturnCode(void) const
-{
-	return (this->_returnCode);
-}
-
-std::string	LocationConfiguration::getReturnMessage(void) const
-{
-	return (this->_returnMessage);
+    return (this->_returnMessage);
 }
 
 const std::set<http::HttpRequest::e_method>
-	&LocationConfiguration::getAllowedMethods(void) const
+    &LocationConfiguration::getAllowedMethods(void) const
 {
-	return (this->_allowedMethods);
+    return (this->_allowedMethods);
 }
 
-std::string	LocationConfiguration::getFCGIServer(void) const
+std::string LocationConfiguration::getFCGIServer(void) const
 {
-	return (this->_fcgiServer);
+    return (this->_fcgiServer);
 }
 
-const std::map<std::string, std::string>
-	&LocationConfiguration::getFCGIParams(void) const
+const std::map<std::string, std::string> &LocationConfiguration::getFCGIParams(
+    void) const
 {
-	return (this->_fcgiParams);
+    return (this->_fcgiParams);
 }
-
 
 /* ************************************************************************** */
 /* Setters */
 
-void	LocationConfiguration::setPath(const std::string &path)
+void LocationConfiguration::setPath(const std::string &path)
 {
-	this->_path = path;
+    this->_path = path;
 }
 
-void	LocationConfiguration::setRoot(const std::string &root)
+void LocationConfiguration::setRoot(const std::string &root)
 {
-	if (!tool::strings::isValidPath(root))
-		throw InvalidPath("`" + root + "`: " + strerror(errno));
-	this->_root = root;
+    if (!tool::strings::isValidPath(root))
+        throw InvalidPath("`" + root + "`: " + strerror(errno));
+    this->_root = root;
 }
 
-void	LocationConfiguration::setIndex(const std::string &index)
+void LocationConfiguration::setIndex(const std::string &index)
 {
-	this->_index = index;
+    this->_index = index;
 }
 
-void	LocationConfiguration::setAutoindex(bool autoindexState)
+void LocationConfiguration::setAutoindex(bool autoindexState)
 {
-	this->_autoindex = autoindexState;
+    this->_autoindex = autoindexState;
 }
 
-void	LocationConfiguration::setReturnCode(int returnCode)
+void LocationConfiguration::setReturnCode(int returnCode)
 {
-	if (returnCode < 100 || returnCode > 599)
-	{
-		throw std::invalid_argument("Invalid return code `"
-			+ tool::strings::toStr(returnCode) + "`");
-	}
-	this->_returnCode = returnCode;
+    if (returnCode < 100 || returnCode > 599)
+    {
+        throw std::invalid_argument("Invalid return code `" +
+                                    tool::strings::toStr(returnCode) + "`");
+    }
+    this->_returnCode = returnCode;
 }
 
-void	LocationConfiguration::setReturnMessage(const std::string
-	&returnMessage)
+void LocationConfiguration::setReturnMessage(const std::string &returnMessage)
 {
-	this->_returnMessage = returnMessage;
+    this->_returnMessage = returnMessage;
 }
 
-void	LocationConfiguration::setAllowedMethods(
-	const std::set<http::HttpRequest::e_method> &allowedMethods)
+void LocationConfiguration::setAllowedMethods(
+    const std::set<http::HttpRequest::e_method> &allowedMethods)
 {
-	this->_allowedMethods = allowedMethods;
+    this->_allowedMethods = allowedMethods;
 }
 
-void	LocationConfiguration::addAllowedMethod(http::HttpRequest::e_method
-	method)
+void LocationConfiguration::addAllowedMethod(http::HttpRequest::e_method method)
 {
-	this->_allowedMethods.insert(method);
+    this->_allowedMethods.insert(method);
 }
 
-void	LocationConfiguration::setFCGIServer(const std::string &fcgiServer)
+void LocationConfiguration::setFCGIServer(const std::string &fcgiServer)
 {
-	this->_fcgiServer = fcgiServer;
+    this->_fcgiServer = fcgiServer;
 }
 
-void	LocationConfiguration::setFCGIParams(const std::map<std::string,
-	std::string> &params)
+void LocationConfiguration::setFCGIParams(
+    const std::map<std::string, std::string> &params)
 {
-	this->_fcgiParams = params;
+    this->_fcgiParams = params;
 }
 
-void	LocationConfiguration::addFCGIParam(const std::string &key,
-	const std::string &value)
+void LocationConfiguration::addFCGIParam(const std::string &key,
+                                         const std::string &value)
 {
-	this->_fcgiParams[key] = value;
+    this->_fcgiParams[key] = value;
 }
-
 
 /* ************************************************************************** */
 /* Public methods */
 
-bool	LocationConfiguration::ismethodAllowed(
-	http::HttpRequest::e_method method) const
+bool LocationConfiguration::ismethodAllowed(
+    http::HttpRequest::e_method method) const
 {
-	return (this->_allowedMethods.find(method) != this->_allowedMethods.end());
+    return (this->_allowedMethods.find(method) != this->_allowedMethods.end());
 }
 
-std::ostream	&LocationConfiguration::print(std::ostream &os) const
+std::ostream &LocationConfiguration::print(std::ostream &os) const
 {
-	os << "@ " << this->_path;
+    os << "@ " << this->_path;
 
-	if (!this->_root.empty())
-		os << "\nRoot            : " << this->_root;
-	
-	os << "\nIndex           : " << this->_index
-		<< "\nAllowed methods : ";
+    if (!this->_root.empty()) os << "\nRoot            : " << this->_root;
 
-	if (this->_allowedMethods.empty())
-		os << "all";
-	else
-		os << tool::strings::join(this->_allowedMethods, ", ");
+    os << "\nIndex           : " << this->_index << "\nAllowed methods : ";
 
-	os << "\nAutoindex       : " << (this->isAutoindex() ? "on" : "off");
+    if (this->_allowedMethods.empty())
+        os << "all";
+    else
+        os << tool::strings::join(this->_allowedMethods, ", ");
 
-	if (this->_returnCode != 0)
-	{
-		os << "\nReturn          : [" << this->getReturnCode() << "] "
-			<< this->getReturnMessage();
-	}
+    os << "\nAutoindex       : " << (this->isAutoindex() ? "on" : "off");
 
-	if (!this->_fcgiServer.empty())
-		os << "\n\nFastCGI server  : " << this->_fcgiServer;
+    if (this->_returnCode != 0)
+    {
+        os << "\nReturn          : [" << this->getReturnCode() << "] "
+           << this->getReturnMessage();
+    }
 
-	if (!this->_fcgiParams.empty())
-	{
-		std::map<std::string, std::string>::const_iterator	it;
+    if (!this->_fcgiServer.empty())
+        os << "\n\nFastCGI server  : " << this->_fcgiServer;
 
-		os << "\nFastCGI params";
-		for (it = this->_fcgiParams.begin(); it != this->_fcgiParams.end();it++)
-			os << "\n └ " << it->first << " = " << it->second;
-	}
-	return (os);
+    if (!this->_fcgiParams.empty())
+    {
+        std::map<std::string, std::string>::const_iterator it;
+
+        os << "\nFastCGI params";
+        for (it = this->_fcgiParams.begin(); it != this->_fcgiParams.end();
+             it++)
+            os << "\n └ " << it->first << " = " << it->second;
+    }
+    return (os);
 }
-
 
 /* ************************************************************************** */
 /* External operator overloads                                                */
 /* ************************************************************************** */
 
-std::ostream	&operator<<(std::ostream &os, const LocationConfiguration
-	&location)
+std::ostream &operator<<(std::ostream &os,
+                         const LocationConfiguration &location)
 {
-	return (location.print(os));
+    return (location.print(os));
 }
 
-} // namespace webserv
-
+}  // namespace webserv

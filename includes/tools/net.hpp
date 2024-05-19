@@ -6,29 +6,30 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/08 12:44:46 by hnogared          #+#    #+#             */
-/*   Updated: 2024/04/26 12:44:54 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/19 22:26:51 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef NET_HPP
-# define NET_HPP
+#define NET_HPP
 
-# include <sstream>
-# include <netinet/in.h>
+#include <netinet/in.h>
 
-# include "strings.hpp"
+#include <sstream>
 
-namespace	tool
+#include "strings.hpp"
+
+namespace tool
 {
 
-namespace	net
+namespace net
 {
 
-std::string	inet_ntoa(struct in_addr addr);
-int			inet_aton(const std::string &address, struct in_addr &addr);
+std::string inet_ntoa(struct in_addr addr);
+int inet_aton(const std::string &address, struct in_addr &addr);
 
-} // namespace net
+}  // namespace net
 
-} // namespace tool
+}  // namespace tool
 
-#endif // NET_HPP
+#endif  // NET_HPP
