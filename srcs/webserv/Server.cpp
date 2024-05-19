@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 17:06:34 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/15 17:04:41 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/19 19:40:41 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -182,7 +182,7 @@ void	Server::_init(const std::string &configPath)
 	}
 	catch(const std::exception &e)
 	{
-		remove(WS_LOCK_FILE);
+		std::remove(WS_LOCK_FILE);
 		throw;
 	}
 
@@ -318,9 +318,11 @@ void	Server::_cleanup(bool removeLockFile)
 	this->_managers.clear();
 
 	if (removeLockFile)
-		remove(WS_LOCK_FILE);
+		std::remove(WS_LOCK_FILE);
 }
 
+
+/* ************************************************************************** */
 /* Static public methods */
 
 /* Method to execute when receiving signals */

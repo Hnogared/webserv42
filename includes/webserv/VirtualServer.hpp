@@ -73,6 +73,8 @@ class	VirtualServer
 			const LocationConfiguration &location);
 		bool	_tryPostOrPutResponse(Client &client,
 			const LocationConfiguration &location);
+		bool	_tryDeleteResponse(Client &client,
+			const LocationConfiguration &location);
 		bool	_tryFileResponse(const std::string &uri, Client &client,
 			const LocationConfiguration &location);
 		bool	_tryDirectoryResponse(const std::string &uri, Client &client,

@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/12 02:08:16 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/19 18:50:55 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/19 19:49:34 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,6 +121,8 @@ bool	VirtualServer::_tryResponse(Client &client,
 		case http::HttpRequest::POST:
 		case http::HttpRequest::PUT:
 			return (this->_tryPostOrPutResponse(client, location));
+		case http::HttpRequest::DELETE:
+			return (this->_tryDeleteResponse(client, location));
 		default:
 			throw http::HttpRequest::RequestException("Method not allowed",405);
 	}
@@ -173,6 +175,33 @@ bool	VirtualServer::_tryPostOrPutResponse(Client &client,
 	this->_log(Harl::INFO, &client, "20" + tool::strings::toStr(!fileExisted));
 	client.sendResponse(http::HttpResponse(200 + !fileExisted,
 		client.getRequest()));
+
+	return (true);
+}
+
+bool	VirtualServer::_tryDeleteResponse(Client &client,
+	const LocationConfiguration &location)
+{
+	const std::string	&uri = client.getRequest().getUri();
+
+	if (*(uri.end() - 1) == '/')
+		throw http::HttpRequest::RequestException("Forbidden", 403);
+
+	const std::string	path = tool::files::joinPaths(location.getRoot(), uri);
+	
+	if (std::remove(path.c_str()) == -1)
+	{
+		if (errno == ENOENT)
+			return (false);
+
+		if (errno == EACCES || errno == EISDIR)
+			throw http::HttpRequest::RequestException("Forbidden", 403);
+
+		throw http::HttpRequest::RequestException("Internal Server Error", 500);
+	}
+
+	this->_log(Harl::INFO, &client, "204");
+	client.sendResponse(http::HttpResponse(204, client.getRequest()));
 
 	return (true);
 }
