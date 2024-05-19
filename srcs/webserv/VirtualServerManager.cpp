@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 12:06:54 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/19 17:16:15 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/19 18:36:06 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,11 @@ VirtualServerManager::~VirtualServerManager(void)
 	for (std::vector<VirtualServer*>::iterator it = this->_servers.begin();
 			it != this->_servers.end(); ++it)
 		delete *it;
+	
+	if (this->_defaultServer != this->_catchAllServer)
+		delete this->_catchAllServer;
+	
+	delete this->_defaultServer;
 	
 	for (std::vector<Client*>::iterator it = this->_clients.begin();
 			it != this->_clients.end(); ++it)

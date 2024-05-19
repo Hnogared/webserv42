@@ -1,13 +1,15 @@
 [INFO] STATUS Parsing config file: test/conf.d/webserv.conf
 [INFO] STATUS test/conf.d/webserv.conf: Success
 [INFO] STATUS Running...
-[INFO] 127.0.0.1:46430 CONN ACCEPTED
-[INFO] 127.0.0.1:46430 REQ 'PUT /test HTTP/1.1' 200 - mywebsite.com:9090 - 'curl/7.81.0'
-[INFO] 127.0.0.1:46430 CONN CLOSED - Remote host
-[INFO] 127.0.0.1:43938 CONN ACCEPTED
-[INFO] 127.0.0.1:43938 REQ 'POST /test HTTP/1.1' 200 - mywebsite.com:9090 - 'curl/7.81.0'
-[INFO] 127.0.0.1:43938 CONN CLOSED - Remote host
-[INFO] 127.0.0.1:43952 CONN ACCEPTED
-[INFO] 127.0.0.1:43952 REQ 'PUT /test HTTP/1.1' 200 - mywebsite.com:9090 - 'curl/7.81.0'
-[INFO] 127.0.0.1:43952 CONN CLOSED - Remote host
+[INFO] 127.0.0.1:54224 CONN ACCEPTED
+[INFO] 127.0.0.1:54224 REQ 'GET /hnogared/Music/ HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:54224 REQ 'GET /hnogared/Music/Clips/ HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:54224 REQ 'GET /hnogared/Music/ HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:54224 REQ 'GET /hnogared/Music/Images/ HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:54224 REQ 'GET /hnogared/Music/Images/Bring+Me+The+Horizon/ HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:54224 REQ 'GET /hnogared/Music/Images/Bring+Me+The+Horizon/Post+Human+Survival+Horror/ HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:54224 REQ 'GET /hnogared/Music/Images/Bring+Me+The+Horizon/Post+Human+Survival+Horror/AlbumSmallArt.jpg HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:54224 REQ 'GET /hnogared/Music/Images/Bring+Me+The+Horizon/ HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:54224 REQ 'GET /hnogared/Music/Images/ HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:54224 REQ 'GET /hnogared/Music/ HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
 [INFO] STATUS Stopping...
