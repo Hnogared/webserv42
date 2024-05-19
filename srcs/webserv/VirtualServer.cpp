@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/12 02:08:16 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/19 16:52:44 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/19 17:50:45 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,18 +116,20 @@ bool	VirtualServer::_tryResponse(Client &client,
 	switch (method)
 	{
 		case http::HttpRequest::GET:
-		//case http::HttpRequest::HEAD:
-			return (this->_tryGetResponse(request.getUri(), client, location));
+		case http::HttpRequest::HEAD:
+			return (this->_tryGetResponse(client, location));
 		case http::HttpRequest::POST:
-			return (this->_tryPostResponse(request.getUri(), client, location));
+			return (this->_tryPostResponse(client, location));
 		default:
 			throw http::HttpRequest::RequestException("Method not allowed",405);
 	}
 }
 
-bool	VirtualServer::_tryGetResponse(const std::string &uri, Client &client,
+bool	VirtualServer::_tryGetResponse(Client &client,
 	const LocationConfiguration &location)
 {
+	const std::string	&uri = client.getRequest().getUri();
+
 	if (*(uri.end() - 1) == '/')
 		return (this->_tryDirectoryResponse(uri, client, location));
 
@@ -138,9 +140,11 @@ bool	VirtualServer::_tryGetResponse(const std::string &uri, Client &client,
 	return (false);
 }
 
-bool	VirtualServer::_tryPostResponse(const std::string &uri, Client &client,
+bool	VirtualServer::_tryPostResponse(Client &client,
 	const LocationConfiguration &location)
 {
+	const std::string	&uri = client.getRequest().getUri();
+
 	client.fetchRequestBody(this->_config.getClientMaxBodySize());
 
 	if (*(uri.end() - 1) == '/')

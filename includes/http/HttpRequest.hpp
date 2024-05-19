@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 22:57:07 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/18 13:45:01 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/19 17:40:54 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ class	HttpRequest : public HttpMessage
 		enum	e_method
 		{
 			GET,
+			HEAD,
 			POST,
 			PUT,
 			DELETE,

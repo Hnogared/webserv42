@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 14:43:33 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/18 13:56:08 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/19 17:59:12 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,17 +110,16 @@ const std::string	&Client::getBuffer(void) const
 
 void	Client::sendResponse(const http::HttpResponse &response)
 {
-	int			code = response.getStatusCode();
-	ssize_t		bytes_sent;
-	std::string	response_str(response.toString());
+	const int			code = response.getStatusCode();
+	const std::string	response_str = response.toString(
+		this->_request.getMethod() != http::HttpRequest::HEAD);
 
 	if (code >= 100 && code < 400 && this->_requestPending)
 		this->fetchRequestBody(0);
 	this->_request.clear();
 
-	bytes_sent = send(this->_socket.getFd(), response_str.c_str(),
-			response_str.size(), 0);
-	if (bytes_sent < 0)
+	if (send(this->_socket.getFd(), response_str.c_str(), response_str.size(),
+			0) < 0)
 		throw ClientWriteException(strerror(errno));
 }
 

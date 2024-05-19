@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 23:01:55 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/18 13:48:14 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/19 17:41:22 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,6 +174,7 @@ const std::map<std::string, HttpRequest::e_method>
 	std::map<std::string, HttpRequest::e_method>	methods;
 
 	methods["GET"] = HttpRequest::GET;
+	methods["HEAD"] = HttpRequest::HEAD;
 	methods["POST"] = HttpRequest::POST;
 	methods["PUT"] = HttpRequest::PUT;
 	methods["DELETE"] = HttpRequest::DELETE;

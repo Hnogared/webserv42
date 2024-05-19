@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 23:20:31 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/19 17:20:15 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/19 17:56:52 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ class	HttpResponse : public HttpMessage
 		void	setBody(const std::string &body, HttpMessage::e_mimeType mime);
 
 		/* Public methods */
-		std::string	toString(void) const;
+		std::string	toString(bool withBody = true) const;
 
 
 	private:

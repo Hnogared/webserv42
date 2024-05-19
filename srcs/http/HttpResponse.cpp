@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 23:28:04 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/19 17:18:33 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/19 17:57:55 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,7 @@ void	HttpResponse::setBody(const std::string &body,
 /* ************************************************************************** */
 /* Public methods */
 
-std::string	HttpResponse::toString(void) const
+std::string	HttpResponse::toString(bool withBody) const
 {
 	std::ostringstream							result;
 	const std::map<std::string, std::string>	&headers = this->getHeaders();
@@ -119,8 +119,12 @@ std::string	HttpResponse::toString(void) const
 
 	for (it = headers.begin(); it != headers.end(); it++)
 		result << it->first << ": " << it->second << "\r\n";
-	
-	result << "\r\n" << this->getBody();
+
+	result << "\r\n";
+
+	if (withBody)
+		result << this->getBody();
+
 	return (result.str());
 }
 
