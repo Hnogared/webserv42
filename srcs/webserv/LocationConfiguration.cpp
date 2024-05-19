@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/01 14:41:57 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/18 13:38:17 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/19 18:51:42 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,10 @@ LocationConfiguration::LocationConfiguration(const std::string &path)
 	_allowedMethods(),
 	_fcgiServer(""),
 	_fcgiParams()
-{}
+{
+	this->_allowedMethods.insert(http::HttpRequest::GET);
+	this->_allowedMethods.insert(http::HttpRequest::HEAD);
+}
 
 /* Copy constructor */
 LocationConfiguration::LocationConfiguration(const LocationConfiguration
@@ -210,11 +213,10 @@ void	LocationConfiguration::addFCGIParam(const std::string &key,
 /* ************************************************************************** */
 /* Public methods */
 
-bool	LocationConfiguration::methodAllowed(http::HttpRequest::e_method method)
-	const
+bool	LocationConfiguration::ismethodAllowed(
+	http::HttpRequest::e_method method) const
 {
-	return (this->_allowedMethods.empty()
-		|| this->_allowedMethods.find(method) != this->_allowedMethods.end());
+	return (this->_allowedMethods.find(method) != this->_allowedMethods.end());
 }
 
 std::ostream	&LocationConfiguration::print(std::ostream &os) const

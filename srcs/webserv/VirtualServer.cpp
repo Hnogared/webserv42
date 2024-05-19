@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/12 02:08:16 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/19 18:23:31 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/19 18:50:55 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ bool	VirtualServer::tryHandleClientRequest(Client &client, bool lastTry)
 			return (false);
 		}
 
-		if (!bestLocation->methodAllowed(request.getMethod()))
+		if (!bestLocation->ismethodAllowed(request.getMethod()))
 			throw http::HttpRequest::RequestException("Method not allowed",405);
 
 		if (this->_tryResponse(client, *bestLocation))

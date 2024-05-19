@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/01 14:34:11 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/18 13:34:41 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/19 18:50:20 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ class	LocationConfiguration
 		void	addFCGIParam(const std::string &key, const std::string &value);
 
 		/* Public methods */
-		bool			methodAllowed(http::HttpRequest::e_method method) const;
+		bool	ismethodAllowed(http::HttpRequest::e_method method) const;
 		std::ostream	&print(std::ostream &os) const;
 
 

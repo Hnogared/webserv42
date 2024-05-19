@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 10:21:20 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/18 13:50:24 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/19 18:48:33 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -578,11 +578,21 @@ void	ConfigurationParser::_parseLocAllowedMethods(
 		token = tokens.front();
 		tokens.pop();
 
-		if (token.content == "all" && (!config.getAllowedMethods().empty()
-			|| tokens.front().type == STRING))
+		if ((!tokens.empty() && tokens.front().content == "all")
+			|| (token.content == "all" && tokens.front().type == STRING))
 		{
 			throw InvalidConfigFile(token.lineNbr, "allow_methods",
 				"Cannot mix `all` with other methods");
+		}
+
+		if (token.content == "all")
+		{
+			config.addAllowedMethod(http::HttpRequest::GET);
+			config.addAllowedMethod(http::HttpRequest::HEAD);
+			config.addAllowedMethod(http::HttpRequest::POST);
+			config.addAllowedMethod(http::HttpRequest::PUT);
+			config.addAllowedMethod(http::HttpRequest::DELETE);
+			continue ;
 		}
 
 		method = http::HttpRequest::strToMethod(token.content);
