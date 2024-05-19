@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 23:28:04 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/18 12:47:54 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/19 17:18:33 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -226,7 +226,7 @@ void	HttpResponse::_buildHeadersAndBody(void)
 
 	if (this->_statusCode < 400)
 	{
-		this->setBody(this->getStatusLine(), HttpMessage::TEXT_PLAIN);
+		this->setBody(this->getStatusLine() + "\n", HttpMessage::TEXT_PLAIN);
 		return ;
 	}
 

@@ -1,25 +1,13 @@
 [INFO] STATUS Parsing config file: test/conf.d/webserv.conf
 [INFO] STATUS test/conf.d/webserv.conf: Success
 [INFO] STATUS Running...
-[INFO] 127.0.0.1:42764 CONN ACCEPTED
-[INFO] 127.0.0.1:42764 REQ 'GET /hnogared HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
-[INFO] 127.0.0.1:42764 REQ 'GET /Dev/ HTTP/1.1' 404 (Not found) - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
-[INFO] 127.0.0.1:42764 CONN CLOSED - Local host
-[INFO] 127.0.0.1:42778 CONN ACCEPTED
-[INFO] 127.0.0.1:42778 REQ 'GET /hnogared HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
-[INFO] 127.0.0.1:42778 REQ 'GET /hnogared HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
-[INFO] 127.0.0.1:42778 REQ 'GET / HTTP/1.1' 404 (Not found) - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
-[INFO] 127.0.0.1:42778 CONN CLOSED - Local host
-[INFO] 127.0.0.1:42046 CONN ACCEPTED
-[INFO] 127.0.0.1:42046 REQ 'GET /hnogared/ HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
-[INFO] 127.0.0.1:42046 REQ 'GET /hnogared/Dev/ HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
-[INFO] 127.0.0.1:42046 REQ 'GET /hnogared/ HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
-[INFO] 127.0.0.1:42046 REQ 'GET /hnogared/Dev/ HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
-[INFO] 127.0.0.1:42046 REQ 'GET /hnogared/Music/ HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
-[INFO] 127.0.0.1:42046 REQ 'GET /hnogared/Music/Bring+Me+The+Horizon+-+1x1.mp3 HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
-[INFO] 127.0.0.1:42046 CONN CLOSED - Remote host
-[INFO] 127.0.0.1:36080 CONN ACCEPTED
-[INFO] 127.0.0.1:36080 REQ 'GET /hnogared/Music/Bring+Me+The+Horizon+-+1x1.mp3 HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
-[INFO] 127.0.0.1:36080 REQ 'GET /favicon.ico HTTP/1.1' 404 (Not found) - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
-[INFO] 127.0.0.1:36080 CONN CLOSED - Local host
+[INFO] 127.0.0.1:48390 CONN ACCEPTED
+[INFO] 127.0.0.1:48390 REQ 'POST /test HTTP/1.1' 200 - mywebsite.com:9090 - 'curl/7.81.0'
+[INFO] 127.0.0.1:48390 CONN CLOSED - Remote host
+[INFO] 127.0.0.1:33296 CONN ACCEPTED
+[INFO] 127.0.0.1:33296 REQ 'POST /test HTTP/1.1' 200 - dwdqw
+[INFO] 127.0.0.1:33296 CONN CLOSED - Local host
+[INFO] 127.0.0.1:54404 CONN ACCEPTED
+[INFO] 127.0.0.1:54404 REQ 'POST /test HTTP/1.1' 200 - mywebsite.com:9090 - 'curl/7.81.0'
+[INFO] 127.0.0.1:54404 CONN CLOSED - Remote host
 [INFO] STATUS Stopping...

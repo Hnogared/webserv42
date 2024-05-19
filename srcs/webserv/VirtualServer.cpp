@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/12 02:08:16 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/18 15:31:35 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/19 16:52:44 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,13 +146,9 @@ bool	VirtualServer::_tryPostResponse(const std::string &uri, Client &client,
 	if (*(uri.end() - 1) == '/')
 		throw http::HttpRequest::RequestException("Forbidden", 403);
 
-	std::string		path = tool::files::joinPaths(location.getRoot(), uri);
-	std::ofstream	file;
-
-	if (tool::files::fileExists(path))
-		file.open(path.c_str(), std::ios::binary | std::ios::app);
-	else
-		file.open(path.c_str(), std::ios::binary);
+	const std::string	path = tool::files::joinPaths(location.getRoot(), uri);
+	const bool			fileExisted = tool::files::fileExists(path);
+	std::ofstream		file(path.c_str(), std::ios::binary | std::ios::app);
 
 	if (!file)
 	{
@@ -163,6 +159,10 @@ bool	VirtualServer::_tryPostResponse(const std::string &uri, Client &client,
 
 	file << client.getRequest().getBody();
 	file.close();
+
+	this->_log(Harl::INFO, &client, "20" + tool::strings::toStr(!fileExisted));
+	client.sendResponse(http::HttpResponse(200 + !fileExisted,
+		client.getRequest()));
 
 	return (true);
 }

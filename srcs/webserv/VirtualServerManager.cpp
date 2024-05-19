@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 12:06:54 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/17 15:40:02 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/19 17:16:15 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -251,13 +251,13 @@ void	VirtualServerManager::_serveClient(
 				&& this->_catchAllServer != this->_defaultServer)
 			this->_catchAllServer->tryHandleClientRequest(*client, true);
 	}
-	catch (const SocketConnectionClosed &e)
+	catch (const SocketConnectionClosed& /* e */)
 	{
 		this->_log(Harl::INFO, client, "CONN CLOSED - Remote host");
 		delete client;
 		this->_clients.erase(clientIt);
 	}
-	catch(const std::exception &e)
+	catch (const std::exception& /* e */)
 	{
 		this->_log(Harl::INFO, client, "CONN CLOSED - Local host");
 		delete client;

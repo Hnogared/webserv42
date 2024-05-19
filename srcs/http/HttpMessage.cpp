@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/08 18:25:00 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/18 13:40:18 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/19 17:25:45 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ const std::map<HttpMessage::e_mimeType, std::string>
 /* ************************************************************************** */
 
 /* Default constructor */
-HttpMessage::HttpMessage(void) {}
+HttpMessage::HttpMessage(void) : _protocol(WS_HTTP_VERSION) {}
 
 /* Version + message constructor */
 HttpMessage::HttpMessage(const std::string &statusLine)
@@ -37,6 +37,8 @@ HttpMessage::HttpMessage(const std::string &statusLine)
 
 	if (pos != std::string::npos)
 		this->_protocol = Protocol(statusLine.substr(pos));
+	else
+		this->_protocol = Protocol(WS_HTTP_VERSION);
 }
 
 /* Copy constructor */

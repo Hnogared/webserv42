@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 23:20:31 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/14 20:21:27 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/19 17:20:15 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,8 +49,10 @@ class	HttpResponse : public HttpMessage
 
 
 	private:
-		/* Private attributes */
+		/* Static rivate attributes */
 		static const std::map<int, std::string>	_statusLines;
+		
+		/* Private attributes */
 		int										_statusCode;
 
 		/* Private static methods */
