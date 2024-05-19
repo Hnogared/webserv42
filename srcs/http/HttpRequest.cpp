@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 23:01:55 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/19 17:41:22 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/19 18:22:05 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,14 +127,18 @@ void	HttpRequest::parseHeaders(std::string &headers)
 			header_name = line.substr(0, colon_pos);
 			header_value = tool::strings::trim(line.substr(colon_pos + 1),
 				" \t\n\r");
+			
+			if (header_name == "Host"
+					&& header_value.find(' ') != std::string::npos)
+				throw BadRequest();
+
 			this->addHeader(header_name, header_value);
 		}
 	}
 
-	if ((this->_method == HttpRequest::POST
+	if (((this->_method == HttpRequest::POST || this->_method==HttpRequest::PUT)
 		&& this->getHeader("Content-Length").empty())
-			|| this->getHeader("Host").empty()
-			|| this->getHeader("Host").find(' ') != std::string::npos)
+			|| this->getHeader("Host").empty())
 		throw BadRequest();
 }
 

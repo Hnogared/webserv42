@@ -1,30 +1,13 @@
 [INFO] STATUS Parsing config file: test/conf.d/webserv.conf
 [INFO] STATUS test/conf.d/webserv.conf: Success
 [INFO] STATUS Running...
-[INFO] 127.0.0.1:43596 CONN ACCEPTED
-[INFO] 127.0.0.1:43596 REQ 'HEAD /test HTTP/1.1' 405 (Method not allowed) - mywebsite.com:9090 - 'curl/7.81.0'
-[INFO] 127.0.0.1:43596 CONN CLOSED - Local host
-[INFO] 127.0.0.1:57572 CONN ACCEPTED
-[INFO] 127.0.0.1:57572 REQ 'HEAD /test HTTP/1.1' 405 (Method not allowed) - mywebsite.com:9090 - 'curl/7.81.0'
-[INFO] 127.0.0.1:57572 CONN CLOSED - Local host
-[INFO] STATUS Reloading...
-[INFO] STATUS Stopping...
-[INFO] STATUS Parsing config file: test/conf.d/webserv.conf
-[INFO] STATUS test/conf.d/webserv.conf: Success
-[INFO] STATUS Running...
-[INFO] 127.0.0.1:49972 CONN ACCEPTED
-[INFO] 127.0.0.1:49972 REQ 'HEAD /test HTTP/1.1' 403 (Forbidden) - mywebsite.com:9090 - 'curl/7.81.0'
-[INFO] 127.0.0.1:49972 CONN CLOSED - Local host
-[INFO] 127.0.0.1:44084 CONN ACCEPTED
-[INFO] 127.0.0.1:44084 REQ 'HEAD /test HTTP/1.1' 403 (Forbidden) - mywebsite.com:9090 - 'curl/7.81.0'
-[INFO] 127.0.0.1:44084 CONN CLOSED - Local host
-[INFO] 127.0.0.1:37270 CONN ACCEPTED
-[INFO] 127.0.0.1:37270 REQ 'HEAD /test HTTP/1.1' 200 - mywebsite.com:9090 - 'curl/7.81.0'
-[INFO] 127.0.0.1:37270 CONN CLOSED - Remote host
-[INFO] 127.0.0.1:34582 CONN ACCEPTED
-[INFO] 127.0.0.1:34582 REQ 'HEAD / HTTP/1.1' 200 - mywebsite.com:9090 - 'curl/7.81.0'
-[INFO] 127.0.0.1:34582 CONN CLOSED - Remote host
-[INFO] 127.0.0.1:34584 CONN ACCEPTED
-[INFO] 127.0.0.1:34584 REQ 'HEAD /dwqdqw HTTP/1.1' 404 (Not found) - mywebsite.com:9090 - 'curl/7.81.0'
-[INFO] 127.0.0.1:34584 CONN CLOSED - Local host
+[INFO] 127.0.0.1:46430 CONN ACCEPTED
+[INFO] 127.0.0.1:46430 REQ 'PUT /test HTTP/1.1' 200 - mywebsite.com:9090 - 'curl/7.81.0'
+[INFO] 127.0.0.1:46430 CONN CLOSED - Remote host
+[INFO] 127.0.0.1:43938 CONN ACCEPTED
+[INFO] 127.0.0.1:43938 REQ 'POST /test HTTP/1.1' 200 - mywebsite.com:9090 - 'curl/7.81.0'
+[INFO] 127.0.0.1:43938 CONN CLOSED - Remote host
+[INFO] 127.0.0.1:43952 CONN ACCEPTED
+[INFO] 127.0.0.1:43952 REQ 'PUT /test HTTP/1.1' 200 - mywebsite.com:9090 - 'curl/7.81.0'
+[INFO] 127.0.0.1:43952 CONN CLOSED - Remote host
 [INFO] STATUS Stopping...

@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/12 02:08:16 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/19 17:50:45 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/19 18:23:31 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,15 +117,16 @@ bool	VirtualServer::_tryResponse(Client &client,
 	{
 		case http::HttpRequest::GET:
 		case http::HttpRequest::HEAD:
-			return (this->_tryGetResponse(client, location));
+			return (this->_tryGetOrHeadResponse(client, location));
 		case http::HttpRequest::POST:
-			return (this->_tryPostResponse(client, location));
+		case http::HttpRequest::PUT:
+			return (this->_tryPostOrPutResponse(client, location));
 		default:
 			throw http::HttpRequest::RequestException("Method not allowed",405);
 	}
 }
 
-bool	VirtualServer::_tryGetResponse(Client &client,
+bool	VirtualServer::_tryGetOrHeadResponse(Client &client,
 	const LocationConfiguration &location)
 {
 	const std::string	&uri = client.getRequest().getUri();
@@ -140,7 +141,7 @@ bool	VirtualServer::_tryGetResponse(Client &client,
 	return (false);
 }
 
-bool	VirtualServer::_tryPostResponse(Client &client,
+bool	VirtualServer::_tryPostOrPutResponse(Client &client,
 	const LocationConfiguration &location)
 {
 	const std::string	&uri = client.getRequest().getUri();
@@ -152,7 +153,12 @@ bool	VirtualServer::_tryPostResponse(Client &client,
 
 	const std::string	path = tool::files::joinPaths(location.getRoot(), uri);
 	const bool			fileExisted = tool::files::fileExists(path);
-	std::ofstream		file(path.c_str(), std::ios::binary | std::ios::app);
+	std::ofstream		file;
+
+	if (client.getRequest().getMethod() == http::HttpRequest::PUT)
+		file.open(path.c_str(), std::ios::binary | std::ios::trunc);
+	else
+		file.open(path.c_str(), std::ios::binary | std::ios::app);
 
 	if (!file)
 	{

@@ -69,9 +69,9 @@ class	VirtualServer
 			const LocationConfiguration **bestLocation) const;
 		bool	_tryResponse(Client &client,
 			const LocationConfiguration &location);
-		bool	_tryGetResponse(Client &client,
+		bool	_tryGetOrHeadResponse(Client &client,
 			const LocationConfiguration &location);
-		bool	_tryPostResponse(Client &client,
+		bool	_tryPostOrPutResponse(Client &client,
 			const LocationConfiguration &location);
 		bool	_tryFileResponse(const std::string &uri, Client &client,
 			const LocationConfiguration &location);
