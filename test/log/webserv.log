@@ -1,30 +1,29 @@
-[INFO] STATUS Parsing config file: test/conf.d/ubuntu_tester.conf
-[INFO] STATUS test/conf.d/ubuntu_tester.conf: Success
+[INFO] STATUS Parsing config file: test/conf.d/webserv.conf
+[INFO] STATUS test/conf.d/webserv.conf: Success
 [INFO] STATUS Running...
-[INFO] 127.0.0.1:45664 CONN ACCEPTED
-[INFO] 127.0.0.1:45664 REQ 'GET / HTTP/1.1' 200 - localhost:9090 - 'Go-http-client/1.1'
-[INFO] 127.0.0.1:45664 REQ 'POST / HTTP/1.1' 405 (Method not allowed) - localhost:9090 - 'Go-http-client/1.1'
-[INFO] 127.0.0.1:45664 CONN CLOSED - Local host
-[INFO] 127.0.0.1:45680 CONN ACCEPTED
-[INFO] 127.0.0.1:45680 REQ 'HEAD / HTTP/1.1' 405 (Method not allowed) - localhost:9090 - 'Go-http-client/1.1'
-[INFO] 127.0.0.1:45680 CONN CLOSED - Local host
-[INFO] 127.0.0.1:45688 CONN ACCEPTED
-[INFO] 127.0.0.1:45688 REQ 'GET /directory HTTP/1.1' 200 - localhost:9090 - 'Go-http-client/1.1'
-[INFO] 127.0.0.1:45688 REQ 'GET /directory/youpi.bad_extension HTTP/1.1' 200 - localhost:9090 - 'Go-http-client/1.1'
-[INFO] 127.0.0.1:45688 REQ 'GET /directory/youpi.bla HTTP/1.1' 200 - localhost:9090 - 'Go-http-client/1.1'
-[INFO] 127.0.0.1:45688 REQ 'GET /directory/oulalala HTTP/1.1' 404 (Not found) - localhost:9090 - 'Go-http-client/1.1'
-[INFO] 127.0.0.1:45688 CONN CLOSED - Local host
-[INFO] 127.0.0.1:45698 CONN ACCEPTED
-[INFO] 127.0.0.1:45698 REQ 'GET /directory/nop HTTP/1.1' 200 - localhost:9090 - 'Go-http-client/1.1'
-[INFO] 127.0.0.1:45698 REQ 'GET /directory/nop/ HTTP/1.1' 200 - localhost:9090 - 'Go-http-client/1.1'
-[INFO] 127.0.0.1:45698 REQ 'GET /directory/nop/other.pouic HTTP/1.1' 200 - localhost:9090 - 'Go-http-client/1.1'
-[INFO] 127.0.0.1:45698 REQ 'GET /directory/nop/other.pouac HTTP/1.1' 404 (Not found) - localhost:9090 - 'Go-http-client/1.1'
-[INFO] 127.0.0.1:45698 CONN CLOSED - Local host
-[INFO] 127.0.0.1:45700 CONN ACCEPTED
-[INFO] 127.0.0.1:45700 REQ 'GET /directory/Yeah HTTP/1.1' 404 (Not found) - localhost:9090 - 'Go-http-client/1.1'
-[INFO] 127.0.0.1:45700 CONN CLOSED - Local host
-[INFO] 127.0.0.1:45716 CONN ACCEPTED
-[INFO] 127.0.0.1:45716 REQ 'GET /directory/Yeah/not_happy.bad_extension HTTP/1.1' 200 - localhost:9090 - 'Go-http-client/1.1'
-[INFO] 127.0.0.1:45716 REQ 'POST /directory/youpi.bla HTTP/1.1' 400 (Invalid request) - localhost:9090 - 'Go-http-client/1.1'
-[INFO] 127.0.0.1:45716 CONN CLOSED - Local host
+[INFO] 127.0.0.1:53852 CONN ACCEPTED
+[INFO] 127.0.0.1:53852 REQ 'GET /hnogared/Music/Clips/ HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:53852 REQ 'GET /hnogared/Music/ HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:53852 500 (Internal Server Error) - Connection closed
+[INFO] 127.0.0.1:33810 CONN ACCEPTED
+[INFO] 127.0.0.1:33810 REQ 'GET /hnogared/Music/Bring+Me+The+Horizon+-+1x1.mp3 HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:33810 CONN CLOSED - Remote host
+[INFO] 127.0.0.1:33816 CONN ACCEPTED
+[INFO] 127.0.0.1:33816 REQ 'GET /hnogared/Music/Bring+Me+The+Horizon+-+1x1.mp3 HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:54670 CONN ACCEPTED
+[INFO] 127.0.0.1:54670 REQ 'GET /favicon.ico HTTP/1.1' 404 (Not found) - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:54670 CONN CLOSED - Local host
+[INFO] 127.0.0.1:33816 REQ 'GET /hnogared/Music/Bring+Me+The+Horizon+-+1x1.mp3 HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:33816 REQ 'GET /hnogared/Music/Clips/ HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:33816 REQ 'GET /hnogared/Music/Clips/AMVs/ HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:33816 REQ 'GET /hnogared/Music/Clips/AMVs/Speed+Racer+Final+Race+but+it+has+Jak+X+music.mp4 HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[ERROR] 127.0.0.1:33816 500 (Internal server error) - Failed write to client: Connection reset by peer
+[ERROR] 127.0.0.1:33816 500 - Failed to read error page: Failed write to client: Broken pipe
+[INFO] 127.0.0.1:33816 CONN CLOSED - Local host
+[INFO] 127.0.0.1:49720 CONN ACCEPTED
+[INFO] 127.0.0.1:49720 REQ 'GET /hnogared/Music/Clips/AMVs/Speed+Racer+Final+Race+but+it+has+Jak+X+music.mp4 HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:49720 REQ 'GET /hnogared/Music/Clips/AMVs/Speed+Racer+Final+Race+but+it+has+Jak+X+music.mp4 HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
 [INFO] STATUS Stopping...
+[ERROR] 127.0.0.1:49720 500 (Internal server error) - Failed write to client: Bad file descriptor
+[ERROR] 127.0.0.1:49720 500 - Failed to read error page: Failed write to client: Bad file descriptor
+[INFO] 127.0.0.1:49720 CONN CLOSED - Local host

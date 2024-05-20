@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 23:01:55 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/20 14:12:32 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/20 16:32:00 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,9 +124,7 @@ void HttpRequest::parseHeaders(std::string &headers)
             throw BadRequest();
 
         this->addHeader(header_name, header_value);
-        std::cout << header_name << " " << header_value << std::endl;
     }
-    std::cout << std::endl;
 }
 
 /* ************************************************************************** */

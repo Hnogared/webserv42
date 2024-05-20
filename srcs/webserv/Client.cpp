@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 14:43:33 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/20 13:29:51 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/20 16:33:59 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,16 +90,34 @@ const std::string &Client::getBuffer(void) const { return (this->_buffer); }
 void Client::sendResponse(const http::HttpResponse &response)
 {
     const int code = response.getStatusCode();
-    const std::string response_str = response.toString(
+    const std::string responseStr = response.toString(
         this->_request.getMethod() != http::HttpRequest::HEAD);
 
     if (code >= 100 && code < 400 && this->_requestPending)
         this->fetchRequestBody(0);
     this->_request.clear();
 
-    if (send(this->_socket.getFd(), response_str.c_str(), response_str.size(),
-             0) < 0)
-        throw ClientWriteException(strerror(errno));
+    if (WS_SEND_BUFF_SIZE <= 0 || responseStr.size() <= WS_SEND_BUFF_SIZE)
+    {
+        if (send(this->_socket.getFd(), responseStr.c_str(), responseStr.size(),
+                 0) == -1)
+            throw ClientWriteException(strerror(errno));
+        return;
+    }
+
+    const char *buff = responseStr.c_str();
+    size_t pos = 0;
+
+    while (pos < responseStr.size())
+    {
+        size_t chunkSize =
+            std::min<size_t>(responseStr.size() - pos, WS_SEND_BUFF_SIZE);
+
+        int sendSize = send(this->_socket.getFd(), buff + pos, chunkSize, 0);
+        if (sendSize == -1) throw ClientWriteException(strerror(errno));
+
+        pos += std::min<size_t>(chunkSize, sendSize);
+    }
 }
 
 void Client::fetchRequestLineAndHeaders(const http::Protocol &protocol)
@@ -192,10 +210,10 @@ void Client::fetchRequestBody(size_t maxBodyLen)
 std::string Client::_readRequestBlock(size_t maxBuffSize) const
 {
     int bytesRead;
-    char buffer[WS_CLIENT_BUFF_SIZE];
+    char buffer[WS_READ_BUFF_SIZE];
 
-    if (maxBuffSize == 0 || WS_CLIENT_BUFF_SIZE - 1 < maxBuffSize)
-        maxBuffSize = WS_CLIENT_BUFF_SIZE - 1;
+    if (maxBuffSize == 0 || WS_READ_BUFF_SIZE - 1 < maxBuffSize)
+        maxBuffSize = WS_READ_BUFF_SIZE - 1;
 
     bytesRead = recv(this->_socket.getFd(), buffer, maxBuffSize, 0);
 
