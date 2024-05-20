@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 21:30:42 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/19 22:24:54 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/20 18:11:30 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 
 #include <stdexcept>
 #include <string>
+
+#include "strings.hpp"
 
 namespace http
 {

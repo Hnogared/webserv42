@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 12:31:31 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/19 22:26:57 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/20 18:10:57 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ namespace tool
 namespace strings
 {
 
-int stoi(const std::string &str);
+int stoib(const std::string &str, size_t *idx = NULL, int base = 10);
 unsigned int stoui(const std::string &str);
 unsigned long int bytestoul(const std::string &str);
 std::string trim(const std::string &str, const std::string &set);

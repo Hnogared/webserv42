@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 10:21:20 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/20 13:57:46 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/20 18:22:05 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -292,11 +292,11 @@ void ConfigurationParser::_parseServerListen(std::queue<t_token> &tokens,
             if (token.content.find('.') != std::string::npos)
                 config.setAddress(token.content);
             else
-                config.setPort(tool::strings::stoi(token.content));
+                config.setPort(tool::strings::stoib(token.content));
         }
         else
         {
-            config.setPort(tool::strings::stoi(token.content.substr(pos + 1)));
+            config.setPort(tool::strings::stoib(token.content.substr(pos + 1)));
             config.setAddress(token.content.substr(0, pos));
         }
     }
@@ -363,7 +363,7 @@ void ConfigurationParser::_parseServerErrorPage(std::queue<t_token> &tokens,
     {
         while (tokens.front().type == STRING)
         {
-            codes.push_back(tool::strings::stoi(token.content));
+            codes.push_back(tool::strings::stoib(token.content));
             token = tokens.front();
             tokens.pop();
         }
@@ -653,7 +653,7 @@ void ConfigurationParser::_parseLocReturn(std::queue<t_token> &tokens,
 
     try
     {
-        config.setReturnCode(tool::strings::stoi(token.content));
+        config.setReturnCode(tool::strings::stoib(token.content));
     }
     catch (const std::exception &e)
     {

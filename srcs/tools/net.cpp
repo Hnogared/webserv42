@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/08 12:47:27 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/19 22:33:17 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/20 18:23:40 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ int inet_aton(const std::string &address, struct in_addr &addr)
     while (std::getline(iss, segment, '.'))
     {
         if (i > 3) return (0);
-        s_addr = (s_addr << 8) | tool::strings::stoi(segment);
+        s_addr = (s_addr << 8) | tool::strings::stoib(segment);
         i++;
     }
     addr.s_addr = htonl(s_addr);

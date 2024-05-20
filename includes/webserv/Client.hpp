@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 14:42:17 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/20 16:23:26 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/20 18:05:22 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,8 @@ private:
     std::string _buffer;
 
     /* Private methods */
+    void _fetchSimpleBody(size_t bodySize);
+    void _fetchChunkedBody(size_t maxBodyLen);
     std::string _readRequestBlock(size_t maxBuffSize = 0) const;
 
     /* Exceptions */

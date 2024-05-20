@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 12:31:15 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/19 22:33:24 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/20 18:23:26 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,17 +18,34 @@ namespace tool
 namespace strings
 {
 
-int stoi(const std::string &str)
+int stoib(const std::string &str, size_t *idx, int base)
 {
-    int nbr;
-    std::istringstream iss(str);
+    int sign = 1;
+    int n = 0;
+    size_t i = 0;
 
-    iss >> nbr;
+    if (str.empty()) return (0);
 
-    if (iss.fail() || !iss.eof())
-        throw std::invalid_argument("Invalid int string `" + str + "`");
+    if (str[0] == '-')
+    {
+        sign = -1;
+        ++i;
+    }
 
-    return (nbr);
+    while (i < str.size())
+    {
+        if (isdigit(str[i]))
+            n = n * base + str[i] - '0';
+        else if (base == 16 && isxdigit(str[i]))
+            n = n * base + tolower(str[i]) - 'a' + 10;
+        else
+            break;
+        ++i;
+    }
+
+    if (idx) *idx = i;
+
+    return (n * sign);
 }
 
 unsigned int stoui(const std::string &str)
