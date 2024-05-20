@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 12:06:54 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/19 22:34:36 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/20 13:31:41 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -232,7 +232,28 @@ void VirtualServerManager::_serveClient(
     try
     {
         client->fetchRequestLineAndHeaders(this->_protocol);
+    }
+    catch (const http::HttpRequest::RequestException &e)
+    {
+        this->_log(Harl::INFO, client,
+                   tool::strings::toStr(e.code()) + "(" + e.what() + ")");
+        client->sendResponse(http::HttpResponse(400));
+        delete client;
+        this->_clients.erase(clientIt);
+        return;
+    }
+    catch (const std::exception &e)
+    {
+        this->_log(Harl::INFO, client,
+                   "500 (Internal Server Error) - " + std::string(e.what()));
+        client->sendResponse(http::HttpResponse(500));
+        delete client;
+        this->_clients.erase(clientIt);
+        return;
+    }
 
+    try
+    {
         for (; serverIt != this->_servers.end(); serverIt++)
         {
             if ((*serverIt)->tryHandleClientRequest(*client)) return;

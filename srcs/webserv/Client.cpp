@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 14:43:33 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/19 22:33:33 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/20 13:29:51 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,6 +147,9 @@ void Client::fetchRequestLineAndHeaders(const http::Protocol &protocol)
     temp = content.substr(0, pos);
     this->_request.parseHeaders(temp);
 
+    if (this->_request.getHeader("Host").empty())
+        throw http::HttpRequest::BadRequest();
+
     this->_buffer = content.substr(pos + 4 - 2 * (pos == 0));
     this->_requestPending = true;
 }
@@ -164,9 +167,12 @@ void Client::fetchRequestBody(size_t maxBodyLen)
         this->_request.getMethod() != http::HttpRequest::PUT)
         return;
 
+    if (this->_request.getHeader("Content-Length").empty())
+        throw http::HttpRequest::BadRequest();
+
     bodySize = tool::strings::stoi(this->_request.getHeader("Content-Length"));
     if (maxBodyLen && bodySize > maxBodyLen)
-        throw http::HttpRequest::BodyTooLarge(this->_request.getStatusLine());
+        throw http::HttpRequest::BodyTooLarge();
 
     while (content.size() < bodySize)
     {

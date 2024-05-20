@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 10:19:18 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/19 22:30:16 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/20 12:58:25 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,6 +104,8 @@ private:
                                   const Configuration &servConfig);
     static void _parseLocAutoindex(std::queue<t_token> &tokens,
                                    LocationConfiguration &config);
+    static void _parseLocClientMaxBodySize(std::queue<t_token> &tokens,
+                                           LocationConfiguration &config);
     static void _parseLocAllowedMethods(std::queue<t_token> &tokens,
                                         LocationConfiguration &config);
     static void _parseLocReturn(std::queue<t_token> &tokens,

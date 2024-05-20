@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/01 14:34:11 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/19 22:30:56 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/20 13:04:06 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ public:
     std::string getRoot(void) const;
     std::string getIndex(void) const;
     bool isAutoindex(void) const;
+    long int getClientMaxBodySize(void) const;
     int getReturnCode(void) const;
     std::string getReturnMessage(void) const;
     const std::set<http::HttpRequest::e_method> &getAllowedMethods(void) const;
@@ -58,6 +59,7 @@ public:
     void setRoot(const std::string &root);
     void setIndex(const std::string &index);
     void setAutoindex(bool autoindex);
+    void setClientMaxBodySize(long int size);
     void setReturnCode(int returnCode);
     void setReturnMessage(const std::string &returnMessage);
     void setAllowedMethods(
@@ -77,6 +79,7 @@ private:
     std::string _root;
     std::string _index;
     bool _autoindex;
+    long int _clientMaxBodySize;
     int _returnCode;
     std::string _returnMessage;
     std::set<http::HttpRequest::e_method> _allowedMethods;

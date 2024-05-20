@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 10:21:20 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/19 22:33:43 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/20 13:57:46 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,7 @@ ConfigurationParser::_initializeLocationDirectives(void)
 
     directives["autoindex"] = &_parseLocAutoindex;
     directives["allow_methods"] = &_parseLocAllowedMethods;
+    directives["client_max_body_size"] = &_parseLocClientMaxBodySize;
     directives["return"] = &_parseLocReturn;
     directives["root"] = &_parseLocRoot;
     directives["index"] = &_parseLocIndex;
@@ -525,6 +526,7 @@ void ConfigurationParser::_completeLocation(LocationConfiguration &locConfig,
 {
     if (locConfig.getRoot().empty() && !servConfig.getRoot().empty())
         locConfig.setRoot(servConfig.getRoot());
+
     if (locConfig.getIndex().empty())
     {
         if (servConfig.getIndex().empty())
@@ -532,6 +534,9 @@ void ConfigurationParser::_completeLocation(LocationConfiguration &locConfig,
         else
             locConfig.setIndex(servConfig.getIndex());
     }
+
+    if (locConfig.getClientMaxBodySize() == -1)
+        locConfig.setClientMaxBodySize(servConfig.getClientMaxBodySize());
 }
 
 void ConfigurationParser::_parseLocAutoindex(std::queue<t_token> &tokens,
@@ -554,11 +559,38 @@ void ConfigurationParser::_parseLocAutoindex(std::queue<t_token> &tokens,
     tokens.pop();
 }
 
+void ConfigurationParser::_parseLocClientMaxBodySize(
+    std::queue<t_token> &tokens, LocationConfiguration &config)
+{
+    t_token token;
+
+    token = tokens.front();
+    tokens.pop();
+
+    if (token.type != STRING)
+        throw UnexpectedToken(token, "client_max_body_size", "string");
+    if (tokens.front().type != SEMICOLON)
+        throw UnexpectedToken(tokens.front(), "client_max_body_size", ";");
+
+    try
+    {
+        config.setClientMaxBodySize(tool::strings::bytestoul(token.content));
+    }
+    catch (const std::invalid_argument &e)
+    {
+        throw InvalidConfigFile(token.lineNbr, "client_max_body_size",
+                                e.what());
+    }
+
+    tokens.pop();
+}
+
 void ConfigurationParser::_parseLocAllowedMethods(std::queue<t_token> &tokens,
                                                   LocationConfiguration &config)
 {
     t_token token;
     http::HttpRequest::e_method method;
+    std::set<http::HttpRequest::e_method> allowed_methods;
 
     if (tokens.empty()) throw MissingToken("allow_methods", "string");
 
@@ -579,11 +611,11 @@ void ConfigurationParser::_parseLocAllowedMethods(std::queue<t_token> &tokens,
 
         if (token.content == "all")
         {
-            config.addAllowedMethod(http::HttpRequest::GET);
-            config.addAllowedMethod(http::HttpRequest::HEAD);
-            config.addAllowedMethod(http::HttpRequest::POST);
-            config.addAllowedMethod(http::HttpRequest::PUT);
-            config.addAllowedMethod(http::HttpRequest::DELETE);
+            allowed_methods.insert(http::HttpRequest::GET);
+            allowed_methods.insert(http::HttpRequest::HEAD);
+            allowed_methods.insert(http::HttpRequest::POST);
+            allowed_methods.insert(http::HttpRequest::PUT);
+            allowed_methods.insert(http::HttpRequest::DELETE);
             continue;
         }
 
@@ -594,8 +626,10 @@ void ConfigurationParser::_parseLocAllowedMethods(std::queue<t_token> &tokens,
                                     "Unknown method `" + token.content + "`");
         }
 
-        config.addAllowedMethod(method);
+        allowed_methods.insert(method);
     }
+
+    config.setAllowedMethods(allowed_methods);
 
     if (tokens.empty()) throw MissingToken("allow_methods", ";");
 

@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 23:01:55 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/19 22:32:19 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/20 14:12:32 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,30 +109,24 @@ void HttpRequest::parseHeaders(std::string &headers)
 
     while (std::getline(iss, line))
     {
-        {
-            std::string::size_type colon_pos = line.find(':');
-            std::string header_name;
-            std::string header_value;
+        std::string::size_type colon_pos = line.find(':');
+        std::string header_name;
+        std::string header_value;
 
-            if (colon_pos == std::string::npos) throw BadRequest();
+        if (colon_pos == std::string::npos) throw BadRequest();
 
-            header_name = line.substr(0, colon_pos);
-            header_value =
-                tool::strings::trim(line.substr(colon_pos + 1), " \t\n\r");
+        header_name = line.substr(0, colon_pos);
+        header_value =
+            tool::strings::trim(line.substr(colon_pos + 1), " \t\n\r");
 
-            if (header_name == "Host" &&
-                header_value.find(' ') != std::string::npos)
-                throw BadRequest();
+        if (header_name == "Host" &&
+            header_value.find(' ') != std::string::npos)
+            throw BadRequest();
 
-            this->addHeader(header_name, header_value);
-        }
+        this->addHeader(header_name, header_value);
+        std::cout << header_name << " " << header_value << std::endl;
     }
-
-    if (((this->_method == HttpRequest::POST ||
-          this->_method == HttpRequest::PUT) &&
-         this->getHeader("Content-Length").empty()) ||
-        this->getHeader("Host").empty())
-        throw BadRequest();
+    std::cout << std::endl;
 }
 
 /* ************************************************************************** */

@@ -2,7 +2,7 @@
 /*																			*/
 /*														:::
  * ::::::::   */
-/*   Configuration.cpp								  :+:
+/*   Configuration.cpp :+:
  * :+:	:+:   */
 /*													+:+
  * +:+		 +:+	 */
@@ -221,7 +221,7 @@ std::ostream &Configuration::print(std::ostream &os) const
     if (!this->_root.empty()) os << "\nRoot     : '" << this->_root << "'";
 
     os << "\nIndex    : '" << this->_index << "'"
-       << "\nClient max body size : " << this->_clientMaxBodySize;
+       << "\nC max body size : " << this->_clientMaxBodySize;
 
     if (!this->_errorPages.empty())
     {

@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/01 14:41:57 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/19 22:50:34 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/20 13:04:09 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ LocationConfiguration::LocationConfiguration(const std::string &path)
       _root(""),
       _index(""),
       _autoindex(false),
+      _clientMaxBodySize(-1),
       _returnCode(0),
       _returnMessage(""),
       _allowedMethods(),
@@ -54,6 +55,7 @@ LocationConfiguration &LocationConfiguration::operator=(
     this->_root = original.getRoot();
     this->_index = original.getIndex();
     this->_autoindex = original.isAutoindex();
+    this->_clientMaxBodySize = original.getClientMaxBodySize();
     this->_returnCode = original.getReturnCode();
     this->_returnMessage = original.getReturnMessage();
     this->_allowedMethods = original.getAllowedMethods();
@@ -70,6 +72,8 @@ bool LocationConfiguration::operator<(const LocationConfiguration &other) const
         return (this->_index < other.getIndex());
     if (this->_autoindex != other.isAutoindex())
         return (this->_autoindex < other.isAutoindex());
+    if (this->_clientMaxBodySize != other.getClientMaxBodySize())
+        return (this->_clientMaxBodySize < other.getClientMaxBodySize());
     if (this->_returnCode != other.getReturnCode())
         return (this->_returnCode < other.getReturnCode());
     if (this->_returnMessage != other.getReturnMessage())
@@ -96,6 +100,11 @@ std::string LocationConfiguration::getIndex(void) const
 bool LocationConfiguration::isAutoindex(void) const
 {
     return (this->_autoindex);
+}
+
+long int LocationConfiguration::getClientMaxBodySize(void) const
+{
+    return (this->_clientMaxBodySize);
 }
 
 int LocationConfiguration::getReturnCode(void) const
@@ -148,6 +157,11 @@ void LocationConfiguration::setIndex(const std::string &index)
 void LocationConfiguration::setAutoindex(bool autoindexState)
 {
     this->_autoindex = autoindexState;
+}
+
+void LocationConfiguration::setClientMaxBodySize(long int size)
+{
+    this->_clientMaxBodySize = size;
 }
 
 void LocationConfiguration::setReturnCode(int returnCode)
@@ -208,6 +222,7 @@ std::ostream &LocationConfiguration::print(std::ostream &os) const
 
     if (!this->_root.empty()) os << "\nRoot            : " << this->_root;
 
+    os << "\nAutoindex       : " << (this->isAutoindex() ? "on" : "off");
     os << "\nIndex           : " << this->_index << "\nAllowed methods : ";
 
     if (this->_allowedMethods.empty())
@@ -215,7 +230,8 @@ std::ostream &LocationConfiguration::print(std::ostream &os) const
     else
         os << tool::strings::join(this->_allowedMethods, ", ");
 
-    os << "\nAutoindex       : " << (this->isAutoindex() ? "on" : "off");
+    if (this->_clientMaxBodySize != -1)
+        os << "\nC max body size : " << this->_clientMaxBodySize;
 
     if (this->_returnCode != 0)
     {

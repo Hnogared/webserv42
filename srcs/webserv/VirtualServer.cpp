@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/12 02:08:16 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/19 22:58:50 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/20 13:53:41 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -158,7 +158,7 @@ bool VirtualServer::_tryPostOrPutResponse(Client &client,
 {
     const std::string &uri = client.getRequest().getUri();
 
-    client.fetchRequestBody(this->_config.getClientMaxBodySize());
+    client.fetchRequestBody(location.getClientMaxBodySize());
 
     if (*(uri.end() - 1) == '/')
         throw http::HttpRequest::RequestException("Forbidden", 403);
