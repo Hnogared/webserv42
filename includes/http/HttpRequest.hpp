@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 22:57:07 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/19 22:25:29 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/21 23:16:01 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,9 @@ public:
 
     /* Getters */
     HttpRequest::e_method getMethod(void) const;
+    const std::string &getMethodStr(void) const;
     const std::string &getUri(void) const;
+    const std::string &getQueryString(void) const;
 
     /* Public methods */
     void parseRequestLine(std::string &line);
@@ -63,11 +65,13 @@ public:
 
     /* Static public methods */
     static e_method strToMethod(const std::string &str);
+    static const std::string &methodToStr(e_method method);
 
 private:
     /* Private attributes */
     e_method _method;
     std::string _uri;
+    std::string _queryString;
 
     /* Static private attributes */
     static const std::map<std::string, e_method> _strToMethodMap;

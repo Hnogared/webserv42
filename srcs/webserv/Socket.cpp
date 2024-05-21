@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 19:07:28 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/19 22:34:26 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/21 23:36:37 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,12 +54,12 @@ Socket::Socket(int fd, const struct sockaddr_in &peer_addr)
 Socket::Socket(const Socket &original)
     : _fd(original.getFd()),
       _ref_count(original.getRefCountPtr()),
-      _local_addr(original.getLocalAddr()),
+      _local_addr(original.getAddr(Socket::LOCAL)),
       _peer_addr_set(false)
 {
     if (original.isPeerAddrSet())
     {
-        this->_peer_addr = original.getPeerAddr();
+        this->_peer_addr = original.getAddr(Socket::PEER);
         this->_peer_addr_set = true;
     }
     (*(this->_ref_count))++;
@@ -90,9 +90,11 @@ Socket &Socket::operator=(const Socket &original)
     }
 
     this->_fd = original.getFd();
-    this->_local_addr = original.getLocalAddr();
+    this->_local_addr = original.getAddr(Socket::LOCAL);
+
     this->_peer_addr_set = original.isPeerAddrSet();
-    if (this->_peer_addr_set) this->_peer_addr = original.getPeerAddr();
+    if (this->_peer_addr_set) this->_peer_addr = original.getAddr(Socket::PEER);
+
     this->_ref_count = original.getRefCountPtr();
     (*(this->_ref_count))++;
     return (*this);
@@ -111,14 +113,32 @@ int Socket::getFd(void) const { return (this->_fd); }
 
 int *Socket::getRefCountPtr(void) const { return (this->_ref_count); }
 
-struct sockaddr_in Socket::getLocalAddr(void) const
+int Socket::getPort(e_addrChoice addrChoice) const
 {
-    return (this->_local_addr);
+    if (addrChoice == Socket::LOCAL) return (ntohs(this->_local_addr.sin_port));
+
+    return (ntohs(this->_peer_addr.sin_port));
 }
 
-struct sockaddr_in Socket::getPeerAddr(void) const
+const struct sockaddr_in &Socket::getAddr(e_addrChoice addrChoice) const
 {
+    if (addrChoice == Socket::LOCAL) return (this->_local_addr);
+
     return (this->_peer_addr);
+}
+
+std::string Socket::getAddrStr(e_addrChoice addrChoice) const
+{
+    if (addrChoice == Socket::LOCAL)
+    {
+        return (tool::net::inet_ntoa(this->_local_addr.sin_addr) + ":" +
+                tool::strings::toStr(ntohs(this->_local_addr.sin_port)));
+    }
+
+    if (!this->_peer_addr_set) return ("");
+
+    return (tool::net::inet_ntoa(this->_peer_addr.sin_addr) + ":" +
+            tool::strings::toStr(ntohs(this->_peer_addr.sin_port)));
 }
 
 bool Socket::isPeerAddrSet(void) const { return (this->_peer_addr_set); }
@@ -150,14 +170,13 @@ std::string Socket::getInfosStr(void) const
 
 void Socket::setFd(int fd) { this->_fd = fd; }
 
-void Socket::setLocalAddr(struct sockaddr_in local_addr)
+void Socket::setAddr(e_addrChoice addrChoice,
+                     const struct sockaddr_in &local_addr)
 {
-    this->_local_addr = local_addr;
-}
-
-void Socket::setPeerAddr(struct sockaddr_in peer_addr)
-{
-    this->_peer_addr = peer_addr;
+    if (addrChoice == Socket::LOCAL)
+        this->_local_addr = local_addr;
+    else
+        this->_peer_addr = local_addr;
 }
 
 /* ************************************************************************** */

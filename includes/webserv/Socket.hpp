@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 19:02:56 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/19 22:31:12 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/21 23:34:10 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,12 @@ namespace webserv
 class Socket
 {
 public:
+    enum e_addrChoice
+    {
+        LOCAL,
+        PEER
+    };
+
     /* Constructors */
     explicit Socket(int fd = -1);
     Socket(int fd, const struct sockaddr_in &peer_addr);
@@ -46,15 +52,15 @@ public:
     /* Getters */
     int getFd(void) const;
     int *getRefCountPtr(void) const;
-    struct sockaddr_in getLocalAddr(void) const;
-    struct sockaddr_in getPeerAddr(void) const;
+    int getPort(e_addrChoice addrChoice) const;
+    const struct sockaddr_in &getAddr(e_addrChoice addrChoice) const;
+    std::string getAddrStr(e_addrChoice addrChoice) const;
     bool isPeerAddrSet(void) const;
     std::string getInfosStr(void) const;
 
     /* Setters */
     void setFd(int fd);
-    void setLocalAddr(struct sockaddr_in local_addr);
-    void setPeerAddr(struct sockaddr_in peer_addr);
+    void setAddr(e_addrChoice addrChoice, const struct sockaddr_in &local_addr);
 
     /* Public methods */
     void close(void);

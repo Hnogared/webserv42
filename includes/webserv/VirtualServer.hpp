@@ -16,10 +16,12 @@
 
 #include <arpa/inet.h>
 #include <dirent.h>
+#include <fcntl.h>
 #include <poll.h>
 #include <signal.h>
 #include <sys/socket.h>
 #include <sys/stat.h>
+#include <sys/wait.h>
 #include <unistd.h>
 
 #include <cerrno>
@@ -65,6 +67,10 @@ private:
     /* Private methods */
     bool _checkServerNames(const std::string &host) const;
     bool _tryResponse(Client &client, const LocationConfiguration &location);
+    void _doCGIResponse(Client &client, const LocationConfiguration &location);
+    void _completeParams(const Client &client,
+                         const LocationConfiguration &location,
+                         std::map<std::string, std::string> &params) const;
     bool _tryGetOrHeadResponse(Client &client,
                                const LocationConfiguration &location);
     bool _tryPostOrPutResponse(Client &client,

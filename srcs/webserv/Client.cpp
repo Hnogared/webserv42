@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 14:43:33 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/21 14:33:11 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/22 00:36:01 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,25 +55,9 @@ bool Client::operator==(const Client &other) const
 
 int Client::getSocketFd(void) const { return (this->_socket.getFd()); }
 
-webserv::Socket Client::getSocket(void) const { return (this->_socket); }
+const webserv::Socket &Client::getSocket(void) const { return (this->_socket); }
 
 const Socket *Client::getSocketPtr(void) const { return (&this->_socket); }
-
-std::string Client::getAddrStr(e_addr_choice choice) const
-{
-    std::ostringstream oss;
-    struct sockaddr_in addr;
-
-    if (choice == LOCAL)
-        addr = this->_socket.getLocalAddr();
-    else if (this->_socket.isPeerAddrSet())
-        addr = this->_socket.getPeerAddr();
-    else
-        return ("Unknown");
-
-    oss << tool::net::inet_ntoa(addr.sin_addr) << ":" << ntohs(addr.sin_port);
-    return (oss.str());
-}
 
 bool Client::isRequestPending(void) const { return (this->_requestPending); }
 
@@ -199,8 +183,6 @@ void Client::fetchRequestBody(size_t maxBodyLen)
         this->_fetchChunkedBody(maxBodyLen);
         this->_requestPending = false;
     }
-    else
-        throw http::HttpRequest::BadRequest();
 }
 
 /* ************************************************************************** */
@@ -209,10 +191,10 @@ void Client::fetchRequestBody(size_t maxBodyLen)
 std::string Client::_readRequestBlock(size_t maxBuffSize) const
 {
     int bytesRead;
-    char buffer[WS_READ_BUFF_SIZE];
+    char buffer[WS_RECV_BUFF_SIZE];
 
-    if (maxBuffSize == 0 || WS_READ_BUFF_SIZE - 1 < maxBuffSize)
-        maxBuffSize = WS_READ_BUFF_SIZE - 1;
+    if (maxBuffSize == 0 || WS_RECV_BUFF_SIZE - 1 < maxBuffSize)
+        maxBuffSize = WS_RECV_BUFF_SIZE - 1;
 
     bytesRead = recv(this->_socket.getFd(), buffer, maxBuffSize, 0);
 

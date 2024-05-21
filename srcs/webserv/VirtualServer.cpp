@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/12 02:08:16 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/21 22:14:03 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/22 00:33:19 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,6 +113,12 @@ bool VirtualServer::_tryResponse(Client &client,
         return (true);
     }
 
+    if (location.getLocationType() == LocationConfiguration::DYNAMIC)
+    {
+        this->_doCGIResponse(client, location);
+        return (true);
+    }
+
     switch (method)
     {
         case http::HttpRequest::GET:
@@ -124,9 +130,147 @@ bool VirtualServer::_tryResponse(Client &client,
         case http::HttpRequest::DELETE:
             return (this->_tryDeleteResponse(client, location));
         default:
-            throw http::HttpRequest::RequestException("Method not allowed",
+            throw http::HttpRequest::RequestException("Method Not Allowed",
                                                       405);
     }
+}
+
+void VirtualServer::_doCGIResponse(Client &client,
+                                   const LocationConfiguration &location)
+{
+    int pid;
+    int pipeOut[2];
+    std::map<std::string, std::string> params = location.getFCGIParams();
+
+    this->_completeParams(client, location, params);
+
+    if (pipe(pipeOut) == -1)
+        throw http::HttpRequest::RequestException("Internal Server Error", 500);
+
+    if ((pid = fork()) == -1)
+    {
+        close(pipeOut[0]);
+        close(pipeOut[1]);
+        throw http::HttpRequest::RequestException("Internal Server Error", 500);
+    }
+
+    if (pid == 0)
+    {
+        dup2(pipeOut[1], STDOUT_FILENO);
+        close(pipeOut[0]);
+        close(pipeOut[1]);
+
+        std::map<std::string, std::string>::const_iterator it;
+        char *argv[] = {NULL};
+        char **env = new char *[params.size() + 1];
+        int index = 0;
+
+        for (it = params.begin(); it != params.end(); it++)
+        {
+            std::string envVar = it->first + "=" + it->second;
+
+            env[index] = new char[envVar.size() + 1];
+            std::strcpy(env[index], envVar.c_str());
+            index++;
+        }
+
+        env[index] = NULL;
+
+        execve(params["SCRIPT_FILENAME"].c_str(), argv, env);
+
+        for (int i = 0; i < index; i++) delete[] env[i];
+        delete[] env;
+        exit(errno);
+    }
+
+    waitpid(pid, NULL, 0);
+
+    int readSize;
+    char buffer[WS_READ_BUFF_SIZE];
+    std::string output;
+    int flags = fcntl(pipeOut[0], F_GETFL, 0);
+
+    fcntl(pipeOut[0], F_SETFL, flags | O_NONBLOCK);
+
+    do
+    {
+        readSize = read(pipeOut[0], buffer, WS_READ_BUFF_SIZE - 1);
+        if (readSize == -1)
+        {
+            if (errno == EAGAIN || errno == EWOULDBLOCK) continue;
+
+            close(pipeOut[0]);
+            close(pipeOut[1]);
+            throw http::HttpRequest::RequestException("Internal Server Error",
+                                                      500);
+        }
+
+        buffer[readSize] = 0;
+        output += buffer;
+    } while (readSize > 0);
+
+    close(pipeOut[0]);
+    close(pipeOut[1]);
+
+    http::HttpResponse response(200, client.getRequest());
+
+    response.setBody(output, http::HttpMessage::TEXT_HTML);
+    this->_log(Harl::INFO, &client, "200");
+    client.sendResponse(response);
+}
+
+void VirtualServer::_completeParams(
+    const Client &client, const LocationConfiguration &location,
+    std::map<std::string, std::string> &params) const
+{
+    const http::HttpRequest &request = client.getRequest();
+
+    params.insert(std::make_pair("QUERY_STRING", request.getQueryString()));
+    params.insert(std::make_pair("REQUEST_METHOD", request.getMethodStr()));
+
+    params.insert(std::make_pair("DOCUMENT_ROOT", location.getRoot()));
+
+    if (request.getHeader("Content-Length").empty())
+        params.insert(std::make_pair("CONTENT_LENGTH", "0"));
+    else
+    {
+        params.insert(std::make_pair("CONTENT_LENGTH",
+                                     request.getHeader("Content-Length")));
+    }
+
+    if (!request.getHeader("Content-Type").empty())
+    {
+        params.insert(
+            std::make_pair("CONTENT_TYPE", request.getHeader("Content-Type")));
+    }
+
+    params.insert(std::make_pair("GATEWAY_INTERFACE", WS_CGI_VERSION));
+
+    params.insert(std::make_pair("REMOTE_ADDR",
+                                 client.getSocket().getAddrStr(Socket::PEER)));
+    params.insert(std::make_pair(
+        "REMOTE_PORT",
+        tool::strings::toStr(client.getSocket().getPort(Socket::PEER))));
+
+    params.insert(std::make_pair("SERVER_ADDR",
+                                 client.getSocket().getAddrStr(Socket::LOCAL)));
+    params.insert(std::make_pair(
+        "SERVER_PORT",
+        tool::strings::toStr(client.getSocket().getPort(Socket::LOCAL))));
+    params.insert(std::make_pair("SERVER_NAME", request.getHeader("Host")));
+
+    params.insert(std::make_pair("SERVER_PROTOCOL", WS_HTTP_VERSION));
+    params.insert(std::make_pair("SERVER_SOFTWARE",
+                                 WS_SERVER_NAME "/" WS_SERVER_VERSION));
+
+    params.insert(std::make_pair(
+        "SCRIPT_FILENAME",
+        tool::files::joinPaths(location.getRoot(), request.getUri())));
+    params.insert(std::make_pair("SCRIPT_NAME", request.getUri()));
+    params.insert(std::make_pair("PATH_INFO", request.getUri()));
+    params.insert(std::make_pair(
+        "PATH_TRANSLATED",
+        tool::files::joinPaths(location.getRoot(), request.getUri())));
 }
 
 bool VirtualServer::_tryGetOrHeadResponse(Client &client,
@@ -410,7 +554,7 @@ void VirtualServer::_log(Harl::e_level level, const Client *client,
     }
 
     const http::HttpRequest &request = client->getRequest();
-    std::string logMessage = client->getAddrStr(Client::PEER);
+    std::string logMessage = client->getSocket().getAddrStr(Socket::PEER);
     std::string statusLine = request.getStatusLine();
 
     if (!statusLine.empty())

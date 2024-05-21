@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 12:06:54 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/20 13:31:41 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/21 23:24:34 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -293,7 +293,7 @@ void VirtualServerManager::_log(Harl::e_level level, const Client *client,
         return;
     }
 
-    std::string logMessage = client->getAddrStr(Client::PEER);
+    std::string logMessage = client->getSocket().getAddrStr(Socket::PEER);
     std::string statusLine = client->getRequest().getStatusLine();
     const http::HttpRequest &request = client->getRequest();
 

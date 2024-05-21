@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 14:42:17 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/21 13:21:42 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/21 23:42:23 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ namespace webserv
 class Client
 {
 public:
-    enum e_addr_choice
+    enum e_addrChoice
     {
         LOCAL,
         PEER
@@ -55,9 +55,8 @@ public:
 
     /* Getters */
     int getSocketFd(void) const;
-    Socket getSocket(void) const;
+    const Socket &getSocket(void) const;
     const Socket *getSocketPtr(void) const;
-    std::string getAddrStr(e_addr_choice choice) const;
     bool isRequestPending(void) const;
     const http::HttpRequest &getRequest(void) const;
     const std::string &getBuffer(void) const;

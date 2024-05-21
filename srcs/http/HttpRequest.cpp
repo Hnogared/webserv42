@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 23:01:55 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/20 16:32:00 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/21 23:20:15 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ const std::map<std::string, HttpRequest::e_method>
 
 /* Default constructor */
 HttpRequest::HttpRequest(void)
-    : HttpMessage(), _method(HttpRequest::UNKNOWN), _uri()
+    : HttpMessage(), _method(HttpRequest::UNKNOWN), _uri(), _queryString()
 {
 }
 
@@ -50,6 +50,7 @@ HttpRequest &HttpRequest::operator=(const HttpRequest &original)
     this->HttpMessage::operator=(original);
     this->_method = original.getMethod();
     this->_uri = original.getUri();
+    this->_queryString = original.getQueryString();
     return (*this);
 }
 
@@ -61,7 +62,17 @@ HttpRequest::e_method HttpRequest::getMethod(void) const
     return (this->_method);
 }
 
+const std::string &HttpRequest::getMethodStr(void) const
+{
+    return (HttpRequest::methodToStr(this->_method));
+}
+
 const std::string &HttpRequest::getUri(void) const { return (this->_uri); }
+
+const std::string &HttpRequest::getQueryString(void) const
+{
+    return (this->_queryString);
+}
 
 /* ************************************************************************** */
 /* Public methods */
@@ -88,7 +99,21 @@ void HttpRequest::parseRequestLine(std::string &line)
     try
     {
         this->_method = HttpRequest::_strToMethodMap.at(methodStr);
-        this->_uri = urlDecode(this->_uri);
+
+        const std::string decoded = urlDecode(this->_uri);
+        std::string::size_type questionMarkPos = decoded.find('?');
+
+        if (questionMarkPos != std::string::npos)
+        {
+            this->_uri = decoded.substr(0, questionMarkPos);
+            this->_queryString = decoded.substr(questionMarkPos + 1);
+        }
+        else
+        {
+            this->_uri = decoded;
+            this->_queryString.clear();
+        }
+
         this->setProtocol(versionStr);
     }
     catch (const std::out_of_range & /* e */)
@@ -135,6 +160,7 @@ void HttpRequest::clear(void)
     this->HttpMessage::clear();
     this->_method = HttpRequest::UNKNOWN;
     this->_uri.clear();
+    this->_queryString.clear();
 }
 
 /* ************************************************************************** */
@@ -148,6 +174,19 @@ HttpRequest::e_method HttpRequest::strToMethod(const std::string &methodStr)
     if (it == HttpRequest::_strToMethodMap.end()) return (HttpRequest::UNKNOWN);
 
     return (it->second);
+}
+
+const std::string &HttpRequest::methodToStr(HttpRequest::e_method method)
+{
+    std::map<std::string, HttpRequest::e_method>::const_iterator it;
+
+    for (it = HttpRequest::_strToMethodMap.begin();
+         it != HttpRequest::_strToMethodMap.end(); ++it)
+    {
+        if (it->second == method) return (it->first);
+    }
+
+    return (HttpRequest::_strToMethodMap.begin()->first);
 }
 
 /* ************************************************************************** */
