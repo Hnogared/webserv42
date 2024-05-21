@@ -1,7 +1,7 @@
 [INFO] STATUS Parsing config file: test/conf.d/webserv.conf
 [INFO] STATUS test/conf.d/webserv.conf: Success
 [INFO] STATUS Running...
-[INFO] 127.0.0.1:58188 CONN ACCEPTED
-[INFO] 127.0.0.1:58188 REQ 'PUT /sandbox/chunked HTTP/1.1' 200 - mywebsite.com:9090 - 'curl/7.81.0'
-[INFO] 127.0.0.1:58188 500 (Internal Server Error) - Connection closed
+[INFO] 127.0.0.1:59870 CONN ACCEPTED
+[INFO] 127.0.0.1:59870 REQ 'PUT /sandbox/chunked HTTP/1.1' 201 - mywebsite.com:9090 - 'curl/7.81.0'
+[INFO] 127.0.0.1:59870 500 (Internal Server Error) - Connection closed
 [INFO] STATUS Stopping...

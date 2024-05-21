@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 14:43:33 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/21 14:29:32 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/21 14:33:11 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -246,12 +246,10 @@ void Client::_fetchChunkedBody(size_t maxBodyLen)
     std::string content;
     std::string chunk;
 
-    while (!this->_getNextChunk(chunk, chunkSize))
+    while (this->_getNextChunk(chunk, chunkSize))
     {
         if (maxBodyLen && content.size() + chunk.size() > maxBodyLen)
             throw http::HttpRequest::BodyTooLarge();
-
-        std::cout << "Chunk size: " << chunkSize << std::endl;
 
         content += chunk;
     }
@@ -272,7 +270,7 @@ bool Client::_getNextChunk(std::string &retBuffer, size_t &chunkSize)
         {
             retBuffer = this->_buffer;
             this->_buffer.clear();
-            return (true);
+            return (false);
         }
 
         this->_buffer += temp;
@@ -280,7 +278,7 @@ bool Client::_getNextChunk(std::string &retBuffer, size_t &chunkSize)
     }
 
     chunkSize = tool::strings::stoib(this->_buffer.substr(0, pos), NULL, 16);
-    if (chunkSize == 0) return (true);
+    if (chunkSize == 0) return (false);
 
     while (this->_buffer.size() < pos + chunkSize + 4)
     {
@@ -291,7 +289,7 @@ bool Client::_getNextChunk(std::string &retBuffer, size_t &chunkSize)
         {
             retBuffer = this->_buffer;
             this->_buffer.clear();
-            return (true);
+            return (false);
         }
 
         this->_buffer += temp;
@@ -300,7 +298,7 @@ bool Client::_getNextChunk(std::string &retBuffer, size_t &chunkSize)
     retBuffer = this->_buffer.substr(pos + 2, chunkSize);
     this->_buffer = this->_buffer.substr(pos + chunkSize + 4);
 
-    return (false);
+    return (true);
 }
 
 /* ************************************************************************** */
