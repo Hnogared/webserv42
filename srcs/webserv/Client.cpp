@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 14:43:33 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/20 18:22:45 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/21 14:29:32 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -242,30 +242,65 @@ void Client::_fetchSimpleBody(size_t bodySize)
 
 void Client::_fetchChunkedBody(size_t maxBodyLen)
 {
-    size_t pos;
     size_t chunkSize;
-    size_t oldSize;
-    std::string content = this->_buffer;
+    std::string content;
+    std::string chunk;
 
-    this->_buffer.clear();
-
-    while (true)
+    while (!this->_getNextChunk(chunk, chunkSize))
     {
-        pos = content.find("\r\n");
-        if (pos == std::string::npos) break;
-
-        chunkSize = tool::strings::stoib(content.substr(0, pos), NULL, 16);
-        if (chunkSize == 0) break;
-
-        if (maxBodyLen && content.size() + chunkSize > maxBodyLen)
+        if (maxBodyLen && content.size() + chunk.size() > maxBodyLen)
             throw http::HttpRequest::BodyTooLarge();
 
-        oldSize = content.size();
-        content += this->_readRequestBlock(chunkSize + 2);
-        if (oldSize == content.size()) break;
+        std::cout << "Chunk size: " << chunkSize << std::endl;
+
+        content += chunk;
     }
 
+    this->_buffer.clear();
     this->_request.setBody(content);
+}
+
+bool Client::_getNextChunk(std::string &retBuffer, size_t &chunkSize)
+{
+    size_t pos = this->_buffer.find("\r\n");
+    std::string temp;
+
+    while (pos == std::string::npos)
+    {
+        std::string temp = this->_readRequestBlock();
+        if (temp.empty())
+        {
+            retBuffer = this->_buffer;
+            this->_buffer.clear();
+            return (true);
+        }
+
+        this->_buffer += temp;
+        pos = this->_buffer.find("\r\n");
+    }
+
+    chunkSize = tool::strings::stoib(this->_buffer.substr(0, pos), NULL, 16);
+    if (chunkSize == 0) return (true);
+
+    while (this->_buffer.size() < pos + chunkSize + 4)
+    {
+        temp =
+            this->_readRequestBlock(pos + chunkSize + 4 - this->_buffer.size());
+
+        if (temp.empty())
+        {
+            retBuffer = this->_buffer;
+            this->_buffer.clear();
+            return (true);
+        }
+
+        this->_buffer += temp;
+    }
+
+    retBuffer = this->_buffer.substr(pos + 2, chunkSize);
+    this->_buffer = this->_buffer.substr(pos + chunkSize + 4);
+
+    return (false);
 }
 
 /* ************************************************************************** */

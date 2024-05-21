@@ -1,61 +1,7 @@
-[INFO] STATUS Parsing config file: test/conf.d/ubuntu_tester.conf
-[INFO] STATUS test/conf.d/ubuntu_tester.conf: Success
+[INFO] STATUS Parsing config file: test/conf.d/webserv.conf
+[INFO] STATUS test/conf.d/webserv.conf: Success
 [INFO] STATUS Running...
-[INFO] 127.0.0.1:37248 CONN ACCEPTED
-[INFO] 127.0.0.1:37248 REQ 'GET / HTTP/1.1' 200 - localhost:9090 - 'Go-http-client/1.1'
-[INFO] 127.0.0.1:37248 REQ 'POST / HTTP/1.1' 405 (Method not allowed) - localhost:9090 - 'Go-http-client/1.1'
-[INFO] 127.0.0.1:37248 CONN CLOSED - Local host
-[INFO] 127.0.0.1:37254 CONN ACCEPTED
-[INFO] 127.0.0.1:37254 REQ 'HEAD / HTTP/1.1' 405 (Method not allowed) - localhost:9090 - 'Go-http-client/1.1'
-[INFO] 127.0.0.1:37254 CONN CLOSED - Local host
-[INFO] 127.0.0.1:37262 CONN ACCEPTED
-[INFO] 127.0.0.1:37262 REQ 'GET /directory HTTP/1.1' 200 - localhost:9090 - 'Go-http-client/1.1'
-[INFO] 127.0.0.1:37262 REQ 'GET /directory/youpi.bad_extension HTTP/1.1' 200 - localhost:9090 - 'Go-http-client/1.1'
-[INFO] 127.0.0.1:37262 REQ 'GET /directory/youpi.bla HTTP/1.1' 200 - localhost:9090 - 'Go-http-client/1.1'
-[INFO] 127.0.0.1:37262 REQ 'GET /directory/oulalala HTTP/1.1' 404 (Not found) - localhost:9090 - 'Go-http-client/1.1'
-[INFO] 127.0.0.1:37262 CONN CLOSED - Local host
-[INFO] 127.0.0.1:37264 CONN ACCEPTED
-[INFO] 127.0.0.1:37264 REQ 'GET /directory/nop HTTP/1.1' 200 - localhost:9090 - 'Go-http-client/1.1'
-[INFO] 127.0.0.1:37264 REQ 'GET /directory/nop/ HTTP/1.1' 200 - localhost:9090 - 'Go-http-client/1.1'
-[INFO] 127.0.0.1:37264 REQ 'GET /directory/nop/other.pouic HTTP/1.1' 200 - localhost:9090 - 'Go-http-client/1.1'
-[INFO] 127.0.0.1:37264 REQ 'GET /directory/nop/other.pouac HTTP/1.1' 404 (Not found) - localhost:9090 - 'Go-http-client/1.1'
-[INFO] 127.0.0.1:37264 CONN CLOSED - Local host
-[INFO] 127.0.0.1:37266 CONN ACCEPTED
-[INFO] 127.0.0.1:37266 REQ 'GET /directory/Yeah HTTP/1.1' 404 (Not found) - localhost:9090 - 'Go-http-client/1.1'
-[INFO] 127.0.0.1:37266 CONN CLOSED - Local host
-[INFO] 127.0.0.1:37272 CONN ACCEPTED
-[INFO] 127.0.0.1:37272 REQ 'GET /directory/Yeah/not_happy.bad_extension HTTP/1.1' 200 - localhost:9090 - 'Go-http-client/1.1'
-[INFO] 127.0.0.1:37272 REQ 'POST /directory/youpi.bla HTTP/1.1' 413 (Request body is too large) - localhost:9090 - 'Go-http-client/1.1'
-[INFO] 127.0.0.1:37272 CONN CLOSED - Local host
-[INFO] STATUS Reloading...
-[INFO] STATUS Stopping...
-[INFO] STATUS Parsing config file: test/conf.d/ubuntu_tester.conf
-[INFO] STATUS test/conf.d/ubuntu_tester.conf: Success
-[INFO] STATUS Running...
-[INFO] 127.0.0.1:46858 CONN ACCEPTED
-[INFO] 127.0.0.1:46858 REQ 'GET / HTTP/1.1' 200 - localhost:9090 - 'Go-http-client/1.1'
-[INFO] 127.0.0.1:46858 REQ 'POST / HTTP/1.1' 405 (Method not allowed) - localhost:9090 - 'Go-http-client/1.1'
-[INFO] 127.0.0.1:46858 CONN CLOSED - Local host
-[INFO] 127.0.0.1:46870 CONN ACCEPTED
-[INFO] 127.0.0.1:46870 REQ 'HEAD / HTTP/1.1' 405 (Method not allowed) - localhost:9090 - 'Go-http-client/1.1'
-[INFO] 127.0.0.1:46870 CONN CLOSED - Local host
-[INFO] 127.0.0.1:46876 CONN ACCEPTED
-[INFO] 127.0.0.1:46876 REQ 'GET /directory HTTP/1.1' 200 - localhost:9090 - 'Go-http-client/1.1'
-[INFO] 127.0.0.1:46876 REQ 'GET /directory/youpi.bad_extension HTTP/1.1' 200 - localhost:9090 - 'Go-http-client/1.1'
-[INFO] 127.0.0.1:46876 REQ 'GET /directory/youpi.bla HTTP/1.1' 200 - localhost:9090 - 'Go-http-client/1.1'
-[INFO] 127.0.0.1:46876 REQ 'GET /directory/oulalala HTTP/1.1' 404 (Not found) - localhost:9090 - 'Go-http-client/1.1'
-[INFO] 127.0.0.1:46876 CONN CLOSED - Local host
-[INFO] 127.0.0.1:46880 CONN ACCEPTED
-[INFO] 127.0.0.1:46880 REQ 'GET /directory/nop HTTP/1.1' 200 - localhost:9090 - 'Go-http-client/1.1'
-[INFO] 127.0.0.1:46880 REQ 'GET /directory/nop/ HTTP/1.1' 200 - localhost:9090 - 'Go-http-client/1.1'
-[INFO] 127.0.0.1:46880 REQ 'GET /directory/nop/other.pouic HTTP/1.1' 200 - localhost:9090 - 'Go-http-client/1.1'
-[INFO] 127.0.0.1:46880 REQ 'GET /directory/nop/other.pouac HTTP/1.1' 404 (Not found) - localhost:9090 - 'Go-http-client/1.1'
-[INFO] 127.0.0.1:46880 CONN CLOSED - Local host
-[INFO] 127.0.0.1:46890 CONN ACCEPTED
-[INFO] 127.0.0.1:46890 REQ 'GET /directory/Yeah HTTP/1.1' 404 (Not found) - localhost:9090 - 'Go-http-client/1.1'
-[INFO] 127.0.0.1:46890 CONN CLOSED - Local host
-[INFO] 127.0.0.1:46894 CONN ACCEPTED
-[INFO] 127.0.0.1:46894 REQ 'GET /directory/Yeah/not_happy.bad_extension HTTP/1.1' 200 - localhost:9090 - 'Go-http-client/1.1'
-[INFO] 127.0.0.1:46894 REQ 'POST /directory/youpi.bla HTTP/1.1' 200 - localhost:9090 - 'Go-http-client/1.1'
-[INFO] 127.0.0.1:46894 REQ '8000' 400(Invalid request)
+[INFO] 127.0.0.1:58188 CONN ACCEPTED
+[INFO] 127.0.0.1:58188 REQ 'PUT /sandbox/chunked HTTP/1.1' 200 - mywebsite.com:9090 - 'curl/7.81.0'
+[INFO] 127.0.0.1:58188 500 (Internal Server Error) - Connection closed
 [INFO] STATUS Stopping...
