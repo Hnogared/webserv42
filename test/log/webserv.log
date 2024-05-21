@@ -1,7 +1,7 @@
 [INFO] STATUS Parsing config file: test/conf.d/webserv.conf
 [INFO] STATUS test/conf.d/webserv.conf: Success
 [INFO] STATUS Running...
-[INFO] 127.0.0.1:40456 CONN ACCEPTED
-[INFO] 127.0.0.1:40456 REQ 'POST /test.bla HTTP/1.1' 200 - mywebsite.com:9090 - 'curl/7.81.0'
-[INFO] 127.0.0.1:40456 500 (Internal Server Error) - Connection closed
+[INFO] 127.0.0.1:56600 CONN ACCEPTED
+[INFO] 127.0.0.1:56600 REQ 'POST /test.bla HTTP/1.1' 200 - mywebsite.com:9090 - 'curl/7.81.0'
+[INFO] 127.0.0.1:56600 500 (Internal Server Error) - Connection closed
 [INFO] STATUS Stopping...

@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/12 02:08:16 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/22 00:33:19 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/22 01:31:28 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -227,15 +227,18 @@ void VirtualServer::_completeParams(
 
     params.insert(std::make_pair("QUERY_STRING", request.getQueryString()));
     params.insert(std::make_pair("REQUEST_METHOD", request.getMethodStr()));
+    // params.insert(std::make_pair("REQUEST_URI",
+    // std::string(request.getUri())));
 
+    params.insert(std::make_pair("DOCUMENT_URI", request.getUri()));
     params.insert(std::make_pair("DOCUMENT_ROOT", location.getRoot()));
 
-    if (request.getHeader("Content-Length").empty())
+    if (request.getBody().empty())
         params.insert(std::make_pair("CONTENT_LENGTH", "0"));
     else
     {
-        params.insert(std::make_pair("CONTENT_LENGTH",
-                                     request.getHeader("Content-Length")));
+        params.insert(std::make_pair(
+            "CONTENT_LENGTH", tool::strings::toStr(request.getBody().size())));
     }
 
     if (!request.getHeader("Content-Type").empty())
@@ -271,6 +274,8 @@ void VirtualServer::_completeParams(
     params.insert(std::make_pair(
         "PATH_TRANSLATED",
         tool::files::joinPaths(location.getRoot(), request.getUri())));
+
+    params.insert(std::make_pair("REDIRECT_STATUS", "200"));
 }
 
 bool VirtualServer::_tryGetOrHeadResponse(Client &client,
