@@ -1,7 +1,45 @@
 [INFO] STATUS Parsing config file: test/conf.d/webserv.conf
 [INFO] STATUS test/conf.d/webserv.conf: Success
 [INFO] STATUS Running...
-[INFO] 127.0.0.1:59870 CONN ACCEPTED
-[INFO] 127.0.0.1:59870 REQ 'PUT /sandbox/chunked HTTP/1.1' 201 - mywebsite.com:9090 - 'curl/7.81.0'
-[INFO] 127.0.0.1:59870 500 (Internal Server Error) - Connection closed
+[INFO] 127.0.0.1:43438 CONN ACCEPTED
+[INFO] 127.0.0.1:43438 REQ 'POST /sandbox/test.bla HTTP/1.1' 405 (Method not allowed) - mywebsite.com:9090 - 'curl/7.81.0'
+[INFO] 127.0.0.1:43438 CONN CLOSED - Local host
+[INFO] STATUS Reloading...
+[INFO] STATUS Stopping...
+[INFO] STATUS Parsing config file: test/conf.d/webserv.conf
+[INFO] STATUS test/conf.d/webserv.conf: Success
+[INFO] STATUS Running...
+[INFO] 127.0.0.1:58976 CONN ACCEPTED
+[INFO] 127.0.0.1:58976 REQ 'POST /sandbox/test.bla HTTP/1.1' 200 - mywebsite.com:9090 - 'curl/7.81.0'
+[INFO] 127.0.0.1:58976 500 (Internal Server Error) - Connection closed
+[INFO] STATUS Reloading...
+[INFO] STATUS Stopping...
+[INFO] STATUS Parsing config file: test/conf.d/webserv.conf
+[INFO] STATUS test/conf.d/webserv.conf: Success
+[INFO] STATUS Running...
+[INFO] 127.0.0.1:57278 CONN ACCEPTED
+[INFO] 127.0.0.1:57278 REQ 'POST /sandbox/test.bla HTTP/1.1' 405 (Method not allowed) - mywebsite.com:9090 - 'curl/7.81.0'
+[INFO] 127.0.0.1:57278 CONN CLOSED - Local host
+[INFO] STATUS Reloading...
+[INFO] STATUS Stopping...
+[INFO] STATUS Parsing config file: test/conf.d/webserv.conf
+[INFO] STATUS test/conf.d/webserv.conf: Success
+[INFO] STATUS Running...
+[INFO] 127.0.0.1:52596 CONN ACCEPTED
+[INFO] 127.0.0.1:52596 REQ 'POST /sandbox/test.bla HTTP/1.1' 200 - mywebsite.com:9090 - 'curl/7.81.0'
+[INFO] 127.0.0.1:52596 500 (Internal Server Error) - Connection closed
+[INFO] 127.0.0.1:49844 CONN ACCEPTED
+[INFO] 127.0.0.1:49844 REQ 'POST /sandbox/test HTTP/1.1' 201 - mywebsite.com:9090 - 'curl/7.81.0'
+[INFO] 127.0.0.1:49844 500 (Internal Server Error) - Connection closed
+[INFO] STATUS Reloading...
+[INFO] STATUS Stopping...
+[INFO] STATUS Parsing config file: test/conf.d/webserv.conf
+[INFO] STATUS test/conf.d/webserv.conf: Success
+[INFO] STATUS Running...
+[INFO] 127.0.0.1:55040 CONN ACCEPTED
+[INFO] 127.0.0.1:55040 REQ 'POST /sandbox/test.bla HTTP/1.1' 200 - mywebsite.com:9090 - 'curl/7.81.0'
+[INFO] 127.0.0.1:55040 500 (Internal Server Error) - Connection closed
+[INFO] 127.0.0.1:37218 CONN ACCEPTED
+[INFO] 127.0.0.1:37218 REQ 'POST /sandbox/test.bla HTTP/1.1' 200 - mywebsite.com:9090 - 'curl/7.81.0'
+[INFO] 127.0.0.1:37218 500 (Internal Server Error) - Connection closed
 [INFO] STATUS Stopping...

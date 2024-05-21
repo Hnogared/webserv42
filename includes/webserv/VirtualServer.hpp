@@ -64,9 +64,6 @@ private:
 
     /* Private methods */
     bool _checkServerNames(const std::string &host) const;
-    const LocationConfiguration *_findBestLocation(
-        const std::string &uri,
-        const LocationConfiguration **bestLocation) const;
     bool _tryResponse(Client &client, const LocationConfiguration &location);
     bool _tryGetOrHeadResponse(Client &client,
                                const LocationConfiguration &location);

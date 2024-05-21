@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/01 14:41:57 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/20 13:04:09 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/21 21:13:18 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,8 @@ namespace webserv
 
 /* Path constructor */
 LocationConfiguration::LocationConfiguration(const std::string &path)
-    : _path(path),
+    : _matchType(LocationConfiguration::MATCH_PREFIX),
+      _path(path),
       _root(""),
       _index(""),
       _autoindex(false),
@@ -51,6 +52,7 @@ LocationConfiguration &LocationConfiguration::operator=(
     const LocationConfiguration &original)
 {
     if (this == &original) return (*this);
+    this->_matchType = original.getMatchType();
     this->_path = original.getPath();
     this->_root = original.getRoot();
     this->_index = original.getIndex();
@@ -66,6 +68,8 @@ LocationConfiguration &LocationConfiguration::operator=(
 
 bool LocationConfiguration::operator<(const LocationConfiguration &other) const
 {
+    if (this->_matchType != other.getMatchType())
+        return (this->_matchType < other.getMatchType());
     if (this->_path != other.getPath()) return (this->_path < other.getPath());
     if (this->_root != other.getRoot()) return (this->_root < other.getRoot());
     if (this->_index != other.getIndex())
@@ -88,11 +92,23 @@ bool LocationConfiguration::operator<(const LocationConfiguration &other) const
 /* ************************************************************************** */
 /* Getters */
 
-std::string LocationConfiguration::getPath(void) const { return (this->_path); }
+LocationConfiguration::e_matchType LocationConfiguration::getMatchType(
+    void) const
+{
+    return (this->_matchType);
+}
 
-std::string LocationConfiguration::getRoot(void) const { return (this->_root); }
+const std::string &LocationConfiguration::getPath(void) const
+{
+    return (this->_path);
+}
 
-std::string LocationConfiguration::getIndex(void) const
+const std::string &LocationConfiguration::getRoot(void) const
+{
+    return (this->_root);
+}
+
+const std::string &LocationConfiguration::getIndex(void) const
 {
     return (this->_index);
 }
@@ -112,7 +128,7 @@ int LocationConfiguration::getReturnCode(void) const
     return (this->_returnCode);
 }
 
-std::string LocationConfiguration::getReturnMessage(void) const
+const std::string &LocationConfiguration::getReturnMessage(void) const
 {
     return (this->_returnMessage);
 }
@@ -123,7 +139,7 @@ const std::set<http::HttpRequest::e_method>
     return (this->_allowedMethods);
 }
 
-std::string LocationConfiguration::getFCGIServer(void) const
+const std::string &LocationConfiguration::getFCGIServer(void) const
 {
     return (this->_fcgiServer);
 }
@@ -136,6 +152,34 @@ const std::map<std::string, std::string> &LocationConfiguration::getFCGIParams(
 
 /* ************************************************************************** */
 /* Setters */
+
+void LocationConfiguration::setMatchType(const std::string &matchType)
+{
+    if (matchType.empty()) throw std::invalid_argument("Empty match type");
+
+    if (matchType.size() == 1)
+    {
+        switch (matchType[0])
+        {
+            case '=':
+                this->_matchType = LocationConfiguration::MATCH_EXACT;
+                return;
+            case '>':
+                this->_matchType = LocationConfiguration::MATCH_PREFIX;
+                return;
+            case '<':
+                this->_matchType = LocationConfiguration::MATCH_SUFFIX;
+                return;
+        }
+    }
+
+    throw std::invalid_argument("Invalid match type `" + matchType + "`");
+}
+
+void LocationConfiguration::setMatchType(e_matchType matchType)
+{
+    this->_matchType = matchType;
+}
 
 void LocationConfiguration::setPath(const std::string &path)
 {
@@ -218,7 +262,7 @@ bool LocationConfiguration::ismethodAllowed(
 
 std::ostream &LocationConfiguration::print(std::ostream &os) const
 {
-    os << "@ " << this->_path;
+    os << "@ " << this->_path << "\nMatch type      : " << this->_matchType;
 
     if (!this->_root.empty()) os << "\nRoot            : " << this->_root;
 

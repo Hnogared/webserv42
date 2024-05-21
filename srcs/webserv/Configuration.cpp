@@ -196,11 +196,29 @@ const LocationConfiguration *Configuration::findBestLocation(
 
     for (it = this->_locations.begin(); it != this->_locations.end(); it++)
     {
-        std::string path = it->getPath();
+        const std::string &path = it->getPath();
 
-        if (uri.substr(0, path.size()) != path) continue;
+        if (uri == path) return (&(*it));
 
-        if (!bestLocation || path.size() > bestLocation->getPath().size())
+        switch (it->getMatchType())
+        {
+            case LocationConfiguration::MATCH_EXACT:
+                if (uri != path) continue;
+                break;
+            case LocationConfiguration::MATCH_PREFIX:
+                if ((bestLocation && bestLocation->getMatchType() ==
+                                         LocationConfiguration::MATCH_SUFFIX) ||
+                    uri.find(path) != 0)
+                    continue;
+                break;
+            case LocationConfiguration::MATCH_SUFFIX:
+                if (uri.rfind(path) != uri.size() - path.size()) continue;
+                break;
+        }
+
+        if (!bestLocation ||
+            it->getMatchType() > bestLocation->getMatchType() ||
+            path.size() > bestLocation->getPath().size())
             bestLocation = &(*it);
     }
 

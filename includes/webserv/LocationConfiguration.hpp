@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/01 14:34:11 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/20 13:04:06 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/21 17:00:04 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,13 @@ namespace webserv
 class LocationConfiguration
 {
 public:
+    enum e_matchType
+    {
+        MATCH_PREFIX = 0,
+        MATCH_SUFFIX,
+        MATCH_EXACT,
+    };
+
     /* Constructors */
     explicit LocationConfiguration(const std::string &path);
     LocationConfiguration(const LocationConfiguration &original);
@@ -43,18 +50,21 @@ public:
     bool operator<(const LocationConfiguration &other) const;
 
     /* Getters */
-    std::string getPath(void) const;
-    std::string getRoot(void) const;
-    std::string getIndex(void) const;
+    e_matchType getMatchType(void) const;
+    const std::string &getPath(void) const;
+    const std::string &getRoot(void) const;
+    const std::string &getIndex(void) const;
     bool isAutoindex(void) const;
     long int getClientMaxBodySize(void) const;
     int getReturnCode(void) const;
-    std::string getReturnMessage(void) const;
+    const std::string &getReturnMessage(void) const;
     const std::set<http::HttpRequest::e_method> &getAllowedMethods(void) const;
-    std::string getFCGIServer(void) const;
+    const std::string &getFCGIServer(void) const;
     const std::map<std::string, std::string> &getFCGIParams(void) const;
 
     /* Setters */
+    void setMatchType(const std::string &matchType);
+    void setMatchType(e_matchType matchType);
     void setPath(const std::string &path);
     void setRoot(const std::string &root);
     void setIndex(const std::string &index);
@@ -75,6 +85,7 @@ public:
 
 private:
     /* Private attributes */
+    e_matchType _matchType;
     std::string _path;
     std::string _root;
     std::string _index;

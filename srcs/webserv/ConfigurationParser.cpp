@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 10:21:20 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/20 18:22:05 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/21 21:16:41 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -479,17 +479,43 @@ void ConfigurationParser::_parseServerLocation(std::queue<t_token> &tokens,
                                                Configuration &config)
 {
     t_token token;
+    t_token token2;
+    std::string path;
+    std::string matchType = ">";
     std::map<std::string, t_locationDirectiveParser>::const_iterator it;
 
     token = tokens.front();
     tokens.pop();
+    path = token.content;
 
-    if (tokens.front().type != OPEN_BRACE)
-        throw UnexpectedToken(tokens.front(), "location", "{");
     if (token.type != STRING)
         throw UnexpectedToken(token, "location", "string");
 
-    LocationConfiguration location(token.content);
+    if (tokens.front().type != OPEN_BRACE)
+    {
+        if (tokens.front().type != STRING)
+            throw UnexpectedToken(tokens.front(), "location", "string");
+
+        token2 = tokens.front();
+        tokens.pop();
+        matchType = token.content;
+        path = token2.content;
+
+        if (tokens.front().type != OPEN_BRACE)
+            throw UnexpectedToken(tokens.front(), "location", "{");
+    }
+
+    LocationConfiguration location(path);
+
+    try
+    {
+        location.setMatchType(matchType);
+    }
+    catch (const std::invalid_argument &e)
+    {
+        throw InvalidConfigFile(token.lineNbr, "location", e.what());
+    }
+
     tokens.pop();
 
     while (!tokens.empty())
@@ -517,7 +543,6 @@ void ConfigurationParser::_parseServerLocation(std::queue<t_token> &tokens,
         throw UnexpectedToken(token, "location", "}");
 
     ConfigurationParser::_completeLocation(location, config);
-
     config.addLocation(location);
 }
 

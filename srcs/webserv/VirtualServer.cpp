@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/12 02:08:16 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/20 13:53:41 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/21 17:02:25 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,15 +93,6 @@ bool VirtualServer::_checkServerNames(const std::string &host) const
 
     return (serverNames.empty() ||
             serverNames.find(hostName) != serverNames.end());
-}
-
-const LocationConfiguration *VirtualServer::_findBestLocation(
-    const std::string &uri, const LocationConfiguration **bestLocation) const
-{
-    if (!bestLocation) return (NULL);
-
-    *bestLocation = this->_config.findBestLocation(uri);
-    return (*bestLocation);
 }
 
 bool VirtualServer::_tryResponse(Client &client,
