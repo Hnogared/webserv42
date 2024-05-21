@@ -205,12 +205,14 @@ const LocationConfiguration *Configuration::findBestLocation(
             case LocationConfiguration::MATCH_EXACT:
                 if (uri != path) continue;
                 break;
+
             case LocationConfiguration::MATCH_PREFIX:
                 if ((bestLocation && bestLocation->getMatchType() ==
                                          LocationConfiguration::MATCH_SUFFIX) ||
                     uri.find(path) != 0)
                     continue;
                 break;
+
             case LocationConfiguration::MATCH_SUFFIX:
                 if (uri.rfind(path) != uri.size() - path.size()) continue;
                 break;

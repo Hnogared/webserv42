@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/12 02:08:16 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/21 17:02:25 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/21 22:14:03 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,7 @@ bool VirtualServer::_tryResponse(Client &client,
     const http::HttpRequest &request = client.getRequest();
     const http::HttpRequest::e_method method = request.getMethod();
 
-    if (location.getReturnCode())
+    if (location.getLocationType() == LocationConfiguration::REDIRECT)
     {
         http::HttpResponse response(location.getReturnCode(), request);
 

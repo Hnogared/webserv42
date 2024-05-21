@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/01 14:34:11 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/21 17:00:04 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/21 22:09:33 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,13 @@ namespace webserv
 class LocationConfiguration
 {
 public:
+    enum e_locationType
+    {
+        STATIC = 0,
+        DYNAMIC,
+        REDIRECT,
+    };
+
     enum e_matchType
     {
         MATCH_PREFIX = 0,
@@ -50,6 +57,7 @@ public:
     bool operator<(const LocationConfiguration &other) const;
 
     /* Getters */
+    e_locationType getLocationType(void) const;
     e_matchType getMatchType(void) const;
     const std::string &getPath(void) const;
     const std::string &getRoot(void) const;
@@ -63,6 +71,7 @@ public:
     const std::map<std::string, std::string> &getFCGIParams(void) const;
 
     /* Setters */
+    void setLocationType(const std::string &locationType);
     void setMatchType(const std::string &matchType);
     void setMatchType(e_matchType matchType);
     void setPath(const std::string &path);
@@ -85,6 +94,7 @@ public:
 
 private:
     /* Private attributes */
+    e_locationType _locationType;
     e_matchType _matchType;
     std::string _path;
     std::string _root;
