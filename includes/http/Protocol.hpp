@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/12 18:16:27 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/19 22:26:19 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/22 17:23:23 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ public:
     /* Getters */
     const std::string &getName(void) const;
     const int *getVersion(void) const;
+    std::string toString(void) const;
 
 private:
     /* Private attributes */

@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/08 18:25:00 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/19 22:32:16 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/22 17:35:41 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,15 +106,19 @@ void HttpMessage::setStatusLine(const std::string &statusLine)
 
 void HttpMessage::addHeader(const std::string &key, const std::string &val)
 {
-    if (this->_headers.find(key) != this->_headers.end())
-        this->_headers[key] += "," + val;
+    const std::string &trimmedKey = tool::strings::trim(key, " \t\n\v\f\r");
+    const std::string &trimmedVal = tool::strings::trim(val, " \t\n\v\f\r");
+
+    if (this->_headers.find(trimmedKey) != this->_headers.end())
+        this->_headers[trimmedKey] += "," + trimmedVal;
     else
-        this->_headers[key] = val;
+        this->_headers[trimmedKey] = trimmedVal;
 }
 
 void HttpMessage::setHeader(const std::string &key, const std::string &val)
 {
-    this->_headers[key] = val;
+    this->_headers[tool::strings::trim(key, " \t\n\v\f\r")] =
+        tool::strings::trim(val, " \t\n\v\f\r");
 }
 
 void HttpMessage::setBody(const std::string &body) { this->_body = body; }

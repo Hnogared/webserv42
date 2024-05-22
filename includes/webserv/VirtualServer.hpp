@@ -71,6 +71,7 @@ private:
     void _completeParams(const Client &client,
                          const LocationConfiguration &location,
                          std::map<std::string, std::string> &params) const;
+    void _readAndSendCGIResponse(Client &client, int pipeOut[2]);
     bool _tryGetOrHeadResponse(Client &client,
                                const LocationConfiguration &location);
     bool _tryPostOrPutResponse(Client &client,

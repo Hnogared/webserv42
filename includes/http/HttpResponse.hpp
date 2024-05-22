@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 23:20:31 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/19 22:26:10 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/22 17:08:41 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,10 +41,12 @@ public:
     int getStatusCode(void) const;
 
     /* Setters */
+    void setBody(const std::string &body);
     void setBody(const std::string &body, HttpMessage::e_mimeType mime);
 
     /* Public methods */
     std::string toString(bool withBody = true) const;
+    void parseCGIResponse(const std::string &cgiResponse);
 
 private:
     /* Static rivate attributes */
@@ -59,6 +61,7 @@ private:
 
     /* Private methods */
     void _buildHeadersAndBody(void);
+    void _parseCGIHeaders(const std::string &headers);
 };  // class HttpResponse
 
 }  // namespace http

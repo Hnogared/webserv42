@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/12 02:08:16 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/22 01:31:28 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/22 17:37:43 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,38 +185,7 @@ void VirtualServer::_doCGIResponse(Client &client,
 
     waitpid(pid, NULL, 0);
 
-    int readSize;
-    char buffer[WS_READ_BUFF_SIZE];
-    std::string output;
-    int flags = fcntl(pipeOut[0], F_GETFL, 0);
-
-    fcntl(pipeOut[0], F_SETFL, flags | O_NONBLOCK);
-
-    do
-    {
-        readSize = read(pipeOut[0], buffer, WS_READ_BUFF_SIZE - 1);
-        if (readSize == -1)
-        {
-            if (errno == EAGAIN || errno == EWOULDBLOCK) continue;
-
-            close(pipeOut[0]);
-            close(pipeOut[1]);
-            throw http::HttpRequest::RequestException("Internal Server Error",
-                                                      500);
-        }
-
-        buffer[readSize] = 0;
-        output += buffer;
-    } while (readSize > 0);
-
-    close(pipeOut[0]);
-    close(pipeOut[1]);
-
-    http::HttpResponse response(200, client.getRequest());
-
-    response.setBody(output, http::HttpMessage::TEXT_HTML);
-    this->_log(Harl::INFO, &client, "200");
-    client.sendResponse(response);
+    this->_readAndSendCGIResponse(client, pipeOut);
 }
 
 void VirtualServer::_completeParams(
@@ -224,13 +193,13 @@ void VirtualServer::_completeParams(
     std::map<std::string, std::string> &params) const
 {
     const http::HttpRequest &request = client.getRequest();
+    std::string uri = request.getUri();
 
     params.insert(std::make_pair("QUERY_STRING", request.getQueryString()));
     params.insert(std::make_pair("REQUEST_METHOD", request.getMethodStr()));
-    // params.insert(std::make_pair("REQUEST_URI",
-    // std::string(request.getUri())));
+    // params.insert(std::make_pair("REQUEST_URI", uri));
 
-    params.insert(std::make_pair("DOCUMENT_URI", request.getUri()));
+    params.insert(std::make_pair("DOCUMENT_URI", uri));
     params.insert(std::make_pair("DOCUMENT_ROOT", location.getRoot()));
 
     if (request.getBody().empty())
@@ -260,22 +229,67 @@ void VirtualServer::_completeParams(
     params.insert(std::make_pair(
         "SERVER_PORT",
         tool::strings::toStr(client.getSocket().getPort(Socket::LOCAL))));
-    params.insert(std::make_pair("SERVER_NAME", request.getHeader("Host")));
+    params.insert(std::make_pair("SERVER_NAME",
+                                 request.getHeader("Host").substr(
+                                     0, request.getHeader("Host").find(':'))));
 
     params.insert(std::make_pair("SERVER_PROTOCOL", WS_HTTP_VERSION));
     params.insert(std::make_pair("SERVER_SOFTWARE",
                                  WS_SERVER_NAME "/" WS_SERVER_VERSION));
 
     params.insert(std::make_pair(
-        "SCRIPT_FILENAME",
-        tool::files::joinPaths(location.getRoot(), request.getUri())));
-    params.insert(std::make_pair("SCRIPT_NAME", request.getUri()));
-    params.insert(std::make_pair("PATH_INFO", request.getUri()));
+        "SCRIPT_FILENAME", tool::files::joinPaths(location.getRoot(), uri)));
+    params.insert(std::make_pair("SCRIPT_NAME", uri));
+
+    params.insert(std::make_pair("PATH_INFO", uri));
+
     params.insert(std::make_pair(
-        "PATH_TRANSLATED",
-        tool::files::joinPaths(location.getRoot(), request.getUri())));
+        "PATH_TRANSLATED", tool::files::joinPaths(location.getRoot(), uri)));
 
     params.insert(std::make_pair("REDIRECT_STATUS", "200"));
+
+    for (std::map<std::string, std::string>::const_iterator it = params.begin();
+         it != params.end(); it++)
+    {
+        std::cout << it->first << "=" << it->second << std::endl;
+    }
+}
+
+void VirtualServer::_readAndSendCGIResponse(Client &client, int pipeOut[2])
+{
+    int readSize;
+    char buffer[WS_READ_BUFF_SIZE];
+    std::string output;
+    int flags = fcntl(pipeOut[0], F_GETFL, 0);
+
+    fcntl(pipeOut[0], F_SETFL, flags | O_NONBLOCK);
+
+    do
+    {
+        readSize = read(pipeOut[0], buffer, WS_READ_BUFF_SIZE - 1);
+        if (readSize == -1)
+        {
+            if (errno == EAGAIN || errno == EWOULDBLOCK) continue;
+
+            close(pipeOut[0]);
+            close(pipeOut[1]);
+            throw http::HttpRequest::RequestException("Internal Server Error",
+                                                      500);
+        }
+
+        buffer[readSize] = 0;
+        output += buffer;
+    } while (readSize > 0);
+
+    close(pipeOut[0]);
+    close(pipeOut[1]);
+
+    http::HttpResponse response(200);
+
+    response.parseCGIResponse(output);
+    this->_log(Harl::INFO, &client,
+               tool::strings::toStr(response.getStatusCode()));
+    client.sendResponse(response);
 }
 
 bool VirtualServer::_tryGetOrHeadResponse(Client &client,

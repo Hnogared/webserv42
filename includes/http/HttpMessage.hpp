@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/08 18:20:17 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/19 22:27:49 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/22 17:34:05 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 
 #include "Protocol.hpp"
 #include "exceptions.hpp"
+#include "strings.hpp"
 #include "webserv.hpp"
 
 namespace http

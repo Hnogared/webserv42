@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 12:31:15 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/20 18:23:26 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/22 17:27:20 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,11 @@ int stoib(const std::string &str, size_t *idx, int base)
 
     if (str.empty()) return (0);
 
-    if (str[0] == '-')
+    while (i < str.size() && isspace(str[i])) ++i;
+
+    if (str[i] == '-' || str[i] == '+')
     {
-        sign = -1;
+        sign -= 2 * (str[i] == '-');
         ++i;
     }
 

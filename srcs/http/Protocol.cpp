@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/12 18:55:44 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/19 22:32:32 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/22 17:23:50 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,6 +112,14 @@ bool Protocol::operator>=(const Protocol &other) const
 const std::string &Protocol::getName(void) const { return (this->_name); }
 
 const int *Protocol::getVersion(void) const { return (this->_version); }
+
+std::string Protocol::toString(void) const
+{
+    std::ostringstream oss;
+
+    oss << this->_name << '/' << this->_version[0] << '.' << this->_version[1];
+    return (oss.str());
+}
 
 /* ************************************************************************** */
 /* External operator overloads                                                */
