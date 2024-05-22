@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/12 02:08:16 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/22 17:37:43 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/22 18:01:20 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -218,17 +218,26 @@ void VirtualServer::_completeParams(
 
     params.insert(std::make_pair("GATEWAY_INTERFACE", WS_CGI_VERSION));
 
-    params.insert(std::make_pair("REMOTE_ADDR",
-                                 client.getSocket().getAddrStr(Socket::PEER)));
-    params.insert(std::make_pair(
-        "REMOTE_PORT",
-        tool::strings::toStr(client.getSocket().getPort(Socket::PEER))));
+    {
+        const std::string &remoteUser =
+            client.getSocket().getAddrStr(Socket::PEER);
 
-    params.insert(std::make_pair("SERVER_ADDR",
-                                 client.getSocket().getAddrStr(Socket::LOCAL)));
-    params.insert(std::make_pair(
-        "SERVER_PORT",
-        tool::strings::toStr(client.getSocket().getPort(Socket::LOCAL))));
+        params.insert(std::make_pair(
+            "REMOTE_ADDR", remoteUser.substr(0, remoteUser.find(':'))));
+        params.insert(std::make_pair(
+            "REMOTE_PORT", remoteUser.substr(remoteUser.find(':') + 1)));
+    }
+
+    {
+        const std::string &localUser =
+            client.getSocket().getAddrStr(Socket::LOCAL);
+
+        params.insert(std::make_pair("SERVER_ADDR",
+                                     localUser.substr(0, localUser.find(':'))));
+        params.insert(std::make_pair(
+            "SERVER_PORT", localUser.substr(localUser.find(':') + 1)));
+    }
+
     params.insert(std::make_pair("SERVER_NAME",
                                  request.getHeader("Host").substr(
                                      0, request.getHeader("Host").find(':'))));
@@ -284,7 +293,7 @@ void VirtualServer::_readAndSendCGIResponse(Client &client, int pipeOut[2])
     close(pipeOut[0]);
     close(pipeOut[1]);
 
-    http::HttpResponse response(200);
+    http::HttpResponse response(200, client.getRequest());
 
     response.parseCGIResponse(output);
     this->_log(Harl::INFO, &client,
