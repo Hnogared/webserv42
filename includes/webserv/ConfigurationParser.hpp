@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 10:19:18 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/20 12:58:25 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/23 16:59:30 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,6 +116,8 @@ private:
                                LocationConfiguration &config);
     static void _parseLocFCGIPass(std::queue<t_token> &tokens,
                                   LocationConfiguration &config);
+    static void _parseLocFCGIIndex(std::queue<t_token> &tokens,
+                                   LocationConfiguration &config);
     static void _parseLocFCGIParam(std::queue<t_token> &tokens,
                                    LocationConfiguration &config);
 

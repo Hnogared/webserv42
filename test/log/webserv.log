@@ -1,6 +1,16 @@
-[INFO] STATUS Parsing config file: test/conf.d/webserv.conf
-[INFO] STATUS test/conf.d/webserv.conf: Success
+[INFO] STATUS Parsing config file: test/conf.d/ubuntu_tester.conf
+[INFO] STATUS test/conf.d/ubuntu_tester.conf: Success
 [INFO] STATUS Running...
-[INFO] 127.0.0.1:56072 CONN ACCEPTED
-[INFO] 127.0.0.1:56072 REQ 'POST /youpi.bla HTTP/1.1' 500 - mywebsite.com:9090 - 'curl/7.81.0'
-[INFO] 127.0.0.1:56072 500 (Internal Server Error) - Connection closed
+[INFO] 127.0.0.1:33642 CONN ACCEPTED
+[INFO] 127.0.0.1:33642 REQ 'GET / HTTP/1.1' 200 - localhost:9090 - 'Go-http-client/1.1'
+[INFO] 127.0.0.1:33642 REQ 'POST / HTTP/1.1' 405 (Method not allowed) - localhost:9090 - 'Go-http-client/1.1'
+[INFO] 127.0.0.1:33642 CONN CLOSED - Local host
+[INFO] 127.0.0.1:33654 CONN ACCEPTED
+[INFO] 127.0.0.1:33654 REQ 'HEAD / HTTP/1.1' 405 (Method not allowed) - localhost:9090 - 'Go-http-client/1.1'
+[INFO] 127.0.0.1:33654 CONN CLOSED - Local host
+[INFO] 127.0.0.1:33670 CONN ACCEPTED
+[INFO] 127.0.0.1:33670 REQ 'GET /directory HTTP/1.1' 200 - localhost:9090 - 'Go-http-client/1.1'
+[INFO] 127.0.0.1:33670 REQ 'GET /directory/youpi.bad_extension HTTP/1.1' 200 - localhost:9090 - 'Go-http-client/1.1'
+[INFO] 127.0.0.1:33670 REQ 'GET /directory/youpi.bla HTTP/1.1' 405 (Method not allowed) - localhost:9090 - 'Go-http-client/1.1'
+[INFO] 127.0.0.1:33670 CONN CLOSED - Local host
+[INFO] STATUS Stopping...

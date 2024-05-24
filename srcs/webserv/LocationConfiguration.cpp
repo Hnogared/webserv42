@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/01 14:41:57 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/21 22:08:38 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/23 16:58:02 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,6 +154,11 @@ const std::string &LocationConfiguration::getFCGIServer(void) const
     return (this->_fcgiServer);
 }
 
+const std::string &LocationConfiguration::getFCGIIndex(void) const
+{
+    return (this->_index);
+}
+
 const std::map<std::string, std::string> &LocationConfiguration::getFCGIParams(
     void) const
 {
@@ -258,6 +263,15 @@ void LocationConfiguration::setFCGIServer(const std::string &fcgiServer)
     }
 }
 
+void LocationConfiguration::setFCGIIndex(const std::string &fcgiIndex)
+{
+    if (this->_locationType != LocationConfiguration::REDIRECT)
+    {
+        this->_locationType = LocationConfiguration::DYNAMIC;
+        this->_index = fcgiIndex;
+    }
+}
+
 void LocationConfiguration::setFCGIParams(
     const std::map<std::string, std::string> &params)
 {
@@ -313,6 +327,9 @@ std::ostream &LocationConfiguration::print(std::ostream &os) const
 
             if (!this->_fcgiServer.empty())
                 os << "\n\nFastCGI server  : " << this->_fcgiServer;
+
+            if (!this->_fcgiIndex.empty())
+                os << "\nFastCGI index   : " << this->_fcgiIndex;
 
             if (!this->_fcgiParams.empty())
             {

@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/01 14:34:11 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/21 22:09:33 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/23 16:55:24 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,10 +68,10 @@ public:
     const std::string &getReturnMessage(void) const;
     const std::set<http::HttpRequest::e_method> &getAllowedMethods(void) const;
     const std::string &getFCGIServer(void) const;
+    const std::string &getFCGIIndex(void) const;
     const std::map<std::string, std::string> &getFCGIParams(void) const;
 
     /* Setters */
-    void setLocationType(const std::string &locationType);
     void setMatchType(const std::string &matchType);
     void setMatchType(e_matchType matchType);
     void setPath(const std::string &path);
@@ -85,6 +85,7 @@ public:
         const std::set<http::HttpRequest::e_method> &allowedMethods);
     void addAllowedMethod(http::HttpRequest::e_method method);
     void setFCGIServer(const std::string &fcgiServer);
+    void setFCGIIndex(const std::string &fcgiIndex);
     void setFCGIParams(const std::map<std::string, std::string> &params);
     void addFCGIParam(const std::string &key, const std::string &value);
 
@@ -105,6 +106,7 @@ private:
     std::string _returnMessage;
     std::set<http::HttpRequest::e_method> _allowedMethods;
     std::string _fcgiServer;
+    std::string _fcgiIndex;
     std::map<std::string, std::string> _fcgiParams;
 
     /* [delete] */

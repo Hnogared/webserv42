@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 10:21:20 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/21 21:16:41 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/23 17:00:17 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,7 @@ ConfigurationParser::_initializeLocationDirectives(void)
     directives["root"] = &_parseLocRoot;
     directives["index"] = &_parseLocIndex;
     directives["fastcgi_pass"] = &_parseLocFCGIPass;
+    directives["fastcgi_index"] = &_parseLocFCGIIndex;
     directives["fastcgi_param"] = &_parseLocFCGIParam;
     return (directives);
 }
@@ -760,6 +761,24 @@ void ConfigurationParser::_parseLocFCGIPass(std::queue<t_token> &tokens,
         throw UnexpectedToken(token, "fastcgi_pass", "string");
 
     config.setFCGIServer(token.content);
+    tokens.pop();
+}
+
+void ConfigurationParser::_parseLocFCGIIndex(std::queue<t_token> &tokens,
+                                             LocationConfiguration &config)
+{
+    t_token token;
+
+    if (tokens.empty()) throw MissingToken("fastcgi_index", "string");
+
+    token = tokens.front();
+    tokens.pop();
+
+    if (tokens.empty()) throw MissingToken("fastcgi_index", ";");
+    if (token.type != STRING)
+        throw UnexpectedToken(token, "fastcgi_index", "string");
+
+    config.setFCGIIndex(token.content);
     tokens.pop();
 }
 

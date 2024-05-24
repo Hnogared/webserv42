@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 23:28:04 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/22 17:41:53 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/23 16:38:54 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,7 +138,7 @@ void HttpResponse::parseCGIResponse(const std::string &cgiResponse)
     std::string::size_type pos = cgiResponse.find("\r\n\r\n");
 
     if (pos == std::string::npos)
-        this->_parseCGIHeaders(cgiResponse);
+        this->setBody(cgiResponse);
     else
     {
         this->_parseCGIHeaders(cgiResponse.substr(0, pos));
@@ -267,23 +267,9 @@ void HttpResponse::_parseCGIHeaders(const std::string &headers)
 {
     if (headers.empty()) return;
 
-    size_t skip;
     std::istringstream iss(headers);
     std::string::size_type pos;
     std::string line;
-
-    if (!std::getline(iss, line, '\n')) return;
-
-    pos = line.find(':');
-
-    if (pos == std::string::npos || line.find("Status") != 0) return;
-
-    std::string status =
-        tool::strings::trim(line.substr(pos + 1), " \r\n\t\v\f");
-
-    this->_statusCode = tool::strings::stoib(status, &skip);
-    this->setStatusLine(status.substr(skip + 1));
-    this->_buildHeadersAndBody();
 
     while (std::getline(iss, line, '\n'))
     {
@@ -293,6 +279,18 @@ void HttpResponse::_parseCGIHeaders(const std::string &headers)
 
         const std::string key = line.substr(0, pos);
         const std::string value = line.substr(pos + 1);
+
+        if (key.find("Status") == 0)
+        {
+            size_t skip;
+            const std::string status =
+                tool::strings::trim(line.substr(pos + 1), " \r\n\t\v\f");
+
+            this->_statusCode = tool::strings::stoib(status, &skip);
+            this->setStatusLine(status.substr(skip + 1));
+            this->_buildHeadersAndBody();
+            continue;
+        }
 
         this->setHeader(key, value);
     }

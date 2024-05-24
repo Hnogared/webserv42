@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/12 02:08:16 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/22 18:01:20 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/24 12:22:40 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,6 +140,7 @@ void VirtualServer::_doCGIResponse(Client &client,
 {
     int pid;
     int pipeOut[2];
+    std::string uri = client.getRequest().getUri();
     std::map<std::string, std::string> params = location.getFCGIParams();
 
     this->_completeParams(client, location, params);
@@ -188,6 +189,13 @@ void VirtualServer::_doCGIResponse(Client &client,
     this->_readAndSendCGIResponse(client, pipeOut);
 }
 
+static void insertParam(std::map<std::string, std::string> &params,
+                        const std::string &key, const std::string &value)
+{
+    if (!value.empty() && !key.empty())
+        params.insert(std::make_pair(key, value));
+}
+
 void VirtualServer::_completeParams(
     const Client &client, const LocationConfiguration &location,
     std::map<std::string, std::string> &params) const
@@ -195,81 +203,84 @@ void VirtualServer::_completeParams(
     const http::HttpRequest &request = client.getRequest();
     std::string uri = request.getUri();
 
-    params.insert(std::make_pair("QUERY_STRING", request.getQueryString()));
-    params.insert(std::make_pair("REQUEST_METHOD", request.getMethodStr()));
-    // params.insert(std::make_pair("REQUEST_URI", uri));
+    insertParam(params, "QUERY_STRING", request.getQueryString());
+    insertParam(params, "REQUEST_METHOD", request.getMethodStr());
 
-    params.insert(std::make_pair("DOCUMENT_URI", uri));
-    params.insert(std::make_pair("DOCUMENT_ROOT", location.getRoot()));
+    insertParam(params, "DOCUMENT_URI", uri);
+    insertParam(params, "DOCUMENT_ROOT", location.getRoot());
 
     if (request.getBody().empty())
-        params.insert(std::make_pair("CONTENT_LENGTH", "0"));
+        insertParam(params, "CONTENT_LENGTH", "0");
     else
     {
-        params.insert(std::make_pair(
-            "CONTENT_LENGTH", tool::strings::toStr(request.getBody().size())));
+        insertParam(params, "CONTENT_LENGTH",
+                    tool::strings::toStr(request.getBody().size()));
     }
 
-    if (!request.getHeader("Content-Type").empty())
-    {
-        params.insert(
-            std::make_pair("CONTENT_TYPE", request.getHeader("Content-Type")));
-    }
-
-    params.insert(std::make_pair("GATEWAY_INTERFACE", WS_CGI_VERSION));
+    insertParam(params, "CONTENT_TYPE", request.getHeader("Content-Type"));
+    insertParam(params, "GATEWAY_INTERFACE", WS_CGI_VERSION);
 
     {
         const std::string &remoteUser =
             client.getSocket().getAddrStr(Socket::PEER);
 
-        params.insert(std::make_pair(
-            "REMOTE_ADDR", remoteUser.substr(0, remoteUser.find(':'))));
-        params.insert(std::make_pair(
-            "REMOTE_PORT", remoteUser.substr(remoteUser.find(':') + 1)));
+        insertParam(params, "REMOTE_ADDR",
+                    remoteUser.substr(0, remoteUser.find(':')));
+        insertParam(params, "REMOTE_PORT",
+                    remoteUser.substr(remoteUser.find(':') + 1));
     }
 
     {
         const std::string &localUser =
             client.getSocket().getAddrStr(Socket::LOCAL);
 
-        params.insert(std::make_pair("SERVER_ADDR",
-                                     localUser.substr(0, localUser.find(':'))));
-        params.insert(std::make_pair(
-            "SERVER_PORT", localUser.substr(localUser.find(':') + 1)));
+        insertParam(params, "SERVER_ADDR",
+                    localUser.substr(0, localUser.find(':')));
+        insertParam(params, "SERVER_PORT",
+                    localUser.substr(localUser.find(':') + 1));
     }
 
-    params.insert(std::make_pair("SERVER_NAME",
-                                 request.getHeader("Host").substr(
-                                     0, request.getHeader("Host").find(':'))));
+    insertParam(params, "SERVER_NAME",
+                request.getHeader("Host").substr(
+                    0, request.getHeader("Host").find(':')));
 
-    params.insert(std::make_pair("SERVER_PROTOCOL", WS_HTTP_VERSION));
-    params.insert(std::make_pair("SERVER_SOFTWARE",
-                                 WS_SERVER_NAME "/" WS_SERVER_VERSION));
+    insertParam(params, "SERVER_PROTOCOL", WS_HTTP_VERSION);
+    insertParam(params, "SERVER_SOFTWARE",
+                WS_SERVER_NAME "/" WS_SERVER_VERSION);
 
-    params.insert(std::make_pair(
-        "SCRIPT_FILENAME", tool::files::joinPaths(location.getRoot(), uri)));
-    params.insert(std::make_pair("SCRIPT_NAME", uri));
-
-    params.insert(std::make_pair("PATH_INFO", uri));
-
-    params.insert(std::make_pair(
-        "PATH_TRANSLATED", tool::files::joinPaths(location.getRoot(), uri)));
-
-    params.insert(std::make_pair("REDIRECT_STATUS", "200"));
-
-    for (std::map<std::string, std::string>::const_iterator it = params.begin();
-         it != params.end(); it++)
+    if (uri == location.getPath() &&
+        location.getFCGIParams().find("SCRIPT_NAME") ==
+            location.getFCGIParams().end())
     {
-        std::cout << it->first << "=" << it->second << std::endl;
+        if (location.getFCGIIndex().empty())
+            throw http::HttpRequest::RequestException("Not found", 404);
+
+        const std::string scriptFilenameDir =
+            tool::files::joinPaths(location.getRoot(), uri);
+
+        insertParam(
+            params, "SCRIPT_FILENAME",
+            tool::files::joinPaths(scriptFilenameDir, location.getFCGIIndex()));
     }
+
+    insertParam(params, "SCRIPT_FILENAME",
+                tool::files::joinPaths(location.getRoot(), uri));
+    insertParam(params, "SCRIPT_NAME", uri);
+
+    insertParam(params, "PATH_INFO", uri);
+
+    insertParam(params, "PATH_TRANSLATED",
+                tool::files::joinPaths(location.getRoot(), uri));
+
+    insertParam(params, "REDIRECT_STATUS", "200");
 }
 
 void VirtualServer::_readAndSendCGIResponse(Client &client, int pipeOut[2])
 {
     int readSize;
+    int flags = fcntl(pipeOut[0], F_GETFL, 0);
     char buffer[WS_READ_BUFF_SIZE];
     std::string output;
-    int flags = fcntl(pipeOut[0], F_GETFL, 0);
 
     fcntl(pipeOut[0], F_SETFL, flags | O_NONBLOCK);
 
