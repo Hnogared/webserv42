@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/12 02:08:16 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/24 12:22:40 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/24 19:47:27 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -201,43 +201,26 @@ void VirtualServer::_completeParams(
     std::map<std::string, std::string> &params) const
 {
     const http::HttpRequest &request = client.getRequest();
-    std::string uri = request.getUri();
+    const std::string &uri = request.getUri();
 
     insertParam(params, "QUERY_STRING", request.getQueryString());
     insertParam(params, "REQUEST_METHOD", request.getMethodStr());
+    insertParam(params, "CONTENT_TYPE", request.getHeader("Content-Type"));
+    insertParam(params, "CONTENT_LENGTH",
+                tool::strings::toStr(request.getBody().size()));
 
     insertParam(params, "DOCUMENT_URI", uri);
     insertParam(params, "DOCUMENT_ROOT", location.getRoot());
 
-    if (request.getBody().empty())
-        insertParam(params, "CONTENT_LENGTH", "0");
-    else
-    {
-        insertParam(params, "CONTENT_LENGTH",
-                    tool::strings::toStr(request.getBody().size()));
-    }
-
-    insertParam(params, "CONTENT_TYPE", request.getHeader("Content-Type"));
     insertParam(params, "GATEWAY_INTERFACE", WS_CGI_VERSION);
 
     {
-        const std::string &remoteUser =
-            client.getSocket().getAddrStr(Socket::PEER);
+        const Socket &socket = client.getSocket();
 
-        insertParam(params, "REMOTE_ADDR",
-                    remoteUser.substr(0, remoteUser.find(':')));
-        insertParam(params, "REMOTE_PORT",
-                    remoteUser.substr(remoteUser.find(':') + 1));
-    }
-
-    {
-        const std::string &localUser =
-            client.getSocket().getAddrStr(Socket::LOCAL);
-
-        insertParam(params, "SERVER_ADDR",
-                    localUser.substr(0, localUser.find(':')));
-        insertParam(params, "SERVER_PORT",
-                    localUser.substr(localUser.find(':') + 1));
+        insertParam(params, "REMOTE_ADDR", socket.getHostStr(Socket::PEER));
+        insertParam(params, "REMOTE_PORT", socket.getPortStr(Socket::PEER));
+        insertParam(params, "SERVER_ADDR", socket.getHostStr(Socket::LOCAL));
+        insertParam(params, "SERVER_PORT", socket.getPortStr(Socket::LOCAL));
     }
 
     insertParam(params, "SERVER_NAME",
@@ -248,9 +231,7 @@ void VirtualServer::_completeParams(
     insertParam(params, "SERVER_SOFTWARE",
                 WS_SERVER_NAME "/" WS_SERVER_VERSION);
 
-    if (uri == location.getPath() &&
-        location.getFCGIParams().find("SCRIPT_NAME") ==
-            location.getFCGIParams().end())
+    if (uri == location.getPath() && params.find("SCRIPT_NAME") == params.end())
     {
         if (location.getFCGIIndex().empty())
             throw http::HttpRequest::RequestException("Not found", 404);
@@ -266,9 +247,7 @@ void VirtualServer::_completeParams(
     insertParam(params, "SCRIPT_FILENAME",
                 tool::files::joinPaths(location.getRoot(), uri));
     insertParam(params, "SCRIPT_NAME", uri);
-
     insertParam(params, "PATH_INFO", uri);
-
     insertParam(params, "PATH_TRANSLATED",
                 tool::files::joinPaths(location.getRoot(), uri));
 

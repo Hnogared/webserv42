@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 19:07:28 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/21 23:36:37 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/24 19:40:10 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,9 +109,18 @@ bool Socket::operator==(const Socket &rhs) const
 /* ************************************************************************** */
 /* Getters */
 
+bool Socket::isPeerAddrSet(void) const { return (this->_peer_addr_set); }
+
 int Socket::getFd(void) const { return (this->_fd); }
 
 int *Socket::getRefCountPtr(void) const { return (this->_ref_count); }
+
+const in_addr &Socket::getHost(e_addrChoice addrChoice) const
+{
+    if (addrChoice == Socket::LOCAL) return (this->_local_addr.sin_addr);
+
+    return (this->_peer_addr.sin_addr);
+}
 
 int Socket::getPort(e_addrChoice addrChoice) const
 {
@@ -127,6 +136,16 @@ const struct sockaddr_in &Socket::getAddr(e_addrChoice addrChoice) const
     return (this->_peer_addr);
 }
 
+std::string Socket::getHostStr(e_addrChoice addrChoice) const
+{
+    return (tool::net::inet_ntoa(this->getHost(addrChoice)));
+}
+
+std::string Socket::getPortStr(e_addrChoice addrChoice) const
+{
+    return (tool::strings::toStr(this->getPort(addrChoice)));
+}
+
 std::string Socket::getAddrStr(e_addrChoice addrChoice) const
 {
     if (addrChoice == Socket::LOCAL)
@@ -140,8 +159,6 @@ std::string Socket::getAddrStr(e_addrChoice addrChoice) const
     return (tool::net::inet_ntoa(this->_peer_addr.sin_addr) + ":" +
             tool::strings::toStr(ntohs(this->_peer_addr.sin_port)));
 }
-
-bool Socket::isPeerAddrSet(void) const { return (this->_peer_addr_set); }
 
 std::string Socket::getInfosStr(void) const
 {

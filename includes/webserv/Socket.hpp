@@ -6,7 +6,7 @@
 /*   By: hnogared <hnogared@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/07 19:02:56 by hnogared          #+#    #+#             */
-/*   Updated: 2024/05/21 23:34:10 by hnogared         ###   ########.fr       */
+/*   Updated: 2024/05/24 19:39:53 by hnogared         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,12 +50,15 @@ public:
     bool operator==(const Socket &other) const;
 
     /* Getters */
+    bool isPeerAddrSet(void) const;
     int getFd(void) const;
     int *getRefCountPtr(void) const;
+    const in_addr &getHost(e_addrChoice addrChoice) const;
     int getPort(e_addrChoice addrChoice) const;
     const struct sockaddr_in &getAddr(e_addrChoice addrChoice) const;
+    std::string getHostStr(e_addrChoice addrChoice) const;
+    std::string getPortStr(e_addrChoice addrChoice) const;
     std::string getAddrStr(e_addrChoice addrChoice) const;
-    bool isPeerAddrSet(void) const;
     std::string getInfosStr(void) const;
 
     /* Setters */
