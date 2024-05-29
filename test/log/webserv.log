@@ -224,3 +224,4 @@
 [INFO] 127.0.0.1:37224 CONN CLOSED - Remote host
 [INFO] 127.0.0.1:37236 CONN ACCEPTED
 [INFO] 127.0.0.1:37236 REQ 'GET /hnogared/Music/Bring+Me+The+Horizon+-+1x1.mp3 HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] STATUS Stopping...
