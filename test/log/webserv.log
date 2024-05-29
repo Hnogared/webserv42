@@ -1,16 +1,226 @@
-[INFO] STATUS Parsing config file: test/conf.d/ubuntu_tester.conf
-[INFO] STATUS test/conf.d/ubuntu_tester.conf: Success
+[INFO] STATUS Parsing config file: test/conf.d/webserv.conf
+[INFO] STATUS test/conf.d/webserv.conf: Success
 [INFO] STATUS Running...
-[INFO] 127.0.0.1:33642 CONN ACCEPTED
-[INFO] 127.0.0.1:33642 REQ 'GET / HTTP/1.1' 200 - localhost:9090 - 'Go-http-client/1.1'
-[INFO] 127.0.0.1:33642 REQ 'POST / HTTP/1.1' 405 (Method not allowed) - localhost:9090 - 'Go-http-client/1.1'
-[INFO] 127.0.0.1:33642 CONN CLOSED - Local host
-[INFO] 127.0.0.1:33654 CONN ACCEPTED
-[INFO] 127.0.0.1:33654 REQ 'HEAD / HTTP/1.1' 405 (Method not allowed) - localhost:9090 - 'Go-http-client/1.1'
-[INFO] 127.0.0.1:33654 CONN CLOSED - Local host
-[INFO] 127.0.0.1:33670 CONN ACCEPTED
-[INFO] 127.0.0.1:33670 REQ 'GET /directory HTTP/1.1' 200 - localhost:9090 - 'Go-http-client/1.1'
-[INFO] 127.0.0.1:33670 REQ 'GET /directory/youpi.bad_extension HTTP/1.1' 200 - localhost:9090 - 'Go-http-client/1.1'
-[INFO] 127.0.0.1:33670 REQ 'GET /directory/youpi.bla HTTP/1.1' 405 (Method not allowed) - localhost:9090 - 'Go-http-client/1.1'
-[INFO] 127.0.0.1:33670 CONN CLOSED - Local host
+[INFO] 127.0.0.1:55572 CONN ACCEPTED
+[INFO] 127.0.0.1:55572 REQ 'GET / HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:55572 REQ 'GET / HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:55572 REQ 'GET / HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:55572 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:55572 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:55572 REQ 'GET / HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:55572 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:55572 REQ 'GET / HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:55572 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:55572 REQ 'GET / HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:55572 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:55572 REQ 'GET / HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:55572 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:55572 REQ 'GET / HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:55572 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:55572 REQ 'GET / HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:55572 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:55572 REQ 'GET / HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:55572 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:55572 REQ 'GET / HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:55572 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:55572 REQ 'GET / HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:55572 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:55572 REQ 'GET / HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:55572 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:55572 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:55572 REQ 'GET / HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:55572 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:55572 REQ 'GET / HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:55572 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:55572 REQ 'GET / HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:55572 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:55572 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:55572 REQ 'GET /cgi-bin/ HTTP/1.1' 405 (Method not allowed) - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:55572 CONN CLOSED - Local host
+[INFO] 127.0.0.1:59786 CONN ACCEPTED
+[INFO] 127.0.0.1:59786 REQ 'GET / HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:59786 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:59786 REQ 'GET / HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:59786 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:59786 REQ 'GET / HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:59786 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:59786 REQ 'GET / HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:59786 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:59786 REQ 'GET / HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:59786 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:59786 REQ 'GET / HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:59786 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:59786 REQ 'GET / HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:59786 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:59786 REQ 'GET /cgi-bin/ HTTP/1.1' 405 (Method not allowed) - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:59786 CONN CLOSED - Local host
+[INFO] 127.0.0.1:51932 CONN ACCEPTED
+[INFO] 127.0.0.1:51932 REQ 'GET / HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:51932 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:51932 REQ 'GET / HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:51932 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:51932 REQ 'GET / HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:51932 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:51932 REQ 'GET /cgi-bin/ HTTP/1.1' 405 (Method not allowed) - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:51932 CONN CLOSED - Local host
+[INFO] 127.0.0.1:51838 CONN ACCEPTED
+[INFO] 127.0.0.1:51838 REQ 'GET / HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:51838 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] STATUS Reloading...
 [INFO] STATUS Stopping...
+[INFO] STATUS Parsing config file: test/conf.d/webserv.conf
+[INFO] STATUS test/conf.d/webserv.conf: Success
+[INFO] STATUS Running...
+[INFO] 127.0.0.1:51848 CONN ACCEPTED
+[INFO] 127.0.0.1:51848 REQ 'GET / HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:51848 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:51848 REQ 'GET /cgi-bin/ HTTP/1.1' 500 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:51848 500 (Internal Server Error) - Connection closed
+[INFO] 127.0.0.1:43972 CONN ACCEPTED
+[INFO] 127.0.0.1:43972 REQ 'GET / HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:43972 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:43972 REQ 'GET / HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:43972 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:43972 REQ 'GET /cgi-bin/ HTTP/1.1' 500 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:43972 500 (Internal Server Error) - Connection closed
+[INFO] 127.0.0.1:59462 CONN ACCEPTED
+[INFO] 127.0.0.1:59462 REQ 'GET / HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:59462 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:59462 REQ 'GET /cgi-bin/ HTTP/1.1' 500 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:59462 500 (Internal Server Error) - Connection closed
+[INFO] 127.0.0.1:40510 CONN ACCEPTED
+[INFO] 127.0.0.1:40510 REQ 'GET / HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:40510 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:40510 REQ 'GET /cgi-bin/ HTTP/1.1' 500 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:40510 500 (Internal Server Error) - Connection closed
+[INFO] 127.0.0.1:45544 CONN ACCEPTED
+[INFO] 127.0.0.1:45544 REQ 'GET / HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:45544 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:45544 REQ 'GET /cgi-bin/ HTTP/1.1' 500 - mywebsite.com:9090 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:45544 500 (Internal Server Error) - Connection closed
+[INFO] 127.0.0.1:57444 CONN ACCEPTED
+[INFO] 127.0.0.1:57444 REQ 'GET /cgi-bin/ HTTP/1.1' 500 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:57444 500 (Internal Server Error) - Connection closed
+[INFO] 127.0.0.1:44352 CONN ACCEPTED
+[INFO] 127.0.0.1:44352 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:44352 REQ 'GET / HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:44352 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:44352 REQ 'GET /cgi-bin/ HTTP/1.1' 500 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:44352 500 (Internal Server Error) - Connection closed
+[INFO] 127.0.0.1:59948 CONN ACCEPTED
+[INFO] 127.0.0.1:59948 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:59948 REQ 'GET / HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:59948 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:59948 REQ 'GET /cgi-bin/ HTTP/1.1' 500 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:59948 500 (Internal Server Error) - Connection closed
+[INFO] 127.0.0.1:37844 CONN ACCEPTED
+[INFO] 127.0.0.1:37844 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:37844 REQ 'GET / HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:37844 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:37844 REQ 'GET /cgi-bin/ HTTP/1.1' 500 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:37844 500 (Internal Server Error) - Connection closed
+[INFO] 127.0.0.1:46072 CONN ACCEPTED
+[INFO] 127.0.0.1:46072 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:46072 REQ 'GET / HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:46072 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:46072 REQ 'GET /cgi-bin/ HTTP/1.1' 500 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:46072 500 (Internal Server Error) - Connection closed
+[INFO] 127.0.0.1:56594 CONN ACCEPTED
+[INFO] 127.0.0.1:56594 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:56594 REQ 'GET / HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:56594 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:56594 REQ 'GET /cgi-bin/ HTTP/1.1' 500 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:56594 500 (Internal Server Error) - Connection closed
+[INFO] 127.0.0.1:40686 CONN ACCEPTED
+[INFO] 127.0.0.1:40686 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:40686 REQ 'GET / HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:40686 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:40686 REQ 'GET /cgi-bin/ HTTP/1.1' 500 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:40686 500 (Internal Server Error) - Connection closed
+[INFO] 127.0.0.1:37966 CONN ACCEPTED
+[INFO] 127.0.0.1:37966 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:37966 REQ 'GET / HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:37966 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:37966 REQ 'GET /cgi-bin/ HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:37966 REQ 'GET /cgi-bin HTTP/1.1' 404 (Not found) - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:37966 CONN CLOSED - Local host
+[INFO] 127.0.0.1:56008 CONN ACCEPTED
+[INFO] 127.0.0.1:56008 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:56008 REQ 'GET / HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:56008 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:56008 REQ 'GET /cgi-bin/ HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:56008 REQ 'GET /cgi-bin HTTP/1.1' 404 (Not found) - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:56008 CONN CLOSED - Local host
+[INFO] 127.0.0.1:33514 CONN ACCEPTED
+[INFO] 127.0.0.1:33514 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:33514 REQ 'GET / HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:33514 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:33514 REQ 'GET /cgi-bin/ HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:33514 REQ 'GET /cgi-bin/ HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:33514 REQ 'GET /cgi-bin/ HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:33514 REQ 'GET /cgi-bin/ HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:33514 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:33514 REQ 'GET / HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:33514 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:33514 REQ 'GET /cgi-bin/ HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:33514 REQ 'GET /cgi-bin/ HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:33514 REQ 'GET /cgi-bin/ HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:33514 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:33514 REQ 'GET / HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:33514 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:33514 REQ 'GET /cgi-bin/ HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:33514 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:33514 REQ 'GET / HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:33514 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:33514 REQ 'GET /cgi-bin/ HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:33514 REQ 'GET /cgi-bin/ HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:33514 REQ 'GET /cgi-bin/ HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:33514 REQ 'GET /cgi-bin/ HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:33514 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:33514 REQ 'GET / HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:33514 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:33514 REQ 'GET /cgi-bin/ HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:33514 REQ 'GET /cgi-bin/ HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:33514 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:33514 REQ 'GET / HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:33514 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:33514 REQ 'GET /cgi-bin/ HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:33514 REQ 'GET /cgi-bin/ HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:33514 REQ 'GET /cgi-bin/ HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:33514 REQ 'GET /cgi-bin/ HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:33514 REQ 'GET /cgi-bin/ HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:33514 500 (Internal Server Error) - Connection closed
+[INFO] 127.0.0.1:48070 CONN ACCEPTED
+[INFO] 127.0.0.1:48070 REQ 'GET / HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:48070 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:48070 REQ 'GET /cgi-bin/ HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:48070 REQ 'GET /cgi-bin/ HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:48070 REQ 'GET /cgi-bin/ HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:48070 REQ 'GET /cgi-bin/ HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:48070 REQ 'GET /cgi-bin/ HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:48070 REQ 'GET /cgi-bin/ HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:48070 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:48070 REQ 'GET / HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:48070 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:48070 REQ 'GET /cgi-bin/ HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:48070 REQ 'GET /cgi-bin/ HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:48070 REQ 'GET /cgi-bin/ HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:48070 500 (Internal Server Error) - Connection closed
+[INFO] 127.0.0.1:46424 CONN ACCEPTED
+[INFO] 127.0.0.1:46424 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:46424 REQ 'GET / HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:46424 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:46424 REQ 'GET /cgi-bin/ HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:46424 REQ 'GET /cgi-bin/ HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:46424 REQ 'GET /cgi-bin/ HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:46424 REQ 'GET /css/index.css HTTP/1.1' 200 - mywebsite.com:9090 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:37440 CONN ACCEPTED
+[INFO] 127.0.0.1:37440 REQ 'GET /hnogared/ HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:37440 REQ 'GET /favicon.ico HTTP/1.1' 404 (Not found) - localhost:4242 - 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36'
+[INFO] 127.0.0.1:37440 CONN CLOSED - Local host
+[INFO] 127.0.0.1:37224 CONN ACCEPTED
+[INFO] 127.0.0.1:37224 REQ 'GET /hnogared/Music/ HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:37224 REQ 'GET /hnogared/Music/Bring+Me+The+Horizon+-+1x1.mp3 HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+[INFO] 127.0.0.1:37224 CONN CLOSED - Remote host
+[INFO] 127.0.0.1:37236 CONN ACCEPTED
+[INFO] 127.0.0.1:37236 REQ 'GET /hnogared/Music/Bring+Me+The+Horizon+-+1x1.mp3 HTTP/1.1' 200 - localhost:4242 - 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
